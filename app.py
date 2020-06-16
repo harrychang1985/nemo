@@ -11,13 +11,14 @@ from instance.config import ProductionConfig
 '''
 
 
-host = ProductionConfig.WEB_HOST  # flask_app.config.get('WEB_HOST')
-port = ProductionConfig.WEB_PORT  # flask_app.config.get('WEB_PORT')
+host = ProductionConfig.WEB_HOST
+port = ProductionConfig.WEB_PORT
 
 
 def web_server():
     http_server = WSGIServer((host, port), web_app)
     http_server.serve_forever()
+
 
 def main_debug():
     web_app.run(host=host, port=port, debug=True)
@@ -25,4 +26,4 @@ def main_debug():
 
 if __name__ == '__main__':
     web_server()
-    # main_debug()
+    #main_debug()

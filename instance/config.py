@@ -11,7 +11,7 @@ class Config:
     WEB_PASSWORD = 'nemo'
     SECRET_KEY = os.urandom(16)
     WEB_HOST = '0.0.0.0'  
-    WEB_PORT = 5000  
+    WEB_PORT = 5000 
     VERSION = '1.0.0'
 
 
@@ -29,8 +29,8 @@ class ProductionConfig(Config):
     # rabbitmq
     MQ_HOST = 'localhost' 
     MQ_PORT = 5672
-    MQ_USERNAME = 'nemo'
-    MQ_PASSWORD = 'nemo2020'
+    MQ_USERNAME = 'guest'
+    MQ_PASSWORD = 'guest'
 
     # flower
     FLOWER_BIND_ADDR = '127.0.0.1'

@@ -25,7 +25,6 @@
             <div class="form-group col-md-2">
               <label class="control-label">组织机构</label>
               <select class="form-control" title="机构组构" id="select_org_id_search">
-                <option value="">--选择组织机构--</option>
                 {% for a in data['org_list'] %}
                 <option value="{{ a['id'] }}">{{ a['org_name'] }}</option>
                 {% endfor %}
@@ -110,7 +109,6 @@
                       </div>
                       <label for="select_org_id_task"><b>资产关联的组织机构</b></label>
                       <select class="form-control" id="select_org_id_task">
-                        <option value="">--选择组织机构--</option>
                         {% for a in data['org_list'] %}
                         <option value="{{ a['id'] }}">{{ a['org_name'] }}</option>
                         {% endfor %}

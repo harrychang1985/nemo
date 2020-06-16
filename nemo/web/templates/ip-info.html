@@ -80,9 +80,9 @@
                         {% for row in ip_info['port_attr'] %}
                         {% if row['table_backgroud_set'] %}
                         <tr class="alert-success">
-                            {% else %}
+                        {% else %}
                         <tr>
-                            {% endif %}
+                        {% endif %}
                             <td>{{ row['ip'] }}</td>
                             <td>{{ row['port'] }}</td>
                             <td>{{ row['tag'] }}</td>

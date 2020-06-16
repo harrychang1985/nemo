@@ -75,6 +75,7 @@ def domainscan_with_portscan(options):
     # 域名任务
     domainscan.prepare(options)
     domain_list = domainscan.execute()
+    result  =  domainscan.save_domain(domain_list)
     # 得到域名的IP及C段
     ip_set = set()
     for domain in domain_list:
@@ -91,6 +92,6 @@ def domainscan_with_portscan(options):
                         'webtitle': options['webtitle'], 'rate': config_datajson['nmap']['rate'], 'tech': config_datajson['nmap']['tech'],
                         'whatweb':options['whatweb'],'iplocation': True, 'org_id': None if 'org_id' not in options else options['org_id']}
     # 执行portscan任务
-    result = portscan.run(options_portscan)
+    result.update(portscan.run(options_portscan))
 
     return result

@@ -5,7 +5,7 @@ import yaml
 
 def load_config(config_file='instance/config.yaml'):
     with open(config_file) as f:
-        return yaml.load(f, Loader=yaml.CLoader)
+        return yaml.safe_load(f)
 
 
 def save_config(config_jsondata, config_file='instance/config.yaml'):

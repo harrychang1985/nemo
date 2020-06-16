@@ -164,6 +164,9 @@ def ip_asset_view():
     if request.method == 'GET':
         org_table = Organization()
         org_list = org_table.gets()
+        if not org_list:
+            org_list = []
+        org_list.insert(0,{'id':'','org_name':'--选择组织机构--'})
 
         data = {'org_list': org_list, 'ip_address_ip': session.get(
             'ip_address_ip', default=''), 'port': session.get('port', '')}
@@ -188,28 +191,29 @@ def ip_asset_view():
         session['ip_address_ip'] = ip_address
         session['port'] = port
 
+        count = 0
         ips = ip_table.gets_by_org_ip_port(
             org_id, ip_address, port, page=(start//length)+1, rows_per_page=length)
+        if ips:
+            for ip_row in ips:
+                port_list, title_set, banner_set, ports_attr_info = aip.get_ip_port_info(
+                    ip_row['ip'], ip_row['id'])
+                ip_list.append({
+                    'id': ip_row['id'],  # 表内序号
+                    "index": index+start,  # 显示序号
+                    "org_name": org_table.get(int(ip_row['org_id']))['org_name'] if ip_row['org_id'] else '',
+                    "ip": ip_row['ip'],
+                    "status": ip_row['status'],
+                    "location": ip_row['location'],
+                    "create_time": str(ip_row['create_datetime']),
+                    "update_time": str(ip_row['update_datetime']),
+                    "port": ', '.join([str(x) for x in port_list]),
+                    "title": list(title_set),
+                    "banner": list(banner_set)
+                })
+                index += 1
 
-        for ip_row in ips:
-            port_list, title_set, banner_set, ports_attr_info = aip.get_ip_port_info(
-                ip_row['ip'], ip_row['id'])
-            ip_list.append({
-                'id': ip_row['id'],  # 表内序号
-                "index": index+start,  # 显示序号
-                "org_name": org_table.get(int(ip_row['org_id']))['org_name'] if ip_row['org_id'] else '',
-                "ip": ip_row['ip'],
-                "status": ip_row['status'],
-                "location": ip_row['location'],
-                "create_time": str(ip_row['create_datetime']),
-                "update_time": str(ip_row['update_datetime']),
-                "port": ', '.join([str(x) for x in port_list]),
-                "title": list(title_set),
-                "banner": list(banner_set)
-            })
-            index += 1
-
-        count = ip_table.count_by_org_ip_port(org_id, ip_address, port)
+            count = ip_table.count_by_org_ip_port(org_id, ip_address, port)
         json_data = {
             'draw': draw,
             'recordsTotal': count,
@@ -232,14 +236,16 @@ def ip_asset_info_view():
     ips = Ip().gets(query={'ip': ip})
     if ips and len(ips) > 0:
         ip_info = AssertInfoParser().get_ip_info(ips[0]['id'])
+        if 'port_attr' in ip_info and ip_info['port_attr']:
+            # 表格背景设置：
+            table_backgroud_set = False           
+            for p in ip_info['port_attr']:
+                if p['ip'] and p['port']:
+                    table_backgroud_set = not table_backgroud_set
+                p['table_backgroud_set'] = table_backgroud_set
     else:
         ip_info = None  
-    # 表格背景设置：
-    table_backgroud_set = False           
-    for p in ip_info['port_attr']:
-        if p['ip'] and p['port']:
-            table_backgroud_set = not table_backgroud_set
-        p['table_backgroud_set'] = table_backgroud_set
+   
 
  
     return render_template('ip-info.html', ip_info=ip_info)
@@ -273,6 +279,10 @@ def domain_asset_view():
     if request.method == 'GET':
         org_table = Organization()
         org_list = org_table.gets()
+        if not org_list:
+            org_list = []
+        org_list.insert(0,{'id':'','org_name':'--选择组织机构--'})
+
         data = {'org_list': org_list, 'domain_address': session.get(
             'domain_address', default=''), 'ip_address_domain': session.get('ip_address_domain', default='')}
 
@@ -297,27 +307,29 @@ def domain_asset_view():
         session['ip_address_domain'] = ip_address
         session['domain_address'] = domain_address
 
+        count = 0
         domains = domain_table.gets_by_org_domain_ip(
             org_id, domain_address, ip_address, page=start//length+1, rows_per_page=length)
-        for domain_row in domains:
-            ips = domain_attr_table.gets(
-                query={'tag': 'A', 'r_id': domain_row['id']})
-            domain_info = api.get_domain_info(domain_row['id'])
-            domain_list.append({
-                'id': domain_row['id'],
-                "index": index+start,
-                "domain": domain_row['domain'],
-                "ip": ', '.join(set(['<a href="/ip-info?ip={0}">{0}</a>'.format(ip_row['content']) for ip_row in ips])),
-                "org_name": org_table.get(int(domain_row['org_id']))['org_name'] if domain_row['org_id'] else '',
-                "create_time": str(domain_row['create_datetime']),
-                "update_time": str(domain_row['update_datetime']),
-                'port': domain_info['port'],
-                'title': domain_info['title'],
-                'banner': domain_info['banner']
-            })
-            index += 1
-        count = domain_table.count_by_org_domain_ip(
-            org_id, domain_address, ip_address)
+        if domains:
+            for domain_row in domains:
+                ips = domain_attr_table.gets(
+                    query={'tag': 'A', 'r_id': domain_row['id']})
+                domain_info = api.get_domain_info(domain_row['id'])
+                domain_list.append({
+                    'id': domain_row['id'],
+                    "index": index+start,
+                    "domain": domain_row['domain'],
+                    "ip": ', '.join(set(['<a href="/ip-info?ip={0}">{0}</a>'.format(ip_row['content']) for ip_row in ips])),
+                    "org_name": org_table.get(int(domain_row['org_id']))['org_name'] if domain_row['org_id'] else '',
+                    "create_time": str(domain_row['create_datetime']),
+                    "update_time": str(domain_row['update_datetime']),
+                    'port': domain_info['port'],
+                    'title': domain_info['title'],
+                    'banner': domain_info['banner']
+                })
+                index += 1
+            count = domain_table.count_by_org_domain_ip(
+                org_id, domain_address, ip_address)
         json_data = {
             'draw': draw,
             'recordsTotal': count,
@@ -339,14 +351,16 @@ def domain_asset_info_view():
     domains = Domain().gets(query={'domain': domain})
     if domains and len(domains) > 0:
         domain_info = AssertInfoParser().get_domain_info(domains[0]['id'])
+        # 表格背景设置：
+        table_backgroud_set = False   
+        if 'port_attr' in domain_info and domain_info['port_attr']:    
+            for p in domain_info['port_attr']:
+                if p['ip'] and p['port']:
+                    table_backgroud_set = not table_backgroud_set
+                p['table_backgroud_set'] = table_backgroud_set
     else:
         domain_info = None
-    # 表格背景设置：
-    table_backgroud_set = False           
-    for p in domain_info['port_attr']:
-        if p['ip'] and p['port']:
-            table_backgroud_set = not table_backgroud_set
-        p['table_backgroud_set'] = table_backgroud_set
+    
 
     return render_template('domain-info.html', domain_info=domain_info)
 

@@ -25,6 +25,7 @@ def config_view():
         return render_template('config.html')
 
     config_data = load_config()
+    
     return jsonify(config_data)
 
 

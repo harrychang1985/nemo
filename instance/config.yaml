@@ -1,7 +1,7 @@
 nmap:
   bin: nmap
   ping: false
-  port: ''
+  port: --top-port 1000
   rate: '3000'
   tech: -sS
 whatweb:
