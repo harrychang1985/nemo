@@ -22,7 +22,7 @@ RUN set -x \
     # && python3.7 -m pip config set global.index-url 'https://pypi.mirrors.ustc.edu.cn/simple/' \
     && python3.7 -m pip install -U pip -i https://mirrors.aliyun.com/pypi/simple/ \
     && python3.7 -m pip install -r /opt/nemo/requirements.txt -i https://mirrors.aliyun.com/pypi/simple/ \
-    && chmod +x /opt/nemo/start.sh
+    && chmod +x /opt/nemo/docker_start.sh
 
 # init databse and rabbitmq
 RUN set -x \
@@ -33,5 +33,5 @@ RUN set -x \
 
 ENV PYTHONOPTIMIZE 1
 WORKDIR /opt/nemo
-ENTRYPOINT ["/opt/nemo/start.sh"]
+ENTRYPOINT ["/opt/nemo/docker_start.sh"]
 EXPOSE 5000

@@ -78,7 +78,7 @@ class TaskBase():
             domain_id = domain_app.save_and_update(domain)
             if domain_id > 0:
                 # 保存domain的属性
-                for attr_key in ('CNAME','A','title','whatweb'):
+                for attr_key in ('CNAME','A','title','whatweb','server'):
                     if  attr_key in domain:
                         for attr_value in domain[attr_key]:
                             domain_attr = {'r_id':domain_id,'source':self.source,'tag':attr_key,'content':attr_value[0:800]}

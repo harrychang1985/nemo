@@ -35,7 +35,7 @@ class PortScan(TaskBase):
         self.task_description = '端口扫描综合任务'
         # 默认参数：
         self.source = 'portscan'
-        self.result_attr_keys = ('service', 'banner', 'title', 'whatweb')
+        self.result_attr_keys = ('service', 'banner', 'title', 'whatweb','server')
         self.webtitle = False
         self.iplocation = False
         self.whatweb = False

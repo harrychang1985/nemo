@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # coding:utf-8
-
+import sys
 from gevent.pywsgi import WSGIServer
 from nemo.web.flask_app import web_app
 from instance.config import ProductionConfig
@@ -25,5 +25,7 @@ def main_debug():
 
 
 if __name__ == '__main__':
-    web_server()
-    #main_debug()
+    if len(sys.argv) == 2 and sys.argv[1] == 'debug':
+        main_debug()
+    else:
+        web_server()

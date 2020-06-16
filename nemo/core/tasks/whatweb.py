@@ -18,7 +18,7 @@ class WhatWeb(TaskBase):
     任务结果:
         保存为ip或domain资产格式的列表：
         [{'ip':'192.168.1.1','port':[{'port':80,'whatweb':'xxx,yyy,zzz','source':'whatweb'},...]},...]
-        [{'domain':'www.cq.sgcc.com.cn','whatweb':'xxx,yyy,zzz'},...]
+        [{'domain':'www.cq.sgcc.com.cn','whatweb':['xxx',]},...]
     '''
 
     def __init__(self):
@@ -31,7 +31,7 @@ class WhatWeb(TaskBase):
         # 参数
         self.org_id = None
         self.source = 'whatweb'
-        self.result_attr_keys = ('whatweb', )
+        self.result_attr_keys = ('whatweb','title','server' )
         self.threads = 10
         # 默认的参数
         self.target = []
@@ -54,7 +54,7 @@ class WhatWeb(TaskBase):
                 scan_result.append(line)
             # 解析nmap扫描结果
             result = ''.join(scan_result)
-            
+
             if result.startswith('ERROR'):
                 result = None
         except FileNotFoundError as e1:
@@ -99,19 +99,43 @@ class WhatWeb(TaskBase):
         # IP:PORT
         if 'ip' in target and 'port' in target:
             for port in target['port']:
-                title = self.__exe_whatweb(
+                content = self.__exe_whatweb(
                     '{}:{}'.format(target['ip'], port['port']))
-                if title:
-                    port['whatweb'] = title
+                if content:
+                    port.update(self.__parse_whatweb(content))
 
         # DOMAIN
         elif 'domain' in target:
-                title = self.__exe_whatweb(
-                    '{}'.format(target['domain']))
-                if title:
-                    if 'whatweb' not in target:
-                        target['whatweb'] = []
-                    target['whatweb'].append(title)
+            content = self.__exe_whatweb(
+                '{}'.format(target['domain']))
+            if content:
+                result = self.__parse_whatweb(content)
+                if 'whatweb' not in target:
+                    target['whatweb'] = []
+                target['whatweb'].append(content)
+                if 'title' in result:
+                    if 'title' not in target:
+                        target['title'] = []
+                    target['title'].append(result['title'])
+                if 'server' in result:
+                    if 'server' not in target:
+                        target['server'] = []
+                    target['server'].append(result['server'])
+
+    def __parse_whatweb(self, content):
+        '''从whatweb的返回中提取title和bannr
+        '''
+        keys = {'Title': 'title', 'HTTPServer': 'server'}
+        p_title = r'{}\[(.*?)\]'
+        result = {}
+        for k, v in keys.items():
+            m = re.findall(p_title.format(k), content)
+            if m:
+                result[v] = ','.join(m)
+
+        result.update(whatweb=content)
+
+        return result
 
     def execute(self, target_list):
         '''调用what执行扫描任务
