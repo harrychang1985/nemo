@@ -57,12 +57,12 @@ class WhatWeb(TaskBase):
             
             if result.startswith('ERROR'):
                 result = None
-        except FileNotFoundError as e:
+        except FileNotFoundError as e1:
             result = None
-            print(e)
-        except:
+            print(e1)
+        except Exception as e2:
             result = None
-            print(e)
+            print(e2)
 
         return result
 
