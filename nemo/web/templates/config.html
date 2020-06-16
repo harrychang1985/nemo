@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+
+{% block css %}
+<link href="static/css/bootstrap-duallistbox/bootstrap-duallistbox.css" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<main class="app-content">
+    <div class="app-title">
+        <div>
+            <h1><i class="fa fa-dashboard"></i> 配置管理</h1>
+        </div>
+        <ul class="app-breadcrumb breadcrumb">
+            <li class="breadcrumb-item"><i class="fa fa-home fa-lg"></i></li>
+            <li class="breadcrumb-item"><a href="/index">首页</a></li>
+            <li class="breadcrumb-item active"><a href="#">配置管理</a></li>
+        </ul>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="tile">
+                <h3 class="tile-title">NMAP配置</h3>
+                <div class="tile-body">
+                    <form>
+                        <div class="form-group">
+                            <label class="col-form-label" for="input_nmap_bin">
+                                <b>NMAP可执行文件位置</b>
+                            </label>
+                            <input class="form-control" id="input_nmap_bin" type="text" value="">
+                            <label class="col-form-label" for="input_nmap_port">
+                                <b>默认扫描端口:</b>
+                            </label>
+                            <input class="form-control" id="input_nmap_port" type="text"
+                                placeholder="--top-ports 1000（支持Nmap格式的端口列表）" value="">
+                            <label for="select_nmap_tech"><b>NMAP探测技术</b></label>
+                            <select class="form-control" id="select_nmap_tech">
+                                <option value="-sS">-sS</option>
+                                <option value="-sT">-sT</option>
+                                <option value="-sV">-sV</option>
+                            </select>
+                            <label for="input_nmap_rate"><b>NMAP扫描速度</b></label>
+                            <input class="form-control" id="input_nmap_rate" type="text" placeholder="3000（默认）"
+                                value="">
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <label class="form-check-label" for="checkbox_nmap_ping">
+                                <input class="form-check-input" id="checkbox_nmap_ping" type="checkbox">PING
+                            </label>
+                        </div>
+                    </form>
+                </div>
+                <div class="tile-footer">
+                    <button class="btn btn-primary" type="button" id="buttonSaveNmap"><i
+                            class="fa fa-fw fa-lg fa-check-circle"></i>保存设置</button>&nbsp;&nbsp;&nbsp;
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="tile">
+                <h3 class="tile-title">WhatWeb配置</h3>
+                <div class="tile-body">
+                    <label class="col-form-label" for="input_whatweb_bin">
+                        <b>WhatWeb可执行文件位置</b>
+                    </label>
+                    <input class="form-control" id="input_whatweb_bin" type="text" value="">
+                </div>
+                <div class="tile-footer">
+                        <button class="btn btn-primary" type="button" id="buttonSaveWhatweb"><i
+                            class="fa fa-fw fa-lg fa-check-circle"></i>保存设置</button>&nbsp;&nbsp;&nbsp;
+                </div>
+            </div>
+            <div class="tile">
+                <h3 class="tile-title">其它</h3>
+                <div class="tile-body">
+                   
+                </div>
+                <div class="tile-footer">
+                    <div class="row">
+                        <div class="col-md-8 col-md-offset-3">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="clearix"></div>
+    </div>
+</main>
+{% endblock %}
+
+{% block js %}
+<script src="static/js/plugins/jquery.dataTables.min.js"></script>
+<script src="static/js/plugins/dataTables.bootstrap.min.js"></script>
+<script src="static/js/sweetalert/sweetalert.min.js"></script>
+<script src="static/js/jquery/jquery.bootstrap-duallistbox.js"></script>
+<script src="static/js/server/config.js"></script>
+{% endblock %}

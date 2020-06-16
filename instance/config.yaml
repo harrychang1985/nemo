@@ -1,0 +1,8 @@
+nmap:
+  bin: nmap
+  ping: false
+  port: ''
+  rate: '3000'
+  tech: -sS
+whatweb:
+  bin: whatweb

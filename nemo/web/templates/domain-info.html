@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+
+{% block css %}
+{% endblock %}
+
+{% block content %}
+<main class="app-content">
+    <div class="app-title">
+        <div>
+            <h1><i class="fa fa-th-list"></i>&nbsp;域名信息</h1>
+            <p></p>
+        </div>
+        <ul class="app-breadcrumb breadcrumb side">
+            <li class="breadcrumb-item"><i class="fa fa-home fa-lg"></i></li>
+            <li class="breadcrumb-item"><a href="/index">首页</a></li>
+            <li class="breadcrumb-item"><a href="/domain-list">域名资产</a></li>
+            <li class="breadcrumb-item active"><a href="#">域名信息</a></li>
+        </ul>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="bs-component">
+                <div class="card">
+                    <h4 class="card-header  bg-primary">{{ domain_info['domain'] }}</h4>
+                    <div class="card-body">
+                        <span class="btn btn-info">关联IP</span></b>
+                        <span class="btn btn-warning">{{ domain_info['ip'] }}</span>
+                        <span class="btn btn-info">端口信息</span></b>
+                        <span class="btn btn-warning">{{ domain_info['port'] }}</span>
+                        {% if domain_info['title'] %}
+                        <br><br>
+                        <span class="btn btn-info">站点标题</span></b>
+                        <span class="btn border-secondary text-left">{{ domain_info['title'] }}</span>
+                        {% endif %}
+                        <br><br>
+                        {% if domain_info['organization'] %}
+                        <span class="btn btn-info">所属组织</span></b>
+                        <span class="btn border-success">{{ domain_info['organization'] }}</span>
+                        {% endif %}
+                        <span class="btn btn-info">创建时间</span></b>
+                        <span class="btn border-success">{{ domain_info['create_datetime'] }}</span>
+                        <span class="btn btn-info">更新时间</span></b>
+                        <span class="btn border-success">{{ domain_info['update_datetime'] }}</span>
+                        {% if domain_info['whatweb'] %}
+                        <br><br>
+                        <span class="btn border-secondary text-left">WhatWeb：{{ domain_info['whatweb'] }}</span>
+                        {% endif %}
+                    </div>
+                    <div class="card-footer text-muted">
+                        <h5>IP与端口信息</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="tile">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th width="10%">IP地址</th>
+                            <th width="5%">端口</th>
+                            <th width="5%">属性</th>
+                            <th width="30%">内容</th>
+                            <th width="5%">来源</th>
+                            <th width="10%">更新时间</th>
+                            <th width="5%">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in domain_info['port_attr'] %}
+                        {% if row['table_backgroud_set'] %}
+                        <tr class="alert-success">
+                            {% else %}
+                        <tr>
+                            {% endif %}
+                            <td>{{ row['ip'] }}</td>
+                            <td>{{ row['port'] }}</td>
+                            <td>{{ row['tag'] }}</td>
+                            <td>{{ row['content'] }}</td>
+                            <td>{{ row['source'] }}</td>
+                            <td>{{ row['update_datetime'] }}</td>
+                            <td><a href=javascript:delete_port_attr({{ row['id'] }})><i
+                                        class="fa fa-trash"></i><span>Delete</span></a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <!--row-->
+</main>
+{% endblock %}
+
+{% block js %}
+<!-- Data table plugin-->
+<script src="static/js/plugins/jquery.dataTables.min.js"></script>
+<script src="static/js/plugins/dataTables.bootstrap.min.js"></script>
+<script src="static/js/sweetalert/sweetalert.min.js"></script>
+<script src="static/js/jquery/jquery.bootstrap-duallistbox.js"></script>
+<script src="static/js/server/asset-info.js"></script>
+{% endblock %}

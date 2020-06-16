@@ -1,0 +1,9 @@
+requests
+dnspython
+pymysql
+DBUtils
+celery
+flower
+flask
+gevent
+pyyaml

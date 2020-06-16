@@ -1,0 +1,162 @@
+{% extends "base.html" %}
+
+{% block css %}
+<link ref="stylesheet" type="text/css" href="static/css/jquery.dataTables.min.css">
+{% endblock %}
+
+{% block content %}
+<main class="app-content">
+  <div class="app-title">
+    <div>
+      <h1><i class="fa fa-th-list"></i>&nbsp;IP列表</h1>
+      <p></p>
+    </div>
+    <ul class="app-breadcrumb breadcrumb side">
+      <li class="breadcrumb-item"><i class="fa fa-home fa-lg"></i></li>
+      <li class="breadcrumb-item"><a href="/index">首页</a></li>
+      <li class="breadcrumb-item active"><a href="#">IP资产</a></li>
+    </ul>
+  </div>
+  <div class="row">
+    <div class="col-md-12">
+      <div class="tile">
+        <div class="tile-body">
+          <form class="row">
+            <div class="form-group col-md-2">
+              <label class="control-label">组织机构</label>
+              <select class="form-control" title="机构组构" id="select_org_id_search">
+                <option value="">--选择组织机构--</option>
+                {% for a in data['org_list'] %}
+                <option value="{{ a['id'] }}">{{ a['org_name'] }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div class="form-group col-md-2">
+              <label class="control-label" for="ip_address">IP</label>
+              <input class="form-control" type="text" id="ip_address" placeholder="IP，单个IP或IP/掩码" value="{{ data['ip_address_ip'] }}">
+            </div>
+            <div class="form-group col-md-2">
+              <label class="control-label" for="port">Port</label>
+              <input class="form-control" type="text" id="port" placeholder="端口，多个逗号分隔" value="{{ data['port']}}">
+            </div>
+            <div class="form-group col-md-4 align-self-end">
+              <button class="btn btn-primary" type="button" id="search"><i
+                  class="fa fa-fw fa-lg fa-check-circle"></i>搜索</button>
+              <button class="btn btn-primary" type="button" id="create_task"><i class="fa fa-plus"></i>新建任务</button>
+            </div>
+          </form>
+        </div>
+      </div>
+      <div class="tile">
+        <div class="tile-body">
+          <table class="table table-hover table-bordered" id="ip_table" width="100%">
+          </table>
+          <!-- 模态对话框：任务-->
+          <div class="modal fade" id="newTask" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header card-header">
+                  <h4 class="modal-title" id="myModalLabel">
+                    新建任务
+                  </h4>
+                </div>
+                <div class="modal-body ">
+                  <form class="form-horizontal" role="form">
+                    <div class="form-group">
+                      <label for="text_target">
+                        <b><span class="text-danger">*</span>Targets:</b>
+                      </label>
+                      <textarea class="form-control" id="text_target" rows="4"
+                        placeholder="192.168.1.1&#10;172.16.80.0/24&#10;www.google.com"></textarea>
+                      <label class="col-form-label" for="input_port">
+                        <b>Ports:</b>
+                      </label>
+                      <input class="form-control" id="input_port" type="text"
+                        placeholder="--top-ports 1000（支持Nmap格式的端口列表）" values="">
+                      <label class="col-form-label">
+                        <b>Options:</b>
+                      </label>
+                      <div class="form-group row">
+                        <div class="col-md-12">
+                          <div class="form-check form-check-inline">
+                            <label class="form-check-label" for="checkbox_iplocation">
+                              <input class="form-check-input" id="checkbox_iplocation" type="checkbox" checked>IP归属地
+                            </label>
+                          </div>
+                          <div class="form-check form-check-inline">
+                            <label class="form-check-label" for="checkbox_webtitle">
+                              <input class="form-check-input" id="checkbox_webtitle" type="checkbox" checked>网站标题
+                            </label>
+                          </div>
+                          <div class="form-check form-check-inline">
+                            <label class="form-check-label" for="checkbox_whatweb">
+                              <input class="form-check-input" id="checkbox_whatweb" type="checkbox" >WhatWeb指纹
+                            </label>
+                          </div>
+                          <div class="form-check form-check-inline">
+                            <label class="form-check-label" for="checkbox_ping">
+                              <input class="form-check-input" id="checkbox_ping" type="checkbox">PING
+                            </label>
+                          </div>
+                          <div class="form-check form-check-inline" for="checkbox_fofasearch">
+                            <label class="form-check-label">
+                              <input class="form-check-input" id="checkbox_fofasearch" type="checkbox">FOFA接口
+                            </label>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="form-row">
+                        <div class="form-group col-md-6">
+                          <label for="select_tech"><b>NMAP探测技术</b></label>
+                          <select class="form-control" id="select_tech">
+                            <option value="-sS">-sS（默认）</option>
+                            <option value="-sT">-sT</option>
+                            <option value="-sV">-sV</option>
+                          </select>
+                        </div>
+                        <div class="form-group col-md-6">
+                          <label for="input_rate"><b>NMAP扫描速度</b></label>
+                          <input class="form-control" id="input_rate" type="text" placeholder="3000（默认）">
+                        </div>
+                      </div>
+            
+                    
+                      <label for="select_org_id_task"><b>资产关联的组织机构</b></label>
+                      <select class="form-control" id="select_org_id_task">
+                        <option value="">--选择组织机构--</option>
+                        {% for a in data['org_list'] %}
+                        <option value="{{ a['id'] }}">{{ a['org_name'] }}</option>
+                        {% endfor %}
+                      </select>
+                    </div>
+                    <div class="hr hr-16 hr-dotted"></div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-dismiss="modal" aria-hidden="true">取消
+                      </button>
+                      <button class="btn btn-primary org-update" type="button" id="start_task">
+                        开始任务
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+          </div> <!-- table responsive-->
+        </div>
+        <!----tile body-->
+      </div> <!-- tile -->
+    </div> <!-- col md-12 -->
+  </div>
+  <!--row-->
+</main>
+{% endblock %}
+
+{% block js %}
+<!-- Data table plugin-->
+<script src="static/js/plugins/jquery.dataTables.min.js"></script>
+<script src="static/js/plugins/dataTables.bootstrap.min.js"></script>
+<script src="static/js/sweetalert/sweetalert.min.js"></script>
+<script src="static/js/jquery/jquery.bootstrap-duallistbox.js"></script>
+<script src="static/js/server/ip-list.js"></script>
+{% endblock %}
