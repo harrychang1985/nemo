@@ -33,7 +33,7 @@ docker build  -t nemo/app:v1 .
 docker run -it -d --name nemo_app -p 5000:5000 nemo/app:v1
 ```
 
-浏览器输入http://localhost:5000，默认用户名密码：**nemo/nemo**
+浏览器输入 [http://localhost:5000](http://localhost:5000)，默认用户名密码：**nemo/nemo**
 
 
 <img src="docs/login.jpg" alt="login" />
