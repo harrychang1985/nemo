@@ -131,7 +131,7 @@ class WhatWeb(TaskBase):
         for k, v in keys.items():
             m = re.findall(p_title.format(k), content)
             if m:
-                result[v] = ','.join(m)
+                result[v] = ','.join(list(set(m)))
 
         result.update(whatweb=content)
 
