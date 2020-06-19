@@ -38,7 +38,10 @@ class ProductionConfig(Config):
 
 
 class APIConfig():
-    
+    # FOFA
     FOFA_EMAIL = 'hancool@163.com'
     FOFA_KEY = '238ebb08523bff5cf297b96364f62440'
+    # Shodan
+    SHODAN_API_KEY = "Dw8SUKGAnaQ58FuZyqS3kXCCfFyIsekQ"
+
 

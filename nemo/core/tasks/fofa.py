@@ -94,8 +94,8 @@ class Fofa(TaskBase):
         if server:
             p['server'] = server
         ip_port = {'ip': ip, 'status': 'N/A', 'port': [p, ]}
-        if len(location) > 2:
-            ip_port['location'] = location
+        # if len(location) > 2:
+        #     ip_port['location'] = location
 
         return ip_port
 

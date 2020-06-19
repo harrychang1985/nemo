@@ -7,6 +7,7 @@ from .ipdomain import IpDomain
 from .webtitle import WebTitle
 from .portscan import PortScan
 from .fofa import Fofa
+from .shodan_search import Shodan
 from .subdomain import SubDmain
 from .domainscan import DomainScan
 from .whatweb import WhatWeb
@@ -20,6 +21,7 @@ celery_app = Celery('nemo', broker=broker, backend='rpc://')
 TASK_ACTION = {
     'portscan':   PortScan().run,
     'fofasearch':   Fofa().run,
+    'shodansearch':   Shodan().run,
     'domainscan':   DomainScan().run,
 }
 
@@ -58,6 +60,12 @@ def fofasearch(options):
     '''调用fofa API
     '''
     return new_task('fofasearch', options)
+
+@celery_app.task(base=UpdateTaskStatus)
+def shodansearch(options):
+    '''调用shodan API
+    '''
+    return new_task('shodansearch', options)
 
 @celery_app.task(base=UpdateTaskStatus)
 def domainscan(options):

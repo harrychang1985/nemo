@@ -70,8 +70,8 @@ def ip_asset_view():
                     "create_time": str(ip_row['create_datetime']),
                     "update_time": str(ip_row['update_datetime']),
                     "port": ', '.join([str(x) for x in port_list]),
-                    "title": list(title_set),
-                    "banner": list(banner_set)
+                    "title": ', '.join(list(title_set)),
+                    "banner": ', '.join(list(banner_set))
                 })
                 index += 1
 

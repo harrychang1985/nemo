@@ -42,7 +42,8 @@ $(function () {
                 'webtitle': $('#checkbox_webtitle').is(":checked"),
                 'whatweb': $('#checkbox_whatweb').is(":checked"),
                 'ping': $('#checkbox_ping').is(":checked"),
-                'fofasearch': $('#checkbox_fofasearch').is(":checked")
+                'fofasearch': $('#checkbox_fofasearch').is(":checked"),
+                'shodansearch': $('#checkbox_shodansearch').is(":checked")
             }, function (data, e) {
                 if (e === "success" && data['status'] == 'success') {
                     swal({

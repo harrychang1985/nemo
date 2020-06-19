@@ -14,10 +14,11 @@ Nemo的初衷是用来进行自动化信息收集的一个简单平台，实现�
 主要实现了以下功能（代码目前在完善和优化中...）
 
 - 采用Nmap进行端口扫描（需本地nmap）
-- 端口标题查询
+- ~~端口标题查询(性能不太好，建议使用whatweb）~~
 - 通过第三方接口查询IP归属地
 - 调用Sublist3r实现子域名收集
 - 调用Fofa的API接口对IP和域名信息收集（需要Fofa的KEY）
+- 调用Shodan的API接口对IP和域名信息收集（需要Shodan的KEY）
 - 调用WhatWeb收集端口和域名的指纹（需本地whatweb）
 - Celery实现分布式任务
 - Docker部署和运行

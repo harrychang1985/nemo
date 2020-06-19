@@ -78,7 +78,11 @@
                             <td>{{ row['ip'] }}</td>
                             <td>{{ row['port'] }}</td>
                             <td>{{ row['tag'] }}</td>
-                            <td>{{ row['content'] }}</td>
+                            <td>
+                                <div style="width:100%;white-space:normal;word-wrap:break-word;word-break:break-all;">
+                                    {{ row['content'] }}
+                                </div>
+                            </td>
                             <td>{{ row['source'] }}</td>
                             <td>{{ row['update_datetime'] }}</td>
                             <td><a href=javascript:delete_port_attr({{ row['id'] }})><i

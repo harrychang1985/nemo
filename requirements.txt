@@ -7,3 +7,4 @@ flower
 flask
 gevent
 pyyaml
+shodan

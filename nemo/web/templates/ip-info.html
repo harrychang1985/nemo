@@ -34,11 +34,13 @@
                         {% endif %}
                         {% if ip_info['title'] %}
                         <span class="btn btn-info">站点标题</span></b>
-                        <span class="btn border-secondary text-left">{{ ip_info['title'] }}</span>
+                        <span class="btn border-secondary text-left">
+                            {{ ip_info['title'] }}</span>
                         {% endif %}
                         {% if ip_info['banner'] %}
                         <span class="btn btn-info">Banner</span></b>
-                        <span class="btn border-secondary text-left">{{ ip_info['banner'] }}</span>
+                        <span class="btn border-secondary text-left">
+                            {{ ip_info['banner'] }}</span>
                         {% endif %}
                         <br><br>
                         {% if ip_info['location'] %}
@@ -80,13 +82,17 @@
                         {% for row in ip_info['port_attr'] %}
                         {% if row['table_backgroud_set'] %}
                         <tr class="alert-success">
-                        {% else %}
+                            {% else %}
                         <tr>
-                        {% endif %}
+                            {% endif %}
                             <td>{{ row['ip'] }}</td>
                             <td>{{ row['port'] }}</td>
                             <td>{{ row['tag'] }}</td>
-                            <td>{{ row['content'] }}</td>
+                            <td>
+                                <div style="width:100%;white-space:normal;word-wrap:break-word;word-break:break-all;">
+                                    {{ row['content'] }}
+                                </div>
+                            </td>
                             <td>{{ row['source'] }}</td>
                             <td>{{ row['update_datetime'] }}</td>
                             <td><a href=javascript:delete_port_attr({{ row['id'] }})><i

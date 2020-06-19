@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # coding:utf-8
 from datetime import datetime
+from copy import deepcopy
 
 from flask import request
 from flask import render_template
@@ -73,6 +74,7 @@ def task_start_portscan_view():
         webtitle = request.form.get('webtitle')
         whatweb = request.form.get('whatweb')
         fofasearch = request.form.get('fofasearch')
+        shodansearch = request.form.get('shodansearch')
 
         if not target or not port:
             return jsonify({'status': 'fail', 'msg': 'no target or port'})
@@ -83,10 +85,13 @@ def task_start_portscan_view():
                    'iplocation': _str2bool(iplocation), 'webtitle': _str2bool(webtitle), 'whatweb': _str2bool(whatweb)
                    }
         # 启动portscan任务
-        result = taskapi.start_task('portscan', kwargs={'options': options})
+        result = taskapi.start_task('portscan', kwargs={'options': deepcopy(options)})
         # 启动FOFA搜索任务
         if _str2bool(fofasearch):
-            taskapi.start_task('fofasearch', kwargs={'options': options})
+            taskapi.start_task('fofasearch', kwargs={'options': deepcopy(options)})
+        # 启动Shodan搜索任务
+        if _str2bool(shodansearch):
+            taskapi.start_task('shodansearch', kwargs={'options': deepcopy(options)})
 
         return jsonify(result)
     except Exception as e:
@@ -121,13 +126,13 @@ def task_start_domainscan_view():
         # 是否有portscan任务
         if _str2bool(portscan) or _str2bool(networkscan):
             result = taskapi.start_task(
-                'domainscan_with_portscan', kwargs={'options': options})
+                'domainscan_with_portscan', kwargs={'options': deepcopy(options)})
         else:
             result = taskapi.start_task(
-                'domainscan', kwargs={'options': options})
+                'domainscan', kwargs={'options': deepcopy(options)})
         # 是否有FOFA搜索
         if _str2bool(fofasearch):
-            taskapi.start_task('fofasearch', kwargs={'options': options})
+            taskapi.start_task('fofasearch', kwargs={'options': deepcopy(options)})
 
         return jsonify(result)
     except Exception as e:
