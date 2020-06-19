@@ -26,11 +26,25 @@ Nemo的初衷是用来进行自动化信息收集的一个简单平台，实现�
 
 ## Docker运行
 
+### 1、本地构建（推荐）
+
 ```shell
 git clone https://github.com/hanc00l/nemo
 cd nemo
 docker build  -t nemo/app:v1 .
 docker run -it -d --name nemo_app -p 5000:5000 nemo/app:v1
+```
+
+### 2、从docker hub拉取image
+
+```
+docker pull han2008/nemo:v1
+docker run -it -d --name nemo_app -p 5000:5000 nemo/app:v1
+docker exec  -it nemo_app /bin/bash
+git pull
+ps aux|grep celery|awk '{print $2}'|xargs kill
+ps aux|grep "app.py"|awk '{print $2}'|xargs kill
+./docker_start.sh
 ```
 
 浏览器输入 [http://localhost:5000](http://localhost:5000)，默认用户名密码：**nemo/nemo**
@@ -44,6 +58,7 @@ docker run -it -d --name nemo_app -p 5000:5000 nemo/app:v1
 
 [开发环境配置](docs/config.md)
 
+由于调用nmap和whatweb使用了终端重定向功能直接读取程序执行的输出结果，暂时只能支持linux/mac下使用；后续版本再改进对windows的支持。
 
 
 ## 目标

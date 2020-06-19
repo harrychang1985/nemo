@@ -6,7 +6,7 @@ import requests
 
 from .taskbase import TaskBase
 from nemo.common.utils.iputils import check_ip_or_domain
-
+from instance.config import APIConfig
 
 class Fofa(TaskBase):
     '''调用fofa API接口进行资产收集
@@ -25,8 +25,8 @@ class Fofa(TaskBase):
     def __init__(self):
         super().__init__()
         # FOFA的API KEY
-        self.email = 'hancool@163.com'
-        self.key = '238ebb08523bff5cf297b96364f62440'
+        self.email = APIConfig.FOFA_EMAIL
+        self.key = APIConfig.FOFA_KEY
         # FOFA地址
         self.base_url = 'https://fofa.so'
         self.search_api_url = '/api/v1/search/all'
@@ -76,7 +76,6 @@ class Fofa(TaskBase):
         else:
             return None
 
-
     def __parse_ip_port(self, line):
         '''解析IP与PORT
         '''
@@ -107,7 +106,7 @@ class Fofa(TaskBase):
         ip = line[1]
         title = line[3]
         # 只保留和解析ipv4地址
-        if  not check_ip_or_domain(ip):
+        if not check_ip_or_domain(ip):
             return None
 
         data = host.replace(
@@ -116,7 +115,7 @@ class Fofa(TaskBase):
         if not check_ip_or_domain(data):
             domain = {'domain': data, 'A': [ip, ]}
             if title:
-                domain['title'] = [title,]
+                domain['title'] = [title, ]
             return domain
         else:
             return None
@@ -125,7 +124,7 @@ class Fofa(TaskBase):
         '''解析参数
         '''
         self.target = options['target']
-        self.org_id = self.get_option('org_id',options,self.org_id)
+        self.org_id = self.get_option('org_id', options, self.org_id)
 
     def execute(self, target):
         '''查询FOFA
@@ -134,8 +133,8 @@ class Fofa(TaskBase):
         domain_ip = []
         for t in target:
             # 查询FOFA
-            result = self.__fofa_search('{}="{}"'.format(
-                'ip' if check_ip_or_domain(t) else 'domain', t))
+            result = self.__fofa_search('{}="{}" || host="{}"'.format(
+                'ip' if check_ip_or_domain(t) else 'domain', t, t))
             # 解析结果
             for line in result:
                 ipp = self.__parse_ip_port(line)

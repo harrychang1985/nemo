@@ -36,3 +36,9 @@ class ProductionConfig(Config):
     FLOWER_BIND_ADDR = '127.0.0.1'
     FLWOER_PORT = 5555
 
+
+class APIConfig():
+    
+    FOFA_EMAIL = 'hancool@163.com'
+    FOFA_KEY = '238ebb08523bff5cf297b96364f62440'
+
