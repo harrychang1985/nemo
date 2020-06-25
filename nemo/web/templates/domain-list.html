@@ -6,17 +6,6 @@
 
 {% block content %}
 <main class="app-content">
-  <div class="app-title">
-    <div>
-      <h1><i class="fa fa-th-list"></i>&nbsp;域名列表</h1>
-      <p></p>
-    </div>
-    <ul class="app-breadcrumb breadcrumb side">
-      <li class="breadcrumb-item"><i class="fa fa-home fa-lg"></i></li>
-      <li class="breadcrumb-item"><a href="/index">首页</a></li>
-      <li class="breadcrumb-item active"><a href="#">域名资产</a></li>
-    </ul>
-  </div>
   <div class="row">
     <div class="col-md-12">
       <div class="tile">
@@ -32,11 +21,13 @@
             </div>
             <div class="form-group col-md-2">
               <label class="control-label">Domain</label>
-              <input class="form-control" type="text" id="domain_address" placeholder="域名（模糊）" value="{{ data['domain_address'] }}">
+              <input class="form-control" type="text" id="domain_address" placeholder="域名（模糊）"
+                value="{{ data['domain_address'] }}">
             </div>
             <div class="form-group col-md-2">
               <label class="control-label">IP</label>
-              <input class="form-control" type="text" id="ip_address" placeholder="单个IP地址（精确）" value="{{ data['ip_address_domain'] }}">
+              <input class="form-control" type="text" id="ip_address" placeholder="单个IP地址（精确）"
+                value="{{ data['ip_address_domain'] }}">
             </div>
             <div class="form-group col-md-4 align-self-end">
               <button class="btn btn-primary" type="button" id="search">
@@ -56,7 +47,7 @@
             aria-hidden="true">
             <div class="modal-dialog">
               <div class="modal-content">
-                <div class="modal-header card-header">
+                <div class="modal-header card-header bg-primary">
                   <h4 class="modal-title" id="myModalLabel">
                     新建任务
                   </h4>
@@ -69,19 +60,20 @@
                       </label>
                       <textarea class="form-control" id="text_target" rows="4"
                         placeholder="www.google.com&#10;github.com"></textarea>
-                      <label class="col-form-label">
-                        <b>Options:</b>
-                      </label>
-                      <div class="form-group row">
-                        <div class="col-md-12">
+                      <div class="row">
+                        <div class="col-md-12 bg-light">
+                          <label class="col-form-label">
+                            <b>基本选项:</b>
+                          </label>
+                          <br>
                           <div class="form-check form-check-inline">
                             <label class="form-check-label" for="checkbox_subdomain">
-                              <input class="form-check-input" id="checkbox_subdomain" type="checkbox" checked>子域名查询
+                              <input class="form-check-input" id="checkbox_subdomain" type="checkbox" checked>子域名
                             </label>
                           </div>
                           <div class="form-check form-check-inline">
                             <label class="form-check-label" for="checkbox_webtitle">
-                              <input class="form-check-input" id="checkbox_webtitle" type="checkbox" >域名标题
+                              <input class="form-check-input" id="checkbox_webtitle" type="checkbox">域名标题
                             </label>
                           </div>
                           <div class="form-check form-check-inline">
@@ -89,32 +81,71 @@
                               <input class="form-check-input" id="checkbox_whatweb" type="checkbox" checked>WhatWeb指纹
                             </label>
                           </div>
-                          <div class="form-check form-check-inline" for="checkbox_fofasearch">
-                            <label class="form-check-label">
-                              <input class="form-check-input" id="checkbox_fofasearch" type="checkbox">FOFA接口
-                            </label>
-                          </div>
+                        </div>
+                      </div>
+
+
+                      <div class="row">
+                        <div class="col-md-12">
+                          <label class="col-form-label">
+                            <b>扩展模式：</b>
+                          </label>
                           <br>
-                          <div class="form-check form-check-inline">
-                            <label class="form-check-label" for="checkbox_portscan">
-                              <input class="form-check-input" id="checkbox_portscan" type="checkbox">IP端口扫描
-                            </label>
-                          </div>
-                          <div class="form-check form-check-inline">
-                            <label class="form-check-label" for="checkbox_networkscan">
-                              <input class="form-check-input" id="checkbox_networkscan" type="checkbox">IP C段扫描
+                          <div class="form-check form-check-inline" for="checkbox_fld_domain">
+                            <label class="form-check-label">
+                              <input class="form-check-input" id="checkbox_fld_domain" type="checkbox">提取顶级域名
                             </label>
                           </div>
                         </div>
                       </div>
-                      <label for="select_org_id_task"><b>资产关联的组织机构</b></label>
-                      <select class="form-control" id="select_org_id_task">
-                        {% for a in data['org_list'] %}
-                        <option value="{{ a['id'] }}">{{ a['org_name'] }}</option>
-                        {% endfor %}
-                      </select>
+
+                      <div class="row bg-light">
+                        <div class="col-md-12">
+                          <label class="col-form-label">
+                            <b>资产API：</b>
+                          </label>
+                          <br>
+                          <div class="form-check form-check-inline" for="checkbox_fofasearch">
+                            <label class="form-check-label">
+                              <input class="form-check-input" id="checkbox_fofasearch" type="checkbox">FOFA
+                            </label>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="row">
+                        <div class="col-md-12">
+                          <label class="col-form-label">
+                            <b>端口扫描：</b>
+                          </label>
+                          <br>
+                          <div class="form-check form-check-inline">
+                            <label class="form-check-label" for="checkbox_portscan">
+                              <input class="form-check-input" id="checkbox_portscan" type="checkbox">IP扫描
+                            </label>
+                          </div>
+                          <div class="form-check form-check-inline">
+                            <label class="form-check-label" for="checkbox_networkscan">
+                              <input class="form-check-input" id="checkbox_networkscan" type="checkbox">C段扫描
+                            </label>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="form-group bg-light row">
+                        <div class="col-md-12">
+                          <br>
+                          <label for="select_org_id_task"><b>资产关联的组织机构</b></label>
+                          <select class="form-control" id="select_org_id_task">
+                            {% for a in data['org_list'] %}
+                            <option value="{{ a['id'] }}">{{ a['org_name'] }}</option>
+                            {% endfor %}
+                          </select>
+                        </div>
+                      </div>
+
+                    
                     </div>
-                    <div class="hr hr-16 hr-dotted"></div>
                     <div class="modal-footer">
                       <button type="button" class="btn btn-secondary" data-dismiss="modal" aria-hidden="true">取消
                       </button>

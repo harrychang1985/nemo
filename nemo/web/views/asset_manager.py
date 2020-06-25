@@ -179,7 +179,7 @@ def domain_asset_view():
                     'id': domain_row['id'],
                     "index": index+start,
                     "domain": domain_row['domain'],
-                    "ip": ', '.join(set(['<a href="/ip-info?ip={0}">{0}</a>'.format(ip_row['content']) for ip_row in ips])),
+                    "ip": ', '.join(set(['<a href="/ip-info?ip={0}" target="_blank">{0}</a>'.format(ip_row['content']) for ip_row in ips])),
                     "org_name": org_table.get(int(domain_row['org_id']))['org_name'] if domain_row['org_id'] else '',
                     "create_time": str(domain_row['create_datetime']),
                     "update_time": str(domain_row['update_datetime']),

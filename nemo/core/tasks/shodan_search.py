@@ -3,7 +3,7 @@
 import shodan
 
 from .taskbase import TaskBase
-from nemo.common.utils.iputils import check_ip_or_domain
+from nemo.common.utils.iputils import check_ip_or_domain,parse_ip
 from instance.config import APIConfig
 
 
@@ -26,6 +26,7 @@ class Shodan(TaskBase):
         # API KEY
         self.key = APIConfig.SHODAN_API_KEY
         # 默认参数
+        self.target = []
         self.source = 'shodan'
         self.result_attr_keys = (
             'data', 'server', 'product', 'cpe', 'os')  # 要保存的属性字段
@@ -63,7 +64,16 @@ class Shodan(TaskBase):
     def prepare(self, options):
         '''解析参数
         '''
-        self.target = options['target']
+        for t in options['target']:
+            if check_ip_or_domain(t):
+                ip_target = parse_ip(t)
+                if ip_target and isinstance(ip_target,(tuple,list)):
+                    self.target.extend(ip_target)
+                else:
+                    self.target.append(ip_target)
+            else:
+                self.target.append(t)
+               
         self.org_id = self.get_option('org_id', options, self.org_id)
 
     def execute(self, target):

@@ -7,6 +7,7 @@ from flask import request
 from flask import render_template
 from flask import Blueprint
 from flask import jsonify
+from tld import get_fld
 
 from .authenticate import login_check
 from nemo.core.database.organization import Organization
@@ -62,6 +63,7 @@ def task_start_portscan_view():
     try:
         # 获取参数
         target = request.form.get('target', default='')
+        portscan = request.form.get('portscan')
         port = request.form.get(
             'port', default=config_datajson['nmap']['port'])
         org_id = request.form.get('org_id', type=int, default=None)
@@ -76,22 +78,28 @@ def task_start_portscan_view():
         fofasearch = request.form.get('fofasearch')
         shodansearch = request.form.get('shodansearch')
 
-        if not target or not port:
+        if not target:
             return jsonify({'status': 'fail', 'msg': 'no target or port'})
         # 格式化tatget
-        target = [x.strip() for x in target.split('\n')]
+        target = list(set([x.strip() for x in target.split('\n')]))
+        # 任务选项options
         options = {'target': target, 'port': port,
                    'org_id': org_id, 'rate': rate, 'ping': _str2bool(ping), 'tech': nmap_tech,
                    'iplocation': _str2bool(iplocation), 'webtitle': _str2bool(webtitle), 'whatweb': _str2bool(whatweb)
                    }
+        result = {'status': 'success', 'result': {'task-id': 0}}
         # 启动portscan任务
-        result = taskapi.start_task('portscan', kwargs={'options': deepcopy(options)})
+        if _str2bool(portscan):
+            result = taskapi.start_task(
+                'portscan', kwargs={'options': deepcopy(options)})
         # 启动FOFA搜索任务
         if _str2bool(fofasearch):
-            taskapi.start_task('fofasearch', kwargs={'options': deepcopy(options)})
+            result = taskapi.start_task(
+                'fofasearch', kwargs={'options': deepcopy(options)})
         # 启动Shodan搜索任务
         if _str2bool(shodansearch):
-            taskapi.start_task('shodansearch', kwargs={'options': deepcopy(options)})
+            result = taskapi.start_task('shodansearch', kwargs={
+                                        'options': deepcopy(options)})
 
         return jsonify(result)
     except Exception as e:
@@ -115,11 +123,22 @@ def task_start_domainscan_view():
         fofasearch = request.form.get('fofasearch')
         portscan = request.form.get('portscan')
         networkscan = request.form.get('networkscan')
+        fld_domain = request.form.get('fld_domain')
 
         if not target:
             return jsonify({'status': 'fail', 'msg': 'no target'})
         # 格式化tatget
-        target = [x.strip() for x in target.split('\n')]
+        target = list(set([x.strip() for x in target.split('\n')]))
+        # 提取顶级域名加入到目标中
+        if _str2bool(fld_domain):
+            fld_set = set()
+            for t in target:
+                d = get_fld(t, fix_protocol=True)
+                if d:
+                    fld_set.add(d)
+            if fld_set:
+                target.extend(fld_set)
+        # 任务选项options
         options = {'target': target,
                    'org_id': org_id, 'subdomain': _str2bool(subdomain), 'webtitle': _str2bool(webtitle),
                    'portscan': _str2bool(portscan), 'networkscan': _str2bool(networkscan), 'whatweb': _str2bool(whatweb)}
@@ -132,7 +151,8 @@ def task_start_domainscan_view():
                 'domainscan', kwargs={'options': deepcopy(options)})
         # 是否有FOFA搜索
         if _str2bool(fofasearch):
-            taskapi.start_task('fofasearch', kwargs={'options': deepcopy(options)})
+            taskapi.start_task('fofasearch', kwargs={
+                               'options': deepcopy(options)})
 
         return jsonify(result)
     except Exception as e:

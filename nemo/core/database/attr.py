@@ -7,7 +7,7 @@ from . import daobase
 class AttrBase(daobase.DAOBase):
     def __init__(self):
         super().__init__()
-        self.sort_order = 'tag,update_datetime desc'
+        self.order_by = 'tag,update_datetime desc'
 
     def attr_hash(self, data):
         '''根据属性值计算hash
@@ -64,7 +64,7 @@ class PortAttr(AttrBase):
     def __init__(self):
         super().__init__()
         self.table_name = 'port_attr'
-        self.sort_order = 'tag,source'
+        self.order_by = 'tag,source'
 
 class DomainAttr(AttrBase):
     def __init__(self):

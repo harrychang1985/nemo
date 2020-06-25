@@ -20,10 +20,7 @@ class PortScan(TaskBase):
             'tech':     '-sT'/'-sS'/'-sV'，扫描技术
             'webtitle': True/False，是否读取网站IP地址
             'iplocation':   True/False，是否获取IP归属地
-            'fofasearch':   True/False，是否调用fofa
             'whatweb':      True/False,是否调用whatweb
-    注意：
-        fofasearch不由PortScan启动，由上一级调用者进行启动
         }
     '''
 

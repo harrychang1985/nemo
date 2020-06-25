@@ -3,9 +3,10 @@
 import re
 import base64
 import requests
+from tld import get_fld
 
 from .taskbase import TaskBase
-from nemo.common.utils.iputils import check_ip_or_domain
+from nemo.common.utils.iputils import check_ip_or_domain,parse_ip
 from instance.config import APIConfig
 
 class Fofa(TaskBase):
@@ -34,6 +35,7 @@ class Fofa(TaskBase):
         # self.__get_userinfo()
         # 默认参数
         self.source = 'fofa'
+        self.target = []
         self.result_attr_keys = ('title', 'server')  # 要保存的属性字段
 
     def __get_userinfo(self):
@@ -123,7 +125,15 @@ class Fofa(TaskBase):
     def prepare(self, options):
         '''解析参数
         '''
-        self.target = options['target']
+        for t in options['target']:
+            if check_ip_or_domain(t):
+                ip_target = parse_ip(t)
+                if ip_target and isinstance(ip_target,(tuple,list)):
+                    self.target.extend(ip_target)
+                else:
+                    self.target.append(ip_target)
+            else:
+                self.target.append(t)
         self.org_id = self.get_option('org_id', options, self.org_id)
 
     def execute(self, target):
@@ -133,8 +143,7 @@ class Fofa(TaskBase):
         domain_ip = []
         for t in target:
             # 查询FOFA
-            result = self.__fofa_search('{}="{}" || host="{}"'.format(
-                'ip' if check_ip_or_domain(t) else 'domain', t, t))
+            result = self.__fofa_search('{}="{}" || host="{}"'.format('ip' if check_ip_or_domain(t) else 'domain', t, t))
             # 解析结果
             for line in result:
                 ipp = self.__parse_ip_port(line)

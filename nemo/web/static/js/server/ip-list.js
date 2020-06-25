@@ -36,6 +36,7 @@ $(function () {
                 "target": target,
                 "port": port,
                 'rate': rate,
+                'portscan':$('#checkbox_portscan').is(":checked"),
                 'nmap_tech': $('#select_tech').val(),
                 'org_id': $('#select_org_id_task').val(),
                 'iplocation': $('#checkbox_iplocation').is(":checked"),
@@ -65,10 +66,28 @@ $(function () {
     });
     //列表全选
     $(".checkall").click(function () {
-        alert('ss');
         var check = $(this).prop("checked");
         $(".checkchild").prop("checked", check);
     });
+    $("#checkbox_portscan").click(function(){
+        if(this.checked){
+            $("#input_port").prop("disabled", false);
+            $("#select_tech").prop("disabled", false);
+            $("#input_rate").prop("disabled", false);
+            $("#checkbox_webtitle").prop("disabled", false);
+            $("#checkbox_whatweb").prop("disabled", false);
+            $("#checkbox_ping").prop("disabled", false);
+            $("#checkbox_iplocation").prop("disabled", false);
+        }else{
+            $("#input_port").prop("disabled", true);
+            $("#select_tech").prop("disabled", true);
+            $("#input_rate").prop("disabled", true);
+            $("#checkbox_webtitle").prop("disabled", true);
+            $("#checkbox_whatweb").prop("disabled", true);
+            $("#checkbox_ping").prop("disabled", true);
+            $("#checkbox_iplocation").prop("disabled", true);
+        }
+    })
     //IP列表
     $('#ip_table').DataTable(
         {
@@ -77,8 +96,8 @@ $(function () {
             "autowidth": false,
             "sort": false,
             "pagingType": "full_numbers",//分页样式
-            'iDisplayLength': 20,
-            "dom": '<t><"bottom"ip>',
+            'iDisplayLength': 50,
+            "dom": '<i><t><"bottom"lp>',
             "ajax": {
                 "url": "/ip-list",
                 "type": "post",
@@ -106,7 +125,7 @@ $(function () {
                     title: "IP地址",
                     width: "12%",
                     render: function (data, type, row, meta) {
-                        return '<a href="/ip-info?ip=' + data + '">' + data + '</a>';
+                        return '<a href="/ip-info?ip=' + data + '" target="_blank">' + data + '</a>';
                     }
                 },
                 { data: "port", title: "开放端口", width: "15%" },
@@ -124,7 +143,7 @@ $(function () {
             infoCallback: function (settings, start, end, max, total, pre) {
                 var api = this.api();
                 var pageInfo = api.page.info();
-                return "共<b>" + pageInfo.pages + "</b>页,当前显示" + start + "到" + end + "条记录" + ",共有<b>" + total + "</b>条记录";
+                return "共<b>" +total + "</b>条记录，当前显示" + start + "到" + end + "记录";
             },
         }
     );//end datatable

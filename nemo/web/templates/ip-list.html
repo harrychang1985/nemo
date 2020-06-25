@@ -6,17 +6,6 @@
 
 {% block content %}
 <main class="app-content">
-  <div class="app-title">
-    <div>
-      <h1><i class="fa fa-th-list"></i>&nbsp;IP列表</h1>
-      <p></p>
-    </div>
-    <ul class="app-breadcrumb breadcrumb side">
-      <li class="breadcrumb-item"><i class="fa fa-home fa-lg"></i></li>
-      <li class="breadcrumb-item"><a href="/index">首页</a></li>
-      <li class="breadcrumb-item active"><a href="#">IP资产</a></li>
-    </ul>
-  </div>
   <div class="row">
     <div class="col-md-12">
       <div class="tile">
@@ -32,7 +21,8 @@
             </div>
             <div class="form-group col-md-2">
               <label class="control-label" for="ip_address">IP</label>
-              <input class="form-control" type="text" id="ip_address" placeholder="IP，单个IP或IP/掩码" value="{{ data['ip_address_ip'] }}">
+              <input class="form-control" type="text" id="ip_address" placeholder="IP，单个IP或IP/掩码"
+                value="{{ data['ip_address_ip'] }}">
             </div>
             <div class="form-group col-md-2">
               <label class="control-label" for="port">Port</label>
@@ -55,7 +45,7 @@
             aria-hidden="true">
             <div class="modal-dialog">
               <div class="modal-content">
-                <div class="modal-header card-header">
+                <div class="modal-header card-header bg-primary">
                   <h4 class="modal-title" id="myModalLabel">
                     新建任务
                   </h4>
@@ -68,16 +58,29 @@
                       </label>
                       <textarea class="form-control" id="text_target" rows="4"
                         placeholder="192.168.1.1&#10;172.16.80.0/24&#10;www.google.com"></textarea>
-                      <label class="col-form-label" for="input_port">
-                        <b>Ports:</b>（支持Nmap格式的端口列表）
-                      </label>
-                      <input class="form-control" id="input_port" type="text"
-                        placeholder="--top-ports 1000（支持Nmap格式的端口列表）" values="">
-                      <label class="col-form-label">
-                        <b>Options:</b>
-                      </label>
-                      <div class="form-group row">
+                      <div class="form-group row bg-light">
                         <div class="col-md-12">
+                          <div class="form-check form-check-inline">
+                            <label class="form-check-label" for="checkbox_portscan">
+                              <input class="form-check-input" id="checkbox_portscan" type="checkbox" checked><b>端口扫描</b>
+                            </label>
+                          </div>
+                          <input class="form-control" id="input_port" type="text"
+                            placeholder="--top-ports 1000（支持Nmap格式的端口列表）" values="">
+                          <div class="form-row">
+                            <div class="form-group col-md-6">
+                              <label for="select_tech">探测技术</label>
+                              <select class="form-control" id="select_tech">
+                                <option value="-sS">-sS（默认）</option>
+                                <option value="-sT">-sT</option>
+                                <option value="-sV">-sV</option>
+                              </select>
+                            </div>
+                            <div class="form-group col-md-6">
+                              <label for="input_rate">扫描速度</label>
+                              <input class="form-control" id="input_rate" type="text" placeholder="3000（默认）">
+                            </div>
+                          </div>
                           <div class="form-check form-check-inline">
                             <label class="form-check-label" for="checkbox_iplocation">
                               <input class="form-check-input" id="checkbox_iplocation" type="checkbox" checked>IP归属地
@@ -85,7 +88,7 @@
                           </div>
                           <div class="form-check form-check-inline">
                             <label class="form-check-label" for="checkbox_webtitle">
-                              <input class="form-check-input" id="checkbox_webtitle" type="checkbox" >网站标题
+                              <input class="form-check-input" id="checkbox_webtitle" type="checkbox">网站标题
                             </label>
                           </div>
                           <div class="form-check form-check-inline">
@@ -98,50 +101,44 @@
                               <input class="form-check-input" id="checkbox_ping" type="checkbox">PING
                             </label>
                           </div>
-                          <br>
+                        </div>
+                      </div>
+
+                      <div class="form-group row">
+                        <div class="col-md-12">
+                          <label class="form-check-label" ><b>资产API：</b></label>
                           <div class="form-check form-check-inline" for="checkbox_fofasearch">
                             <label class="form-check-label">
-                              <input class="form-check-input" id="checkbox_fofasearch" type="checkbox">Fofa接口
+                              <input class="form-check-input" id="checkbox_fofasearch" type="checkbox">Fofa
                             </label>
                           </div>
                           <div class="form-check form-check-inline" for="checkbox_shodansearch">
                             <label class="form-check-label">
-                              <input class="form-check-input" id="checkbox_shodansearch" type="checkbox">Shodan接口
+                              <input class="form-check-input" id="checkbox_shodansearch" type="checkbox">Shodan
                             </label>
                           </div>
                         </div>
                       </div>
-                      <div class="form-row">
-                        <div class="form-group col-md-6">
-                          <label for="select_tech"><b>NMAP探测技术</b></label>
-                          <select class="form-control" id="select_tech">
-                            <option value="-sS">-sS（默认）</option>
-                            <option value="-sT">-sT</option>
-                            <option value="-sV">-sV</option>
+
+                      <div class="form-group row bg-light ">
+                        <div class="col-md-12">
+                          <label for="select_org_id_task"><b>资产关联的组织机构</b></label>
+                          <select class="form-control" id="select_org_id_task">
+                            {% for a in data['org_list'] %}
+                            <option value="{{ a['id'] }}">{{ a['org_name'] }}</option>
+                            {% endfor %}
                           </select>
                         </div>
-                        <div class="form-group col-md-6">
-                          <label for="input_rate"><b>NMAP扫描速度</b></label>
-                          <input class="form-control" id="input_rate" type="text" placeholder="3000（默认）">
-                        </div>
                       </div>
-            
-                      <label for="select_org_id_task"><b>资产关联的组织机构</b></label>
-                      <select class="form-control" id="select_org_id_task">
-                        {% for a in data['org_list'] %}
-                        <option value="{{ a['id'] }}">{{ a['org_name'] }}</option>
-                        {% endfor %}
-                      </select>
-                    </div>
-                    <div class="hr hr-16 hr-dotted"></div>
-                    <div class="modal-footer">
-                      <button type="button" class="btn btn-secondary" data-dismiss="modal" aria-hidden="true">取消
-                      </button>
-                      <button class="btn btn-primary org-update" type="button" id="start_task">
-                        开始任务
-                      </button>
                     </div>
                   </form>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal" aria-hidden="true">取消
+                  </button>
+                  <button class="btn btn-primary org-update" type="button" id="start_task">
+                    开始任务
+                  </button>
                 </div>
               </div><!-- /.modal-content -->
             </div><!-- /.modal-dialog -->

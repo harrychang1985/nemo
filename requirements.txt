@@ -8,3 +8,4 @@ flask
 gevent
 pyyaml
 shodan
+tld

@@ -32,6 +32,7 @@ $(function () {
                 'subdomain': $('#checkbox_subdomain').is(":checked"),
                 'webtitle': $('#checkbox_webtitle').is(":checked"),
                 'whatweb': $('#checkbox_whatweb').is(":checked"),
+                'fld_domain': $('#checkbox_fld_domain').is(":checked"),
                 'portscan': $('#checkbox_portscan').is(":checked"),
                 'fofasearch': $('#checkbox_fofasearch').is(":checked"),
                 'networkscan': $('#checkbox_networkscan').is(":checked")
@@ -61,9 +62,8 @@ $(function () {
             "autowidth": false,
             "sort": false,
             "pagingType": "full_numbers",//分页样式
-            'iDisplayLength': 20,
-            "dom": '<t><"bottom"ip>',
-            "dom": '<t><"bottom"ip>',
+            'iDisplayLength': 50,
+            "dom": '<i><t><"bottom"lp>',
             "ajax": {
                 "url": "/domain-list",
                 "type": "post",
@@ -91,7 +91,7 @@ $(function () {
                     title: "域名",
                     width: "12%",
                     render: function (data, type, row, meta) {
-                        return '<a href="/domain-info?domain=' + data + '">' + data + '</a>';
+                        return '<a href="/domain-info?domain=' + data + '" target="_blank">' + data + '</a>';
                     }
                 },
                 { data: "ip", title: "IP地址", width: "20%" },
@@ -109,7 +109,7 @@ $(function () {
             infoCallback: function (settings, start, end, max, total, pre) {
                 var api = this.api();
                 var pageInfo = api.page.info();
-                return "共<b>" + pageInfo.pages + "</b>页,当前显示" + start + "到" + end + "条记录" + ",共有<b>" + total + "</b>条记录";
+                return "共<b>" +total + "</b>条记录，当前显示" + start + "到" + end + "记录";
             },
         }
     );//end datatable

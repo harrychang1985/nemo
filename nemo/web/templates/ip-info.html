@@ -5,30 +5,24 @@
 
 {% block content %}
 <main class="app-content">
-    <div class="app-title">
-        <div>
-            <h1><i class="fa fa-th-list"></i>&nbsp;IP信息</h1>
-            <p></p>
-        </div>
-        <ul class="app-breadcrumb breadcrumb side">
-            <li class="breadcrumb-item"><i class="fa fa-home fa-lg"></i></li>
-            <li class="breadcrumb-item"><a href="/index">首页</a></li>
-            <li class="breadcrumb-item"><a href="/ip-list">IP资产</a></li>
-            <li class="breadcrumb-item active"><a href="#">IP信息</a></li>
-        </ul>
-    </div>
     <div class="row">
         <div class="col-md-12">
             <div class="bs-component">
                 <div class="card">
-                    <h4 class="card-header  bg-primary">{{ ip_info['ip'] }}</h4>
+                    <h4 class="card-header  bg-primary">
+                        <a class="text-white" href="http://{{ ip_info['ip'] }}" target="_blank">{{ ip_info['ip'] }}</a>
+                    </h4>
                     <div class="card-body">
                         {% if ip_info['domain'] %}
                         <span class="btn btn-info">关联域名</span></b>
-                        <span class="btn btn-warning">{{ ip_info['domain'] }}</span>
+                        <span class="btn btn-warning text-left">
+                            {% for d in ip_info['domain'] %}
+                            <a href="domain-info?domain={{ d }}" target="_blank">{{ d }}</a>&nbsp;
+                            {% endfor %}
+                        </span>
                         {% endif %}
                         <span class="btn btn-info">端口信息</span></b>
-                        <span class="btn btn-warning">{{ ip_info['port'] }}</span>
+                        <span class="btn btn-warning  text-left">{{ ip_info['port'] }}</span>
                         {% if ip_info['title'] or ip_info['banner'] %}
                         <br><br>
                         {% endif %}
@@ -45,7 +39,7 @@
                         <br><br>
                         {% if ip_info['location'] %}
                         <span class="btn btn-info">归属地</span></b>
-                        <span class="btn border-success">{{ ip_info['location'] }}</span>
+                        <span class="btn border-success  text-left">{{ ip_info['location'] }}</span>
                         {% endif %}
                         {% if ip_info['organization'] %}
                         <span class="btn btn-info">所属组织</span></b>
@@ -71,9 +65,9 @@
                         <tr>
                             <th width="10%">IP地址</th>
                             <th width="5%">端口</th>
+                            <th width="5%">来源</th>
                             <th width="5%">属性</th>
                             <th width="30%">内容</th>
-                            <th width="5%">来源</th>
                             <th width="10%">更新时间</th>
                             <th width="5%">操作</th>
                         </tr>
@@ -81,19 +75,27 @@
                     <tbody>
                         {% for row in ip_info['port_attr'] %}
                         {% if row['table_backgroud_set'] %}
-                        <tr class="alert-success">
+                        <tr class="alert-dark">
                             {% else %}
                         <tr>
                             {% endif %}
-                            <td>{{ row['ip'] }}</td>
+                            <td>
+                                {% if row['ip'] and row['port']%}
+                                    {% if row['port']==443 %}
+                                    <a href="https://{{ row['ip'] }}" target="_blank">{{ row['ip'] }}</a>
+                                    {% else %}
+                                    <a href="http://{{ row['ip'] }}:{{ row['port'] }}" target="_blank">{{ row['ip'] }}</a>
+                                    {% endif %}
+                                {% endif %}
+                            </td>
                             <td>{{ row['port'] }}</td>
+                            <td>{{ row['source'] }}</td>
                             <td>{{ row['tag'] }}</td>
                             <td>
                                 <div style="width:100%;white-space:normal;word-wrap:break-word;word-break:break-all;">
                                     {{ row['content'] }}
                                 </div>
                             </td>
-                            <td>{{ row['source'] }}</td>
                             <td>{{ row['update_datetime'] }}</td>
                             <td><a href=javascript:delete_port_attr({{ row['id'] }})><i
                                         class="fa fa-trash"></i><span>Delete</span></a>
@@ -116,4 +118,7 @@
 <script src="static/js/sweetalert/sweetalert.min.js"></script>
 <script src="static/js/jquery/jquery.bootstrap-duallistbox.js"></script>
 <script src="static/js/server/asset-info.js"></script>
+<script>
+    $("title").html(" {{ ip_info['ip'] }}-ipinfo");
+</script>
 {% endblock %}
