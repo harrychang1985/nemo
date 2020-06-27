@@ -1,5 +1,7 @@
 $(function () {
     $('#btnsiderbar').click();
+    $('#select_org_id_search').val($('#hidden_org_id').val());
+    $('#select_org_id_task').val($('#hidden_org_id').val());
     //加载nmap配置
     load_nmap_config();
     // //获取任务的状态信息
@@ -88,6 +90,13 @@ $(function () {
             $("#checkbox_iplocation").prop("disabled", true);
         }
     })
+    $("#export_excel").click(function () {
+        var url = 'ip-export?';
+        url += 'org_id=' + encodeURI($('#select_org_id_search').val());
+        url += '&ip_address=' + encodeURI($('#ip_address').val());
+        url += '&port=' + encodeURI($('#port').val());
+        window.open(url);
+    });
     //IP列表
     $('#ip_table').DataTable(
         {
@@ -135,7 +144,7 @@ $(function () {
                     title: "操作",
                     width: "8%",
                     "render": function (data, type, row, meta) {
-                        var strDelete = "<a href=javascript:delete_ip(" + row.id + ")><i class='fa fa-pencil'></i><span>删除</span></a>";
+                        var strDelete = "<a class=\"btn btn-sm btn-danger\" href=javascript:delete_ip(" + row.id + ") role=\"button\" title=\"Delete\"><i class=\"fa fa-trash-o\"></i></a>";
                         return strDelete;
                     }
                 }

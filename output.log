@@ -1,1 +1,337 @@
 
+2020-06-27 16:22:58,420 - ERROR - dbutils.py#queryall_process():122 - main - Traceback (most recent call last):
+  File "/Users/hancool/01infomation/nemo/nemo/core/database/dbutils.py", line 118, in queryall_process
+    cur.execute(sql, param)
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/DBUtils/SteadyDB.py", line 605, in tough_method
+    result = method(*args, **kwargs)  # try to execute
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/pymysql/cursors.py", line 170, in execute
+    result = self._query(query)
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/pymysql/cursors.py", line 328, in _query
+    conn.query(q)
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/pymysql/connections.py", line 517, in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/pymysql/connections.py", line 732, in _read_query_result
+    result.read()
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/pymysql/connections.py", line 1075, in read
+    first_packet = self.connection._read_packet()
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/pymysql/connections.py", line 684, in _read_packet
+    packet.check_error()
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/pymysql/protocol.py", line 220, in check_error
+    err.raise_mysql_exception(self._data)
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/pymysql/err.py", line 109, in raise_mysql_exception
+    raise errorclass(errno, errval)
+pymysql.err.ProgrammingError: (1064, "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ') order by ip_int limit 0,50' at line 1")
+
+2020-06-27 16:22:58,421 - ERROR - dbutils.py#queryall_process():123 - main - [sql]:select * from ip  where  org_id=%s  and  id in (select distinct ip_id from port where ) order by ip_int limit %s,%s [param]:['3', 0, 50]
+2020-06-27 16:23:09,435 - ERROR - dbutils.py#queryall_process():122 - main - Traceback (most recent call last):
+  File "/Users/hancool/01infomation/nemo/nemo/core/database/dbutils.py", line 118, in queryall_process
+    cur.execute(sql, param)
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/DBUtils/SteadyDB.py", line 605, in tough_method
+    result = method(*args, **kwargs)  # try to execute
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/pymysql/cursors.py", line 170, in execute
+    result = self._query(query)
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/pymysql/cursors.py", line 328, in _query
+    conn.query(q)
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/pymysql/connections.py", line 517, in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/pymysql/connections.py", line 732, in _read_query_result
+    result.read()
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/pymysql/connections.py", line 1075, in read
+    first_packet = self.connection._read_packet()
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/pymysql/connections.py", line 684, in _read_packet
+    packet.check_error()
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/pymysql/protocol.py", line 220, in check_error
+    err.raise_mysql_exception(self._data)
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/pymysql/err.py", line 109, in raise_mysql_exception
+    raise errorclass(errno, errval)
+pymysql.err.ProgrammingError: (1064, "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ') order by ip_int limit 0,50' at line 1")
+
+2020-06-27 16:23:09,436 - ERROR - dbutils.py#queryall_process():123 - main - [sql]:select * from ip  where  org_id=%s  and  id in (select distinct ip_id from port where ) order by ip_int limit %s,%s [param]:['3', 0, 50]
+2020-06-27 16:23:14,445 - ERROR - dbutils.py#queryall_process():122 - main - Traceback (most recent call last):
+  File "/Users/hancool/01infomation/nemo/nemo/core/database/dbutils.py", line 118, in queryall_process
+    cur.execute(sql, param)
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/DBUtils/SteadyDB.py", line 605, in tough_method
+    result = method(*args, **kwargs)  # try to execute
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/pymysql/cursors.py", line 170, in execute
+    result = self._query(query)
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/pymysql/cursors.py", line 328, in _query
+    conn.query(q)
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/pymysql/connections.py", line 517, in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/pymysql/connections.py", line 732, in _read_query_result
+    result.read()
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/pymysql/connections.py", line 1075, in read
+    first_packet = self.connection._read_packet()
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/pymysql/connections.py", line 684, in _read_packet
+    packet.check_error()
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/pymysql/protocol.py", line 220, in check_error
+    err.raise_mysql_exception(self._data)
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/pymysql/err.py", line 109, in raise_mysql_exception
+    raise errorclass(errno, errval)
+pymysql.err.ProgrammingError: (1064, "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ') order by ip_int limit 0,50' at line 1")
+
+2020-06-27 16:23:14,445 - ERROR - dbutils.py#queryall_process():123 - main - [sql]:select * from ip  where  org_id=%s  and  id in (select distinct ip_id from port where ) order by ip_int limit %s,%s [param]:['2', 0, 50]
+2020-06-27 16:23:15,906 - ERROR - dbutils.py#queryall_process():122 - main - Traceback (most recent call last):
+  File "/Users/hancool/01infomation/nemo/nemo/core/database/dbutils.py", line 118, in queryall_process
+    cur.execute(sql, param)
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/DBUtils/SteadyDB.py", line 605, in tough_method
+    result = method(*args, **kwargs)  # try to execute
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/pymysql/cursors.py", line 170, in execute
+    result = self._query(query)
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/pymysql/cursors.py", line 328, in _query
+    conn.query(q)
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/pymysql/connections.py", line 517, in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/pymysql/connections.py", line 732, in _read_query_result
+    result.read()
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/pymysql/connections.py", line 1075, in read
+    first_packet = self.connection._read_packet()
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/pymysql/connections.py", line 684, in _read_packet
+    packet.check_error()
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/pymysql/protocol.py", line 220, in check_error
+    err.raise_mysql_exception(self._data)
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/pymysql/err.py", line 109, in raise_mysql_exception
+    raise errorclass(errno, errval)
+pymysql.err.ProgrammingError: (1064, "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ') order by ip_int limit 0,50' at line 1")
+
+2020-06-27 16:23:15,907 - ERROR - dbutils.py#queryall_process():123 - main - [sql]:select * from ip  where  org_id=%s  and  id in (select distinct ip_id from port where ) order by ip_int limit %s,%s [param]:['2', 0, 50]
+2020-06-27 16:23:16,422 - ERROR - dbutils.py#queryall_process():122 - main - Traceback (most recent call last):
+  File "/Users/hancool/01infomation/nemo/nemo/core/database/dbutils.py", line 118, in queryall_process
+    cur.execute(sql, param)
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/DBUtils/SteadyDB.py", line 605, in tough_method
+    result = method(*args, **kwargs)  # try to execute
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/pymysql/cursors.py", line 170, in execute
+    result = self._query(query)
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/pymysql/cursors.py", line 328, in _query
+    conn.query(q)
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/pymysql/connections.py", line 517, in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/pymysql/connections.py", line 732, in _read_query_result
+    result.read()
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/pymysql/connections.py", line 1075, in read
+    first_packet = self.connection._read_packet()
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/pymysql/connections.py", line 684, in _read_packet
+    packet.check_error()
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/pymysql/protocol.py", line 220, in check_error
+    err.raise_mysql_exception(self._data)
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/pymysql/err.py", line 109, in raise_mysql_exception
+    raise errorclass(errno, errval)
+pymysql.err.ProgrammingError: (1064, "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ') order by ip_int limit 0,50' at line 1")
+
+2020-06-27 16:23:16,422 - ERROR - dbutils.py#queryall_process():123 - main - [sql]:select * from ip  where  org_id=%s  and  id in (select distinct ip_id from port where ) order by ip_int limit %s,%s [param]:['2', 0, 50]
+2020-06-27 16:23:16,565 - ERROR - dbutils.py#queryall_process():122 - main - Traceback (most recent call last):
+  File "/Users/hancool/01infomation/nemo/nemo/core/database/dbutils.py", line 118, in queryall_process
+    cur.execute(sql, param)
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/DBUtils/SteadyDB.py", line 605, in tough_method
+    result = method(*args, **kwargs)  # try to execute
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/pymysql/cursors.py", line 170, in execute
+    result = self._query(query)
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/pymysql/cursors.py", line 328, in _query
+    conn.query(q)
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/pymysql/connections.py", line 517, in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/pymysql/connections.py", line 732, in _read_query_result
+    result.read()
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/pymysql/connections.py", line 1075, in read
+    first_packet = self.connection._read_packet()
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/pymysql/connections.py", line 684, in _read_packet
+    packet.check_error()
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/pymysql/protocol.py", line 220, in check_error
+    err.raise_mysql_exception(self._data)
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/pymysql/err.py", line 109, in raise_mysql_exception
+    raise errorclass(errno, errval)
+pymysql.err.ProgrammingError: (1064, "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ') order by ip_int limit 0,50' at line 1")
+
+2020-06-27 16:23:16,565 - ERROR - dbutils.py#queryall_process():123 - main - [sql]:select * from ip  where  org_id=%s  and  id in (select distinct ip_id from port where ) order by ip_int limit %s,%s [param]:['2', 0, 50]
+2020-06-27 16:23:16,706 - ERROR - dbutils.py#queryall_process():122 - main - Traceback (most recent call last):
+  File "/Users/hancool/01infomation/nemo/nemo/core/database/dbutils.py", line 118, in queryall_process
+    cur.execute(sql, param)
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/DBUtils/SteadyDB.py", line 605, in tough_method
+    result = method(*args, **kwargs)  # try to execute
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/pymysql/cursors.py", line 170, in execute
+    result = self._query(query)
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/pymysql/cursors.py", line 328, in _query
+    conn.query(q)
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/pymysql/connections.py", line 517, in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/pymysql/connections.py", line 732, in _read_query_result
+    result.read()
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/pymysql/connections.py", line 1075, in read
+    first_packet = self.connection._read_packet()
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/pymysql/connections.py", line 684, in _read_packet
+    packet.check_error()
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/pymysql/protocol.py", line 220, in check_error
+    err.raise_mysql_exception(self._data)
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/pymysql/err.py", line 109, in raise_mysql_exception
+    raise errorclass(errno, errval)
+pymysql.err.ProgrammingError: (1064, "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ') order by ip_int limit 0,50' at line 1")
+
+2020-06-27 16:23:16,706 - ERROR - dbutils.py#queryall_process():123 - main - [sql]:select * from ip  where  org_id=%s  and  id in (select distinct ip_id from port where ) order by ip_int limit %s,%s [param]:['2', 0, 50]
+2020-06-27 16:23:16,851 - ERROR - dbutils.py#queryall_process():122 - main - Traceback (most recent call last):
+  File "/Users/hancool/01infomation/nemo/nemo/core/database/dbutils.py", line 118, in queryall_process
+    cur.execute(sql, param)
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/DBUtils/SteadyDB.py", line 605, in tough_method
+    result = method(*args, **kwargs)  # try to execute
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/pymysql/cursors.py", line 170, in execute
+    result = self._query(query)
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/pymysql/cursors.py", line 328, in _query
+    conn.query(q)
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/pymysql/connections.py", line 517, in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/pymysql/connections.py", line 732, in _read_query_result
+    result.read()
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/pymysql/connections.py", line 1075, in read
+    first_packet = self.connection._read_packet()
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/pymysql/connections.py", line 684, in _read_packet
+    packet.check_error()
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/pymysql/protocol.py", line 220, in check_error
+    err.raise_mysql_exception(self._data)
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/pymysql/err.py", line 109, in raise_mysql_exception
+    raise errorclass(errno, errval)
+pymysql.err.ProgrammingError: (1064, "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ') order by ip_int limit 0,50' at line 1")
+
+2020-06-27 16:23:16,851 - ERROR - dbutils.py#queryall_process():123 - main - [sql]:select * from ip  where  org_id=%s  and  id in (select distinct ip_id from port where ) order by ip_int limit %s,%s [param]:['2', 0, 50]
+2020-06-27 16:23:18,352 - ERROR - dbutils.py#queryall_process():122 - main - Traceback (most recent call last):
+  File "/Users/hancool/01infomation/nemo/nemo/core/database/dbutils.py", line 118, in queryall_process
+    cur.execute(sql, param)
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/DBUtils/SteadyDB.py", line 605, in tough_method
+    result = method(*args, **kwargs)  # try to execute
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/pymysql/cursors.py", line 170, in execute
+    result = self._query(query)
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/pymysql/cursors.py", line 328, in _query
+    conn.query(q)
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/pymysql/connections.py", line 517, in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/pymysql/connections.py", line 732, in _read_query_result
+    result.read()
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/pymysql/connections.py", line 1075, in read
+    first_packet = self.connection._read_packet()
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/pymysql/connections.py", line 684, in _read_packet
+    packet.check_error()
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/pymysql/protocol.py", line 220, in check_error
+    err.raise_mysql_exception(self._data)
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/pymysql/err.py", line 109, in raise_mysql_exception
+    raise errorclass(errno, errval)
+pymysql.err.ProgrammingError: (1064, "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ') order by ip_int limit 0,50' at line 1")
+
+2020-06-27 16:23:18,352 - ERROR - dbutils.py#queryall_process():123 - main - [sql]:select * from ip  where  org_id=%s  and  id in (select distinct ip_id from port where ) order by ip_int limit %s,%s [param]:['2', 0, 50]
+2020-06-27 16:23:19,738 - ERROR - dbutils.py#queryall_process():122 - main - Traceback (most recent call last):
+  File "/Users/hancool/01infomation/nemo/nemo/core/database/dbutils.py", line 118, in queryall_process
+    cur.execute(sql, param)
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/DBUtils/SteadyDB.py", line 605, in tough_method
+    result = method(*args, **kwargs)  # try to execute
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/pymysql/cursors.py", line 170, in execute
+    result = self._query(query)
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/pymysql/cursors.py", line 328, in _query
+    conn.query(q)
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/pymysql/connections.py", line 517, in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/pymysql/connections.py", line 732, in _read_query_result
+    result.read()
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/pymysql/connections.py", line 1075, in read
+    first_packet = self.connection._read_packet()
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/pymysql/connections.py", line 684, in _read_packet
+    packet.check_error()
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/pymysql/protocol.py", line 220, in check_error
+    err.raise_mysql_exception(self._data)
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/pymysql/err.py", line 109, in raise_mysql_exception
+    raise errorclass(errno, errval)
+pymysql.err.ProgrammingError: (1064, "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ') order by ip_int limit 0,50' at line 1")
+
+2020-06-27 16:23:19,738 - ERROR - dbutils.py#queryall_process():123 - main - [sql]:select * from ip  where  org_id=%s  and  id in (select distinct ip_id from port where ) order by ip_int limit %s,%s [param]:['2', 0, 50]
+2020-06-27 16:23:24,257 - ERROR - dbutils.py#queryall_process():122 - main - Traceback (most recent call last):
+  File "/Users/hancool/01infomation/nemo/nemo/core/database/dbutils.py", line 118, in queryall_process
+    cur.execute(sql, param)
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/DBUtils/SteadyDB.py", line 605, in tough_method
+    result = method(*args, **kwargs)  # try to execute
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/pymysql/cursors.py", line 170, in execute
+    result = self._query(query)
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/pymysql/cursors.py", line 328, in _query
+    conn.query(q)
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/pymysql/connections.py", line 517, in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/pymysql/connections.py", line 732, in _read_query_result
+    result.read()
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/pymysql/connections.py", line 1075, in read
+    first_packet = self.connection._read_packet()
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/pymysql/connections.py", line 684, in _read_packet
+    packet.check_error()
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/pymysql/protocol.py", line 220, in check_error
+    err.raise_mysql_exception(self._data)
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/pymysql/err.py", line 109, in raise_mysql_exception
+    raise errorclass(errno, errval)
+pymysql.err.ProgrammingError: (1064, "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ') order by ip_int limit 0,50' at line 1")
+
+2020-06-27 16:23:24,257 - ERROR - dbutils.py#queryall_process():123 - main - [sql]:select * from ip  where  id in (select distinct ip_id from port where ) order by ip_int limit %s,%s [param]:[0, 50]
+2020-06-27 16:23:25,883 - ERROR - dbutils.py#queryall_process():122 - main - Traceback (most recent call last):
+  File "/Users/hancool/01infomation/nemo/nemo/core/database/dbutils.py", line 118, in queryall_process
+    cur.execute(sql, param)
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/DBUtils/SteadyDB.py", line 605, in tough_method
+    result = method(*args, **kwargs)  # try to execute
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/pymysql/cursors.py", line 170, in execute
+    result = self._query(query)
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/pymysql/cursors.py", line 328, in _query
+    conn.query(q)
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/pymysql/connections.py", line 517, in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/pymysql/connections.py", line 732, in _read_query_result
+    result.read()
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/pymysql/connections.py", line 1075, in read
+    first_packet = self.connection._read_packet()
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/pymysql/connections.py", line 684, in _read_packet
+    packet.check_error()
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/pymysql/protocol.py", line 220, in check_error
+    err.raise_mysql_exception(self._data)
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/pymysql/err.py", line 109, in raise_mysql_exception
+    raise errorclass(errno, errval)
+pymysql.err.ProgrammingError: (1064, "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ') order by ip_int limit 0,50' at line 1")
+
+2020-06-27 16:23:25,883 - ERROR - dbutils.py#queryall_process():123 - main - [sql]:select * from ip  where  id in (select distinct ip_id from port where ) order by ip_int limit %s,%s [param]:[0, 50]
+2020-06-27 16:23:26,047 - ERROR - dbutils.py#queryall_process():122 - main - Traceback (most recent call last):
+  File "/Users/hancool/01infomation/nemo/nemo/core/database/dbutils.py", line 118, in queryall_process
+    cur.execute(sql, param)
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/DBUtils/SteadyDB.py", line 605, in tough_method
+    result = method(*args, **kwargs)  # try to execute
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/pymysql/cursors.py", line 170, in execute
+    result = self._query(query)
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/pymysql/cursors.py", line 328, in _query
+    conn.query(q)
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/pymysql/connections.py", line 517, in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/pymysql/connections.py", line 732, in _read_query_result
+    result.read()
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/pymysql/connections.py", line 1075, in read
+    first_packet = self.connection._read_packet()
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/pymysql/connections.py", line 684, in _read_packet
+    packet.check_error()
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/pymysql/protocol.py", line 220, in check_error
+    err.raise_mysql_exception(self._data)
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/pymysql/err.py", line 109, in raise_mysql_exception
+    raise errorclass(errno, errval)
+pymysql.err.ProgrammingError: (1064, "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ') order by ip_int limit 0,50' at line 1")
+
+2020-06-27 16:23:26,048 - ERROR - dbutils.py#queryall_process():123 - main - [sql]:select * from ip  where  id in (select distinct ip_id from port where ) order by ip_int limit %s,%s [param]:[0, 50]
+2020-06-27 16:23:26,210 - ERROR - dbutils.py#queryall_process():122 - main - Traceback (most recent call last):
+  File "/Users/hancool/01infomation/nemo/nemo/core/database/dbutils.py", line 118, in queryall_process
+    cur.execute(sql, param)
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/DBUtils/SteadyDB.py", line 605, in tough_method
+    result = method(*args, **kwargs)  # try to execute
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/pymysql/cursors.py", line 170, in execute
+    result = self._query(query)
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/pymysql/cursors.py", line 328, in _query
+    conn.query(q)
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/pymysql/connections.py", line 517, in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/pymysql/connections.py", line 732, in _read_query_result
+    result.read()
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/pymysql/connections.py", line 1075, in read
+    first_packet = self.connection._read_packet()
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/pymysql/connections.py", line 684, in _read_packet
+    packet.check_error()
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/pymysql/protocol.py", line 220, in check_error
+    err.raise_mysql_exception(self._data)
+  File "/Users/hancool/Library/Python/3.7/lib/python/site-packages/pymysql/err.py", line 109, in raise_mysql_exception
+    raise errorclass(errno, errval)
+pymysql.err.ProgrammingError: (1064, "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ') order by ip_int limit 0,50' at line 1")
+
+2020-06-27 16:23:26,210 - ERROR - dbutils.py#queryall_process():123 - main - [sql]:select * from ip  where  id in (select distinct ip_id from port where ) order by ip_int limit %s,%s [param]:[0, 50]

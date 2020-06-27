@@ -1,9 +1,11 @@
 $(function () {
     $('#btnsiderbar').click();
+    $('#select_org_id_search').val($('#hidden_org_id').val());
+    $('#select_org_id_task').val($('#hidden_org_id').val());
     //获取任务的状态信息
     //get_task_status();
     setInterval(function () {
-       get_task_status();
+        get_task_status();
     }, 60 * 1000);
     //搜索任务
     $("#search").click(function () {
@@ -55,6 +57,13 @@ $(function () {
             });
 
     });
+    $("#export_excel").click(function () {
+        var url = 'domain-export?';
+        url += 'org_id=' + encodeURI($('#select_org_id_search').val());
+        url += '&ip_address=' + encodeURI($('#ip_address').val());
+        url += '&domain_address=' + encodeURI($('#domain_address').val());
+        window.open(url);
+    });
     $('#domain_table').DataTable(
         {
             "paging": true,
@@ -101,7 +110,7 @@ $(function () {
                     title: "操作",
                     width: "10%",
                     "render": function (data, type, row, meta) {
-                        var strDelete = "<a href=javascript:delete_domain(" + row.id + ")><i class='fa fa-pencil'></i><span>删除</span></a>";
+                        var strDelete = "<a class=\"btn btn-sm btn-danger\" href=javascript:delete_domain(" + row.id + ") role=\"button\" title=\"Delete\"><i class=\"fa fa-trash-o\"></i></a>";
                         return strDelete;
                     }
                 }
@@ -109,7 +118,7 @@ $(function () {
             infoCallback: function (settings, start, end, max, total, pre) {
                 var api = this.api();
                 var pageInfo = api.page.info();
-                return "共<b>" +total + "</b>条记录，当前显示" + start + "到" + end + "记录";
+                return "共<b>" + total + "</b>条记录，当前显示" + start + "到" + end + "记录";
             },
         }
     );//end datatable
@@ -143,7 +152,7 @@ function delete_domain(id) {
         });
 }
 
-function get_task_status(){
+function get_task_status() {
     $.post("/dashboard-task-info", function (data) {
         $("#span_show_task").html(data['task_info']);
     });

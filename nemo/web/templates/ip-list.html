@@ -12,7 +12,8 @@
         <div class="tile-body">
           <form class="row">
             <div class="form-group col-md-2">
-              <label class="control-label">组织机构</label>
+              <label class="control-label" for="select_org_id_search">组织机构 
+                </label>
               <select class="form-control" title="机构组构" id="select_org_id_search">
                 {% for a in data['org_list'] %}
                 <option value="{{ a['id'] }}">{{ a['org_name'] }}</option>
@@ -31,8 +32,11 @@
             <div class="form-group col-md-4 align-self-end">
               <button class="btn btn-primary" type="button" id="search"><i
                   class="fa fa-fw fa-lg fa-check-circle"></i>搜索</button>
+              <button class="btn btn-primary" type="button" id="export_excel">
+                <i class="fa fa-fw fa-lg fa-file-excel-o"></i>导出</button>
               <button class="btn btn-primary" type="button" id="create_task"><i class="fa fa-plus"></i>新建任务</button>
             </div>
+            <input type="hidden" value="{{ data['session_org_id'] }}" id="hidden_org_id">
           </form>
         </div>
       </div>
@@ -106,7 +110,7 @@
 
                       <div class="form-group row">
                         <div class="col-md-12">
-                          <label class="form-check-label" ><b>资产API：</b></label>
+                          <label class="form-check-label"><b>资产API：</b></label>
                           <div class="form-check form-check-inline" for="checkbox_fofasearch">
                             <label class="form-check-label">
                               <input class="form-check-input" id="checkbox_fofasearch" type="checkbox">Fofa

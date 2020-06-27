@@ -6,6 +6,7 @@ from flask import Blueprint
 from flask import request
 from flask import jsonify
 from flask import session
+from flask import Response
 
 from .authenticate import login_check
 from nemo.core.database.ip import Ip
@@ -14,6 +15,7 @@ from nemo.core.database.domain import Domain
 from nemo.core.database.organization import Organization
 from nemo.core.database.attr import IpAttr, PortAttr, DomainAttr
 from nemo.common.utils.assertinfoparser import AssertInfoParser
+from nemo.common.utils.assertexport import export_domains,export_ips
 
 asset_manager = Blueprint('asset_manager', __name__)
 
@@ -31,7 +33,9 @@ def ip_asset_view():
         org_list.insert(0, {'id': '', 'org_name': '--选择组织机构--'})
 
         data = {'org_list': org_list, 'ip_address_ip': session.get(
-            'ip_address_ip', default=''), 'port': session.get('port', '')}
+            'ip_address_ip', default=''), 'port': session.get('port', default=''),'session_org_id':session.get('session_org_id',default='')}
+        print(data['session_org_id'])
+
         return render_template('ip-list.html', data=data)
 
     ip_table = Ip()
@@ -52,6 +56,7 @@ def ip_asset_view():
 
         session['ip_address_ip'] = ip_address
         session['port'] = port
+        session['session_org_id'] = org_id
 
         count = 0
         ips = ip_table.gets_by_org_ip_port(
@@ -130,6 +135,22 @@ def delete_ip_view(ip_id):
 
     return jsonify({'status': 'success', 'msg': rows})
 
+@asset_manager.route('/ip-export', methods=['GET'])
+@login_check
+def ip_export_view():
+    '''导出IP数据
+    '''
+    
+    org_id = request.args.get('org_id')
+    ip_address = request.args.get('ip_address')
+    port = request.args.get('port')
+
+    data = export_ips(org_id,ip_address,port)
+    response = Response(data, content_type='application/octet-stream')
+    response.headers["Content-disposition"] = 'attachment; filename={}'.format("ip-export.xlsx")
+
+    return response
+
 
 @asset_manager.route('/domain-list', methods=['GET', 'POST'])
 @login_check
@@ -144,7 +165,7 @@ def domain_asset_view():
         org_list.insert(0, {'id': '', 'org_name': '--选择组织机构--'})
 
         data = {'org_list': org_list, 'domain_address': session.get(
-            'domain_address', default=''), 'ip_address_domain': session.get('ip_address_domain', default='')}
+            'domain_address', default=''), 'ip_address_domain': session.get('ip_address_domain', default=''),'session_org_id':session.get('session_org_id',default='')}
 
         return render_template('domain-list.html', data=data)
 
@@ -166,6 +187,7 @@ def domain_asset_view():
 
         session['ip_address_domain'] = ip_address
         session['domain_address'] = domain_address
+        session['session_org_id'] = org_id
 
         count = 0
         domains = domain_table.gets_by_org_domain_ip(
@@ -232,3 +254,21 @@ def delete_domain_view(domain_id):
     rows = Domain().delete(domain_id)
 
     return jsonify({'status': 'success', 'msg': rows})
+
+
+@asset_manager.route('/domain-export', methods=['GET'])
+@login_check
+def domain_export_view():
+    '''导出域名数据
+    '''
+    
+    org_id = request.args.get('org_id')
+    ip_address = request.args.get('ip_address')
+    domain_address = request.args.get('domain_address')
+
+    data = export_domains(org_id,domain_address,ip_address)
+    response = Response(data, content_type='application/octet-stream')
+    response.headers["Content-disposition"] = 'attachment; filename={}'.format("domain-export.xlsx")
+
+    return response
+
