@@ -39,16 +39,11 @@ class DomainScan(TaskBase):
         self.source = 'domainscan'
         self.subdomain = True
         self.webtitle = True
-        self.fofasearch = False
-        self.portscan = False
-        self.networkscan = False
         self.whatweb = False
 
     def prepare(self, options):
         '''解析参数
         '''
-        self.fofasearch = self.get_option(
-            'fofasearch', options, self.fofasearch)
         self.org_id = self.get_option('org_id', options, self.org_id)
         self.webtitle = self.get_option('webtitle', options, self.webtitle)
         self.subdomain = self.get_option('subdomain', options, self.subdomain)
@@ -61,18 +56,17 @@ class DomainScan(TaskBase):
         # 获取当前域名的IP
         ipdomain = IpDomain()
         domain_target = []  
-        domain_result_list  = []   
         # 筛选出域名目标
         for host in self.target:
             if not check_ip_or_domain(host):
                 domain_target.append({'domain': host})
         # 解析域名IP
-        domain_result_list = ipdomain.execute_domainip(domain_target)
+        domain_result_list = ipdomain.execute(domain_target)
         # 子域名查询
         if self.subdomain:
             subdomain = SubDmain()
             sub_domain_list = subdomain.execute(self.target)
-            domain_result_list.extend(ipdomain.execute_domainip(sub_domain_list))
+            domain_result_list.extend(ipdomain.execute(sub_domain_list))
         # 获取域名的title
         if self.webtitle:
             webtitle = WebTitle()

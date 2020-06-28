@@ -57,7 +57,7 @@ class Ip(daobase.DAOBase):
             self.copy_key(data_new, data, 'location')
             return self.add(data_new)
 
-    def __fill_org_ip_port_where(self, org_id, ip, port):
+    def __fill_org_domain_ip_port_where(self, org_id, domain, ip, port):
         '''根据指定的字段，生成查询SQL语句和参数
         '''
         sql = []
@@ -67,6 +67,12 @@ class Ip(daobase.DAOBase):
             sql.append(link_word)
             sql.append(' org_id=%s ')
             param.append(org_id)
+            link_word = ' and '
+        if domain:
+            sql.append(link_word)
+            sql.append(
+                ' ip in (select content from domain_attr where tag="A" and r_id in (select id from domain where domain like %s)) ')
+            param.append('%'+domain+'%')
             link_word = ' and '
         if ip:
             # IP范围范围：是否是IP/掩码
@@ -101,12 +107,14 @@ class Ip(daobase.DAOBase):
                     print(e)
                     pass
             sql.append(')')
+            link_word = ' and '
 
         return sql, param
 
-    def count_by_org_ip_port(self, org_id=None, ip=None, port=None):
+    def count_by_org_domain_ip_port(self, org_id=None, domain=None, ip=None, port=None):
         '''统计记录总条数
         org_id:     组织的ID
+        domain:     域名
         ip:         ip地址或ip/掩码,(192.168.1.5或172.16.0.0/16）
         port:       端口号，多个端口号以,分隔('21,22,80,8080')
         '''
@@ -114,16 +122,17 @@ class Ip(daobase.DAOBase):
         param = []
         sql.append('select count(id) from {} '.format(self.table_name))
         # 查询条件
-        where_sql, where_param = self.__fill_org_ip_port_where(
-            org_id, ip, port)
+        where_sql, where_param = self.__fill_org_domain_ip_port_where(
+            org_id, domain, ip, port)
         sql.extend(where_sql)
         param.extend(where_param)
 
         return dbutils.queryone(''.join(sql), param)
 
-    def gets_by_org_ip_port(self, org_id=None, ip=None, port=None, fields=None, page=1, rows_per_page=None, order_by=None):
+    def gets_by_org_domain_ip_port(self, org_id=None, domain=None, ip=None, port=None, fields=None, page=1, rows_per_page=None, order_by=None):
         '''根据组织机构、IP地址（包括范围）及端口的综合查询
         org_id:     组织的ID
+        domain:     域名
         ip:         ip地址或ip/掩码,(192.168.1.5或172.16.0.0/16）
         port:       端口号，多个端口号以,分隔('21,22,80,8080')
         fields:     要返回的字段，列表格式('id','name','port')
@@ -136,8 +145,8 @@ class Ip(daobase.DAOBase):
         sql.append('select {} from {} '.format(
             self.fill_fields(fields), self.table_name))
         # 查询条件
-        where_sql, where_param = self.__fill_org_ip_port_where(
-            org_id, ip, port)
+        where_sql, where_param = self.__fill_org_domain_ip_port_where(
+            org_id, domain, ip, port)
         sql.extend(where_sql)
         param.extend(where_param)
         # 排序、分页

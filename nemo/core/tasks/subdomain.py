@@ -28,7 +28,7 @@ class SubDmain(TaskBase):
         self.threads = 10
         self.savefile = False
         self.ports = False
-        self.silent = True
+        self.silent = False
         self.verbose = False
         #
         self.bruteforce = False
@@ -77,7 +77,7 @@ class SubDmain(TaskBase):
         domain_list = self.execute(self.target)
         # 查询域名IP地址
         ipdomain = IpDomain()
-        ipdomain.execute_domainip(domain_list)
+        ipdomain.execute(domain_list)
         #print(domain_list)
         # 保存结果：
         result = self.save_domain(domain_list)

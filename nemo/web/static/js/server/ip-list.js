@@ -79,7 +79,6 @@ $(function () {
             $("#checkbox_webtitle").prop("disabled", false);
             $("#checkbox_whatweb").prop("disabled", false);
             $("#checkbox_ping").prop("disabled", false);
-            $("#checkbox_iplocation").prop("disabled", false);
         }else{
             $("#input_port").prop("disabled", true);
             $("#select_tech").prop("disabled", true);
@@ -87,12 +86,12 @@ $(function () {
             $("#checkbox_webtitle").prop("disabled", true);
             $("#checkbox_whatweb").prop("disabled", true);
             $("#checkbox_ping").prop("disabled", true);
-            $("#checkbox_iplocation").prop("disabled", true);
         }
     })
     $("#export_excel").click(function () {
         var url = 'ip-export?';
         url += 'org_id=' + encodeURI($('#select_org_id_search').val());
+        url += '&domain_address=' + encodeURI($('#domain_address').val());
         url += '&ip_address=' + encodeURI($('#ip_address').val());
         url += '&port=' + encodeURI($('#port').val());
         window.open(url);
@@ -113,6 +112,7 @@ $(function () {
                 "data": function (d) {
                     return $.extend({}, d, {
                         "org_id": $('#select_org_id_search').val(),
+                        "domain_address":$('#domain_address').val(),
                         "ip_address": $('#ip_address').val(),
                         "port": $('#port').val()
                     });
@@ -137,9 +137,10 @@ $(function () {
                         return '<a href="/ip-info?ip=' + data + '" target="_blank">' + data + '</a>';
                     }
                 },
+                { data: "location", title: "归属地", width: "10%" },
                 { data: "port", title: "开放端口", width: "15%" },
-                { data: "title", title: "标题", width: "25%" },
-                { data: "banner", title: "Banner", width: "25%" },
+                { data: "title", title: "标题", width: "20%" },
+                { data: "banner", title: "Banner", width: "20%" },
                 {
                     title: "操作",
                     width: "8%",

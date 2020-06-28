@@ -218,6 +218,7 @@ class WebTitle(TaskBase):
         '''解析参数
         '''
         self.org_id = self.get_option('org_id', options, self.org_id)
+        self.target = []
         for host in options['target']:
             if 'domain' in host:
                 self.target.append(host)

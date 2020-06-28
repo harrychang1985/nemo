@@ -92,6 +92,10 @@ def task_start_portscan_view():
         if _str2bool(portscan):
             result = taskapi.start_task(
                 'portscan', kwargs={'options': deepcopy(options)})
+        # IP归属地：如果有portscan任务，则在portscan启动，否则单独启动任务
+        if _str2bool(iplocation) and not _str2bool(portscan):
+            result = taskapi.start_task(
+                'iplocation', kwargs={'options': deepcopy(options)})
         # 启动FOFA搜索任务
         if _str2bool(fofasearch):
             result = taskapi.start_task(

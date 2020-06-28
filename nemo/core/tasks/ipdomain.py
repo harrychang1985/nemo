@@ -31,53 +31,6 @@ class IpDomain(TaskBase):
             'User-Agent': 'Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 5.1; Trident/4.0)'}
         self.timeout = 5
 
-    def __fetch_iplocation_from_7188(self, ip):
-        '''调用www.hao7188.com的接口查询指定的IP地址
-        '''
-        url = 'http://www.hao7188.com/'
-        session = requests.Session()
-        try:
-            r1 = session.get(url, headers=self.headers)
-            if r1.status_code == requests.codes.ok:
-                pattern = r'name="so_token" value="(.*?)">'
-                m = re.findall(pattern, r1.text)
-                token = m[0] if m and len(m) > 0 else ''
-                if token != '':
-                    url = 'http://www.hao7188.com/query.html?ip={}&so_token={}'.format(
-                        ip, token)
-                    r2 = session.get(url, headers=self.headers)
-                    if r2.status_code == requests.codes.ok:
-                        m = re.findall(
-                            r"<script>window\.location\.href = '(.*?)'</script>", r2.text)
-                        new_href = m[0] if m and len(m) > 0 else ''
-                        if new_href != '':
-                            url_new = 'http://www.hao7188.com/{}'.format(
-                                new_href)
-                            r3 = session.get(url_new, headers=self.headers)
-                            p = u'<span>(.*?)</span>'
-                            m = re.findall(p, r3.text)
-                            return m
-        except:
-            pass
-
-        return None
-
-    def __fetch_iplocation_from_ipcn(self, ip):
-        '''调用ip.cn查询IP地址
-        '''
-        url = 'https://ip.cn?ip={}'.format(ip)
-
-        try:
-            r = requests.get(url, headers=self.headers, timeout=self.timeout)
-            if r.status_code == requests.codes.ok:
-                p = r'<code>(.*?)</code>'
-                m = re.findall(p, r.text)
-                return m
-        except:
-            pass
-
-        return None
-
 
     def fetch_domain_ip(self, domain):
         '''查询域名对应的IP，返回结果A是域名对应的IP地址
@@ -116,29 +69,15 @@ class IpDomain(TaskBase):
         '''解析参数
         '''
         self.org_id = self.get_option('org_id',options,self.org_id)
+        self.target = []
         for host in options['target']:
             if check_ip_or_domain(host):
                 self.target.append({'ip': host})
             else:
                 self.target.append({'domain': host})
 
-    def execute_iplocation(self, ips):
-        '''查询IP归属地
-        '''
-        for ip in ips:
-            if 'ip' not in ip:
-                continue
-            ip_loc = self.__fetch_iplocation_from_7188(ip['ip'])
-            if ip_loc and len(ip_loc) > 0:
-                ip['location'] = ','.join(ip_loc)
-                continue
-            ip_loc = self.__fetch_iplocation_from_ipcn(ip['ip'])
-            if ip_loc and len(ip_loc) >= 2:
-                ip['location'] = ip_loc[1]
 
-        return ips
-
-    def execute_domainip(self, domains):
+    def execute(self, domains):
         '''查询domain对应的IP
         '''
         for domain in domains:
@@ -148,35 +87,11 @@ class IpDomain(TaskBase):
 
         return domains
 
-    def save_ip(self, data):
-        '''保存IP归属地结果到数据库
-        只更新ip表的location字段
-        '''
-        ip_app = Ip()
-        count = 0
-        for ip in data:
-            if 'location' in ip and ip['location']:
-                if self.org_id:
-                    ip['org_id'] = self.org_id
-                count += 1 if ip_app.save_and_update(ip) > 0 else 0
-
-        return count
-
-    def run_iplocation(self, options):
-        '''根据IP获得归属地
-        '''
-        self.prepare(options)
-        self.execute_iplocation(self.target)
-        result={'status': 'success',
-                  'count': self.save_ip(self.target)}
-
-        return result
-
-    def run_domainip(self, options):
+    def run(self, options):
         '''给定域名，查询对应的IP地址
         '''
         self.prepare(options)
-        self.execute_domainip(self.target)
+        self.execute(self.target)
         result = self.save_domain(self.target)
         result['status'] = 'success'
 

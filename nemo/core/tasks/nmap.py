@@ -100,7 +100,6 @@ class Nmap(TaskBase):
     def prepare(self, options):
         '''解析参数
         '''
-
         self.target = options['target']
         self.port = self.get_option('port', options, self.port)
         if not self.port:

@@ -21,13 +21,18 @@
               </select>
             </div>
             <div class="form-group col-md-2">
+              <label class="control-label" for="domain_address">Domain</label>
+              <input class="form-control" type="text" id="domain_address" placeholder="域名（模糊搜索）"
+                value="{{ data['domain_address'] }}">
+            </div>
+            <div class="form-group col-md-2" >
               <label class="control-label" for="ip_address">IP</label>
-              <input class="form-control" type="text" id="ip_address" placeholder="IP，单个IP或IP/掩码"
+              <input class="form-control" type="text" id="ip_address" placeholder="IP（单个或IP/掩码）"
                 value="{{ data['ip_address_ip'] }}">
             </div>
-            <div class="form-group col-md-2">
+            <div class="form-group col-md-2" >
               <label class="control-label" for="port">Port</label>
-              <input class="form-control" type="text" id="port" placeholder="端口，多个逗号分隔" value="{{ data['port']}}">
+              <input class="form-control" type="text" id="port" placeholder="端口（多个以逗号分隔）" value="{{ data['port']}}">
             </div>
             <div class="form-group col-md-4 align-self-end">
               <button class="btn btn-primary" type="button" id="search"><i
@@ -86,11 +91,6 @@
                             </div>
                           </div>
                           <div class="form-check form-check-inline">
-                            <label class="form-check-label" for="checkbox_iplocation">
-                              <input class="form-check-input" id="checkbox_iplocation" type="checkbox" checked>IP归属地
-                            </label>
-                          </div>
-                          <div class="form-check form-check-inline">
                             <label class="form-check-label" for="checkbox_webtitle">
                               <input class="form-check-input" id="checkbox_webtitle" type="checkbox">网站标题
                             </label>
@@ -105,6 +105,17 @@
                               <input class="form-check-input" id="checkbox_ping" type="checkbox">PING
                             </label>
                           </div>
+                        </div>
+                      </div>
+
+                      <div class="form-group row">
+                        <div class="col-md-12">
+                          <div class="form-check form-check-inline" for="checkbox_iplocation">
+                            <label class="form-check-label">
+                              <input class="form-check-input" id="checkbox_iplocation" type="checkbox"><b>IP归属地</b>
+                            </label>
+                          </div>
+                        
                         </div>
                       </div>
 

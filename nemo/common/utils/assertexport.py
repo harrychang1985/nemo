@@ -50,19 +50,19 @@ def _get_domains(org_id, domain_address, ip_address):
     return domain_list
 
 
-def _get_ips(org_id, ip_address, port):
+def _get_ips(org_id, domain_address, ip_address, port):
     '''获取IP
     '''
     ip_table = Ip()
     aip = AssertInfoParser()
 
     ip_list = []
-    ips = ip_table.gets_by_org_ip_port(
-        org_id, ip_address, port, page=1, rows_per_page=100000)
+    ips = ip_table.gets_by_org_domain_ip_port(org_id, domain_address, ip_address, port,
+                                              page=1, rows_per_page=100000)
     if ips:
         for i, ip_row in enumerate(ips):
             ip_info = aip.get_ip_info(ip_row['id'])
-            ip_info.update(index= i+1)
+            ip_info.update(index=i+1)
             ip_list.append(ip_info)
 
     return ip_list
@@ -106,12 +106,12 @@ def export_domains(org_id=None, domain_address=None, ip_address=None):
         return data
 
 
-def export_ips(org_id=None, ip_address=None, port=None):
+def export_ips(org_id=None, domain_address=None, ip_address=None, port=None):
     '''导出IP为excel文件
     '''
     wb = load_workbook(template_file_ip)
     ws = wb.active
-    ips = _get_ips(org_id, ip_address, port)
+    ips = _get_ips(org_id, domain_address, ip_address, port)
     row_start = 2
     for ip in ips:
         merged_row_start = row_start
@@ -132,12 +132,17 @@ def export_ips(org_id=None, ip_address=None, port=None):
                 row_start += 1
         else:
             row_start += 1
-        ws.merge_cells(start_row=merged_row_start, start_column=1, end_row=row_start-1, end_column=1)
-        ws.merge_cells(start_row=merged_row_start, start_column=2, end_row=row_start-1, end_column=2)
-        ws.merge_cells(start_row=merged_row_start, start_column=3, end_row=row_start-1, end_column=3)
-        ws.merge_cells(start_row=merged_row_start, start_column=4, end_row=row_start-1, end_column=4)
+        ws.merge_cells(start_row=merged_row_start, start_column=1,
+                       end_row=row_start-1, end_column=1)
+        ws.merge_cells(start_row=merged_row_start, start_column=2,
+                       end_row=row_start-1, end_column=2)
+        ws.merge_cells(start_row=merged_row_start, start_column=3,
+                       end_row=row_start-1, end_column=3)
+        ws.merge_cells(start_row=merged_row_start, start_column=4,
+                       end_row=row_start-1, end_column=4)
 
-        ws.cell(column=1, row=merged_row_start, value="{0}".format(ip['index']))
+        ws.cell(column=1, row=merged_row_start,
+                value="{0}".format(ip['index']))
         ws.cell(column=2, row=merged_row_start, value="{0}".format(ip['ip']))
         ws.cell(column=3, row=merged_row_start,
                 value="{0}".format('\n'.join(ip['domain'])))

@@ -35,7 +35,6 @@ class Fofa(TaskBase):
         # self.__get_userinfo()
         # 默认参数
         self.source = 'fofa'
-        self.target = []
         self.result_attr_keys = ('title', 'server')  # 要保存的属性字段
 
     def __get_userinfo(self):
@@ -125,6 +124,7 @@ class Fofa(TaskBase):
     def prepare(self, options):
         '''解析参数
         '''
+        self.target = []
         for t in options['target']:
             if check_ip_or_domain(t):
                 ip_target = parse_ip(t)

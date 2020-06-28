@@ -5,6 +5,7 @@ from .nmap import Nmap
 from .ipdomain import IpDomain
 from .webtitle import WebTitle
 from .whatweb import WhatWeb
+from .iplocation import IpLocation
 from nemo.common.utils.iputils import check_ip_or_domain
 
 
@@ -19,8 +20,8 @@ class PortScan(TaskBase):
             'ping':     True/False，是否PING
             'tech':     '-sT'/'-sS'/'-sV'，扫描技术
             'webtitle': True/False，是否读取网站IP地址
-            'iplocation':   True/False，是否获取IP归属地
             'whatweb':      True/False,是否调用whatweb
+            'iplocation':   True/False，是否调用iplocation
         }
     '''
 
@@ -34,17 +35,16 @@ class PortScan(TaskBase):
         self.source = 'portscan'
         self.result_attr_keys = ('service', 'banner', 'title', 'whatweb','server')
         self.webtitle = False
-        self.iplocation = False
         self.whatweb = False
+        self.iplocation = False
 
     def prepare(self, options):
         '''解析参数
         '''
         self.org_id = self.get_option('org_id', options, self.org_id)
         self.webtitle = self.get_option('webtitle', options, self.webtitle)
-        self.iplocation = self.get_option(
-            'iplocation', options, self.iplocation)
         self.whatweb = self.get_option('whatweb', options, self.whatweb)
+        self.iplocation = self.get_option('iplocation', options, self.iplocation)
         # 将域名转换为IP
         target_ip = []
         ipdomain = IpDomain()
@@ -71,10 +71,10 @@ class PortScan(TaskBase):
         nmap_app = Nmap()
         nmap_app.prepare(options)
         ip_ports = nmap_app.execute()
-        # IP归属地
+        # iplocation:
         if self.iplocation:
-            ipdomain_app = IpDomain()
-            ipdomain_app.execute_iplocation(ip_ports)
+            iplocation_app = IpLocation()
+            iplocation_app.execute(ip_ports)
         # 端口的title
         if self.webtitle:
             webtitle_app = WebTitle()

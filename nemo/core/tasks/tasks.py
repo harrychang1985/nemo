@@ -1,16 +1,14 @@
 #!/usr/bin/env python3
 # coding:utf-8
-
+from copy  import deepcopy
 from celery import Celery, Task
-from .nmap import Nmap
-from .ipdomain import IpDomain
-from .webtitle import WebTitle
+
 from .portscan import PortScan
 from .fofa import Fofa
 from .shodan_search import Shodan
-from .subdomain import SubDmain
 from .domainscan import DomainScan
-from .whatweb import WhatWeb
+from .iplocation import IpLocation
+
 from nemo.common.utils.config import load_config
 from instance.config import ProductionConfig
 
@@ -20,6 +18,7 @@ celery_app = Celery('nemo', broker=broker, backend='rpc://')
 
 TASK_ACTION = {
     'portscan':   PortScan().run,
+    'iplocation':   IpLocation().run,
     'fofasearch':   Fofa().run,
     'shodansearch':   Shodan().run,
     'domainscan':   DomainScan().run,
@@ -74,11 +73,19 @@ def domainscan(options):
     return new_task('domainscan', options)
 
 @celery_app.task(base=UpdateTaskStatus)
+def iplocation(options):
+    '''IP归属地
+    '''
+    return new_task('iplocation', options)
+
+
+@celery_app.task(base=UpdateTaskStatus)
 def domainscan_with_portscan(options):
     '''域名收集综合信息
     '''
     domainscan = DomainScan()
     portscan = PortScan()
+    iplocation = IpLocation()
     config_datajson = load_config()
     # 域名任务
     domainscan.prepare(options)
@@ -96,9 +103,8 @@ def domainscan_with_portscan(options):
                 else:
                     ip_set.update(domain['A'])
     # 生成portscan的默认参数
-    options_portscan = {'target': list(ip_set), 'port': config_datajson['nmap']['port'], 'ping': config_datajson['nmap']['ping'],
-                        'webtitle': options['webtitle'], 'rate': config_datajson['nmap']['rate'], 'tech': config_datajson['nmap']['tech'],
-                        'whatweb':options['whatweb'],'iplocation': True, 'org_id': None if 'org_id' not in options else options['org_id']}
+    options_portscan = {'target': list(ip_set), 'iplocation':True,'webtitle': options['webtitle'],
+                        'whatweb':options['whatweb'], 'org_id': None if 'org_id' not in options else options['org_id']}
     # 执行portscan任务
     result.update(portscan.run(options_portscan))
 

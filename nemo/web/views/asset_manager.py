@@ -15,7 +15,7 @@ from nemo.core.database.domain import Domain
 from nemo.core.database.organization import Organization
 from nemo.core.database.attr import IpAttr, PortAttr, DomainAttr
 from nemo.common.utils.assertinfoparser import AssertInfoParser
-from nemo.common.utils.assertexport import export_domains,export_ips
+from nemo.common.utils.assertexport import export_domains, export_ips
 
 asset_manager = Blueprint('asset_manager', __name__)
 
@@ -32,9 +32,8 @@ def ip_asset_view():
             org_list = []
         org_list.insert(0, {'id': '', 'org_name': '--选择组织机构--'})
 
-        data = {'org_list': org_list, 'ip_address_ip': session.get(
-            'ip_address_ip', default=''), 'port': session.get('port', default=''),'session_org_id':session.get('session_org_id',default='')}
-        print(data['session_org_id'])
+        data = {'org_list': org_list, 'ip_address_ip': session.get('ip_address_ip', default=''), 'domain_address': session.get('domain_address', default=''),
+                'port': session.get('port', default=''), 'session_org_id': session.get('session_org_id', default='')}
 
         return render_template('ip-list.html', data=data)
 
@@ -52,15 +51,17 @@ def ip_asset_view():
         length = int(request.form.get('length'))
         org_id = request.form.get('org_id')
         ip_address = request.form.get('ip_address')
+        domain_address = request.form.get('domain_address')
         port = request.form.get('port')
 
         session['ip_address_ip'] = ip_address
+        session['domain_address'] = domain_address
         session['port'] = port
         session['session_org_id'] = org_id
 
         count = 0
-        ips = ip_table.gets_by_org_ip_port(
-            org_id, ip_address, port, page=(start//length)+1, rows_per_page=length)
+        ips = ip_table.gets_by_org_domain_ip_port(org_id, domain_address,
+                                                  ip_address, port, page=(start//length)+1, rows_per_page=length)
         if ips:
             for ip_row in ips:
                 port_list, title_set, banner_set, ports_attr_info = aip.get_ip_port_info(
@@ -71,7 +72,7 @@ def ip_asset_view():
                     "org_name": org_table.get(int(ip_row['org_id']))['org_name'] if ip_row['org_id'] else '',
                     "ip": ip_row['ip'],
                     "status": ip_row['status'],
-                    "location": ip_row['location'],
+                    "location": ip_row['location'].split(',')[0] if ip_row['location'] else '',
                     "create_time": str(ip_row['create_datetime']),
                     "update_time": str(ip_row['update_datetime']),
                     "port": ', '.join([str(x) for x in port_list]),
@@ -80,7 +81,8 @@ def ip_asset_view():
                 })
                 index += 1
 
-            count = ip_table.count_by_org_ip_port(org_id, ip_address, port)
+            count = ip_table.count_by_org_domain_ip_port(
+                org_id, domain_address, ip_address, port)
         json_data = {
             'draw': draw,
             'recordsTotal': count,
@@ -135,19 +137,21 @@ def delete_ip_view(ip_id):
 
     return jsonify({'status': 'success', 'msg': rows})
 
+
 @asset_manager.route('/ip-export', methods=['GET'])
 @login_check
 def ip_export_view():
     '''导出IP数据
     '''
-    
     org_id = request.args.get('org_id')
+    domain_address = request.args.get('domain_address')
     ip_address = request.args.get('ip_address')
     port = request.args.get('port')
 
-    data = export_ips(org_id,ip_address,port)
+    data = export_ips(org_id, domain_address, ip_address, port)
     response = Response(data, content_type='application/octet-stream')
-    response.headers["Content-disposition"] = 'attachment; filename={}'.format("ip-export.xlsx")
+    response.headers["Content-disposition"] = 'attachment; filename={}'.format(
+        "ip-export.xlsx")
 
     return response
 
@@ -165,7 +169,7 @@ def domain_asset_view():
         org_list.insert(0, {'id': '', 'org_name': '--选择组织机构--'})
 
         data = {'org_list': org_list, 'domain_address': session.get(
-            'domain_address', default=''), 'ip_address_domain': session.get('ip_address_domain', default=''),'session_org_id':session.get('session_org_id',default='')}
+            'domain_address', default=''), 'ip_address_domain': session.get('ip_address_domain', default=''), 'session_org_id': session.get('session_org_id', default='')}
 
         return render_template('domain-list.html', data=data)
 
@@ -261,14 +265,14 @@ def delete_domain_view(domain_id):
 def domain_export_view():
     '''导出域名数据
     '''
-    
+
     org_id = request.args.get('org_id')
     ip_address = request.args.get('ip_address')
     domain_address = request.args.get('domain_address')
 
-    data = export_domains(org_id,domain_address,ip_address)
+    data = export_domains(org_id, domain_address, ip_address)
     response = Response(data, content_type='application/octet-stream')
-    response.headers["Content-disposition"] = 'attachment; filename={}'.format("domain-export.xlsx")
+    response.headers["Content-disposition"] = 'attachment; filename={}'.format(
+        "domain-export.xlsx")
 
     return response
-
