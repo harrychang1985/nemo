@@ -9,8 +9,8 @@
         <div class="col-md-12">
             <div class="bs-component">
                 <div class="card">
-                    <h4 class="card-header  bg-primary">
-                        <a class="text-white" href="http://{{ domain_info['domain'] }}" target="_blank">{{ domain_info['domain'] }}</a>
+                    <h4 class="card-header">
+                        <a href="http://{{ domain_info['domain'] }}" target="_blank">{{ domain_info['domain'] }}</a>
                     </h4>
                     <div class="card-body">
                         <span class="btn btn-info">关联IP</span></b>
@@ -79,7 +79,15 @@
                                 {% endif %}
                             </td>
                             <td>{{ row['port'] }}</td>
-                            <td>{{ row['source'] }}</td>
+                            <td>
+                                {% if row['source']=='portscan' %}
+                                <span class="badge badge-warning"> {{ row['source'] }}</span>
+                                {% elif row['source'] == 'fofa' %}
+                                <span class="badge badge-success"> {{ row['source'] }}</span>
+                                {% else %}
+                                <span class="badge badge-secondary"> {{ row['source'] }}</span>
+                                {% endif %}
+                            </td>
                             <td>{{ row['tag'] }}</td>
                             <td>
                                 <div style="width:100%;white-space:normal;word-wrap:break-word;word-break:break-all;">
