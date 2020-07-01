@@ -9,3 +9,4 @@ gevent
 pyyaml
 shodan
 tld
+openpyxl
