@@ -147,7 +147,7 @@ def ip_export_view():
     domain_address = request.args.get('domain_address')
     ip_address = request.args.get('ip_address')
     port = request.args.get('port')
-
+    
     data = export_ips(org_id, domain_address, ip_address, port)
     response = Response(data, content_type='application/octet-stream')
     response.headers["Content-disposition"] = 'attachment; filename={}'.format(

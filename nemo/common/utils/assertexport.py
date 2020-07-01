@@ -118,20 +118,25 @@ def export_ips(org_id=None, domain_address=None, ip_address=None, port=None):
         _copy_cell_style(ws, 2, row_start, 1, 9)
         if ip['port_attr']:
             for port in ip['port_attr']:
-                _copy_cell_style(ws, 2, row_start, 1, 9)
-                ws.cell(column=5, row=row_start,
-                        value="{0}".format(port['port']))
-                ws.cell(column=6, row=row_start,
-                        value="{0}".format(port['source']))
-                ws.cell(column=7, row=row_start,
-                        value="{0}".format(port['tag']))
-                ws.cell(column=8, row=row_start,
-                        value="{0}".format(port['content']))
-                ws.cell(column=9, row=row_start,
-                        value="{0}".format(port['update_datetime']))
-                row_start += 1
+                try:
+                    _copy_cell_style(ws, 2, row_start, 1, 9)
+                    ws.cell(column=5, row=row_start,
+                            value="{0}".format(port['port']))
+                    ws.cell(column=6, row=row_start,
+                            value="{0}".format(port['source']))
+                    ws.cell(column=7, row=row_start,
+                            value="{0}".format(port['tag']))
+                    ws.cell(column=8, row=row_start,
+                            value="{0}".format(port['content']))
+                    ws.cell(column=9, row=row_start,
+                            value="{0}".format(port['update_datetime']))
+                except:
+                    pass
+                finally:
+                    row_start += 1
         else:
             row_start += 1
+            
         ws.merge_cells(start_row=merged_row_start, start_column=1,
                        end_row=row_start-1, end_column=1)
         ws.merge_cells(start_row=merged_row_start, start_column=2,
@@ -140,7 +145,6 @@ def export_ips(org_id=None, domain_address=None, ip_address=None, port=None):
                        end_row=row_start-1, end_column=3)
         ws.merge_cells(start_row=merged_row_start, start_column=4,
                        end_row=row_start-1, end_column=4)
-
         ws.cell(column=1, row=merged_row_start,
                 value="{0}".format(ip['index']))
         ws.cell(column=2, row=merged_row_start, value="{0}".format(ip['ip']))
