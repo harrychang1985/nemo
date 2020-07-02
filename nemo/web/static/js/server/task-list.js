@@ -28,10 +28,16 @@ $(function () {
                         if (data == 'STARTED') {
                             return data + '<button class="btn btn-sm btn-danger" type="button" onclick="stop_task(\'' + row['uuid'] + '\')" >&nbsp;中止&nbsp;</button>';
                         }
-                        else return data
+                        else return data;
                     }
                 },
-                { data: 'kwargs', title: '参数', width: '20%' },
+                {
+                    data: 'kwargs', title: '参数', width: '20%',
+                    "render": function (data, type, row) {
+                        var data = '<div style="width:100%;white-space:normal;word-wrap:break-word;word-break:break-all;">' + data + '</div>';
+                        return data;
+                    }
+                },
                 { data: 'result', title: '结果', width: '10%' },
                 { data: 'received', title: '接收时间', width: '10%' },
                 { data: 'started', title: '启动时间', width: '10%' },

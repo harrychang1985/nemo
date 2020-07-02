@@ -26,7 +26,13 @@ $(function () {
             columns: [
                 { data: 'name', title: '名称', width: '10%' },
                 { data: 'state', title: '状态', width: '5%' },
-                { data: 'kwargs', title: '参数', width: '30%' },
+                {
+                    data: 'kwargs', title: '参数', width: '30%',
+                    "render": function (data, type, row) {
+                        var data = '<div style="width:100%;white-space:normal;word-wrap:break-word;word-break:break-all;">' + data + '</div>';
+                        return data;
+                    }
+                },
                 { data: 'result', title: '结果', width: '10%' },
                 { data: 'received', title: '接收时间', width: '10%' },
                 { data: 'started', title: '启动时间', width: '10%' },
