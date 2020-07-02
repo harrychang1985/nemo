@@ -46,7 +46,8 @@ $(function () {
                 'whatweb': $('#checkbox_whatweb').is(":checked"),
                 'ping': $('#checkbox_ping').is(":checked"),
                 'fofasearch': $('#checkbox_fofasearch').is(":checked"),
-                'shodansearch': $('#checkbox_shodansearch').is(":checked")
+                'shodansearch': $('#checkbox_shodansearch').is(":checked"),
+                'subtask':$('#checkbox_subtask').is(":checked")
             }, function (data, e) {
                 if (e === "success" && data['status'] == 'success') {
                     swal({

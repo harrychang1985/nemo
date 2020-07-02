@@ -37,7 +37,8 @@ $(function () {
                 'fld_domain': $('#checkbox_fld_domain').is(":checked"),
                 'portscan': $('#checkbox_portscan').is(":checked"),
                 'fofasearch': $('#checkbox_fofasearch').is(":checked"),
-                'networkscan': $('#checkbox_networkscan').is(":checked")
+                'networkscan': $('#checkbox_networkscan').is(":checked"),
+                'subtask': $('#checkbox_subtask').is(":checked")
             }, function (data, e) {
                 if (e === "success" && data['status'] == 'success') {
                     swal({

@@ -90,7 +90,7 @@
                               <input class="form-control" id="input_rate" type="text" placeholder="3000（默认）">
                             </div>
                           </div>
-                          <div class="form-check form-check-inline">
+                          <div class="form-check form-check-inline " style="display: none;">
                             <label class="form-check-label" for="checkbox_webtitle">
                               <input class="form-check-input" id="checkbox_webtitle" type="checkbox">网站标题
                             </label>
@@ -110,26 +110,30 @@
 
                       <div class="form-group row">
                         <div class="col-md-12">
-                          <div class="form-check form-check-inline" for="checkbox_iplocation">
-                            <label class="form-check-label">
+                          <div class="form-check form-check-inline">
+                            <label class="form-check-label"  for="checkbox_iplocation"> 
                               <input class="form-check-input" id="checkbox_iplocation" type="checkbox"><b>IP归属地</b>
                             </label>
                           </div>
-                        
-                        </div>
-                      </div>
-
-                      <div class="form-group row">
-                        <div class="col-md-12">
                           <label class="form-check-label"><b>资产API：</b></label>
                           <div class="form-check form-check-inline" for="checkbox_fofasearch">
                             <label class="form-check-label">
                               <input class="form-check-input" id="checkbox_fofasearch" type="checkbox">Fofa
                             </label>
                           </div>
-                          <div class="form-check form-check-inline" for="checkbox_shodansearch">
-                            <label class="form-check-label">
+                          <div class="form-check form-check-inline" >
+                            <label class="form-check-label" for="checkbox_shodansearch">
                               <input class="form-check-input" id="checkbox_shodansearch" type="checkbox">Shodan
+                            </label>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div class="form-group row">
+                        <div class="col-md-12">
+                          <div class="form-check form-check-inline">
+                            <label class="form-check-label" for="checkbox_subtask">
+                              <input class="form-check-input" id="checkbox_subtask" type="checkbox"><b>并发子任务模式</b>
                             </label>
                           </div>
                         </div>

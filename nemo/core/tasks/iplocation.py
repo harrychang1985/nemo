@@ -31,7 +31,7 @@ class IpLocation(TaskBase):
         self.headers = {
             'User-Agent': 'Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 5.1; Trident/4.0)'}
         self.timeout = 5
-        self.threads = 10
+        self.threads = 5
        
 
     def __fetch_iplocation_from_7188(self, ip):

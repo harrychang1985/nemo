@@ -49,7 +49,7 @@ class WebTitle(TaskBase):
             'location.href[\s]*=[\s]*[\'"](.*?)[\'"]',
         )
         # 默认参数
-        self.threads = 10
+        self.threads = 5
         self.source = 'portscan'
         self.result_attr_keys = ('title',)
 

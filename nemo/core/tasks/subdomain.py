@@ -25,7 +25,7 @@ class SubDmain(TaskBase):
         self.task_description = '子域名信息收集'
         self.source = 'subdomain'
         # sublist3r 参数
-        self.threads = 10
+        self.threads = 5
         self.savefile = False
         self.ports = False
         self.silent = False

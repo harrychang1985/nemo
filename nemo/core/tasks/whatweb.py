@@ -32,7 +32,8 @@ class WhatWeb(TaskBase):
         self.org_id = None
         self.source = 'whatweb'
         self.result_attr_keys = ('whatweb','title','server' )
-        self.threads = 10
+        self.threads = 5
+        self.whatweb_threads = 5
         # 默认的参数
         self.target = []
         config_jsondata = load_config()
@@ -41,7 +42,7 @@ class WhatWeb(TaskBase):
     def __exe_whatweb(self, url):
         '''调用nmap对指定IP和端口进行扫描
         '''
-        whatweb_bin = [self.whatweb_bin, '-q', '--color=never', '--log-brief', '-',
+        whatweb_bin = [self.whatweb_bin, '-q', '--color=never', '--log-brief', '-','--max-threads',str(self.whatweb_threads),
                        '-U=Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/52.0.2743.116 Safari/537.36 Edge/15.15063',
                        url]
         # 调用whatweb进行扫描

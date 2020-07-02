@@ -77,33 +77,40 @@ def task_start_portscan_view():
         whatweb = request.form.get('whatweb')
         fofasearch = request.form.get('fofasearch')
         shodansearch = request.form.get('shodansearch')
+        subtask = request.form.get('subtask')
 
         if not target:
             return jsonify({'status': 'fail', 'msg': 'no target or port'})
+        result = {'status': 'success', 'result': {'task-id': 0}}
         # 格式化tatget
         target = list(set([x.strip() for x in target.split('\n')]))
-        # 任务选项options
-        options = {'target': target, 'port': port,
+        # 子任务模式，将每一个目标拆按行成分成多个目标分别启动
+        if _str2bool(subtask):
+            task_target = [[x] for x in target]
+        else:
+            task_target =  [target]
+        for t in task_target:
+            # 任务选项options
+            options = {'target': t, 'port': port,
                    'org_id': org_id, 'rate': rate, 'ping': _str2bool(ping), 'tech': nmap_tech,
                    'iplocation': _str2bool(iplocation), 'webtitle': _str2bool(webtitle), 'whatweb': _str2bool(whatweb)
                    }
-        result = {'status': 'success', 'result': {'task-id': 0}}
-        # 启动portscan任务
-        if _str2bool(portscan):
-            result = taskapi.start_task(
-                'portscan', kwargs={'options': deepcopy(options)})
-        # IP归属地：如果有portscan任务，则在portscan启动，否则单独启动任务
-        if _str2bool(iplocation) and not _str2bool(portscan):
-            result = taskapi.start_task(
-                'iplocation', kwargs={'options': deepcopy(options)})
-        # 启动FOFA搜索任务
-        if _str2bool(fofasearch):
-            result = taskapi.start_task(
-                'fofasearch', kwargs={'options': deepcopy(options)})
-        # 启动Shodan搜索任务
-        if _str2bool(shodansearch):
-            result = taskapi.start_task('shodansearch', kwargs={
-                                        'options': deepcopy(options)})
+            # 启动portscan任务
+            if _str2bool(portscan):
+                result = taskapi.start_task(
+                    'portscan', kwargs={'options': deepcopy(options)})
+            # IP归属地：如果有portscan任务，则在portscan启动，否则单独启动任务
+            if _str2bool(iplocation) and not _str2bool(portscan):
+                result = taskapi.start_task(
+                    'iplocation', kwargs={'options': deepcopy(options)})
+            # 启动FOFA搜索任务
+            if _str2bool(fofasearch):
+                result = taskapi.start_task(
+                    'fofasearch', kwargs={'options': deepcopy(options)})
+            # 启动Shodan搜索任务
+            if _str2bool(shodansearch):
+                result = taskapi.start_task('shodansearch', kwargs={
+                                            'options': deepcopy(options)})
 
         return jsonify(result)
     except Exception as e:
@@ -128,6 +135,7 @@ def task_start_domainscan_view():
         portscan = request.form.get('portscan')
         networkscan = request.form.get('networkscan')
         fld_domain = request.form.get('fld_domain')
+        subtask = request.form.get('subtask')
 
         if not target:
             return jsonify({'status': 'fail', 'msg': 'no target'})
@@ -142,21 +150,27 @@ def task_start_domainscan_view():
                     fld_set.add(d)
             if fld_set:
                 target.extend(fld_set)
-        # 任务选项options
-        options = {'target': target,
-                   'org_id': org_id, 'subdomain': _str2bool(subdomain), 'webtitle': _str2bool(webtitle),
-                   'portscan': _str2bool(portscan), 'networkscan': _str2bool(networkscan), 'whatweb': _str2bool(whatweb)}
-        # 是否有portscan任务
-        if _str2bool(portscan) or _str2bool(networkscan):
-            result = taskapi.start_task(
-                'domainscan_with_portscan', kwargs={'options': deepcopy(options)})
+        # 子任务模式，将每一个目标拆按行成分成多个目标分别启动
+        if _str2bool(subtask):
+            task_target = [[x] for x in target]
         else:
-            result = taskapi.start_task(
-                'domainscan', kwargs={'options': deepcopy(options)})
-        # 是否有FOFA搜索
-        if _str2bool(fofasearch):
-            taskapi.start_task('fofasearch', kwargs={
-                               'options': deepcopy(options)})
+            task_target =  [target]
+        for t in task_target:
+            # 任务选项options
+            options = {'target': t,
+                    'org_id': org_id, 'subdomain': _str2bool(subdomain), 'webtitle': _str2bool(webtitle),
+                    'portscan': _str2bool(portscan), 'networkscan': _str2bool(networkscan), 'whatweb': _str2bool(whatweb)}
+            # 是否有portscan任务
+            if _str2bool(portscan) or _str2bool(networkscan):
+                result = taskapi.start_task(
+                    'domainscan_with_portscan', kwargs={'options': deepcopy(options)})
+            else:
+                result = taskapi.start_task(
+                    'domainscan', kwargs={'options': deepcopy(options)})
+            # 是否有FOFA搜索
+            if _str2bool(fofasearch):
+                taskapi.start_task('fofasearch', kwargs={
+                                'options': deepcopy(options)})
 
         return jsonify(result)
     except Exception as e:
