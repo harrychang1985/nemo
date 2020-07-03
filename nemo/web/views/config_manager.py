@@ -34,7 +34,7 @@ def config_view():
 def config_save_nmap_view():
     '''保存NMAP设置
     '''
-    nmap_config = {'bin': request.form.get('nmap_bin'), 'port': request.form.get('nmap_port'),
+    nmap_config = {'nmap_bin': request.form.get('nmap_bin'), 'masscan_bin': request.form.get('masscan_bin'),'port': request.form.get('nmap_port'),
                    'tech': request.form.get('nmap_tech'), 'rate': request.form.get('nmap_rate'), 
                    'ping': _str2bool(request.form.get('nmap_ping'))}
 

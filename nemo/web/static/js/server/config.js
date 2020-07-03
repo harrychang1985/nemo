@@ -12,7 +12,8 @@ $(function () {
 
 function load_config() {
     $.post("/adv-config-list", function (data) {
-        $('#input_nmap_bin').val(data['nmap']['bin']);
+        $('#input_nmap_bin').val(data['nmap']['nmap_bin']);
+        $('#input_masscan_bin').val(data['nmap']['masscan_bin']);
         $('#input_nmap_port').val(data['nmap']['port']);
         $('#select_nmap_tech').val(data['nmap']['tech']);
         $('#input_nmap_rate').val(data['nmap']['rate']);
@@ -22,13 +23,18 @@ function load_config() {
 }
 
 function save_nmap_config() {
-    const bin = $('#input_nmap_bin').val();
+    const nmap_bin = $('#input_nmap_bin').val();
+    const masscan_bin = $('#input_masscan_bin').val();
     const port = $('#input_nmap_port').val();
     const tech = $('#select_nmap_tech').val();
     const rate = $('#input_nmap_rate').val();
     const ping = $('#checkbox_nmap_ping').is(":checked");
-    if (!bin) {
+    if (!nmap_bin) {
         swal('Warning', 'NMAP可执行文件不能为空！', 'error');
+        return;
+    }
+    if (!masscan_bin) {
+        swal('Warning', 'MASSCAN可执行文件不能为空！', 'error');
         return;
     }
     if (!tech) {
@@ -41,7 +47,8 @@ function save_nmap_config() {
     }
     $.post("/adv-config-save-nmap",
         {
-            "nmap_bin": bin,
+            "nmap_bin": nmap_bin,
+            "masscan_bin": masscan_bin,
             "nmap_port": port,
             "nmap_rate": rate,
             'nmap_tech': tech,

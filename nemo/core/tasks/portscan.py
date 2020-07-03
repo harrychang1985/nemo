@@ -2,6 +2,7 @@
 # coding:utf-8
 from .taskbase import TaskBase
 from .nmap import Nmap
+from .masscan import Masscan
 from .ipdomain import IpDomain
 from .webtitle import WebTitle
 from .whatweb import WhatWeb
@@ -22,6 +23,7 @@ class PortScan(TaskBase):
             'webtitle': True/False，是否读取网站IP地址
             'whatweb':      True/False,是否调用whatweb
             'iplocation':   True/False，是否调用iplocation
+            'bin':      nmap/masscan，扫描方法
         }
     '''
 
@@ -37,6 +39,7 @@ class PortScan(TaskBase):
         self.webtitle = False
         self.whatweb = False
         self.iplocation = False
+        self.bin = 'nmap'
 
     def prepare(self, options):
         '''解析参数
@@ -45,6 +48,7 @@ class PortScan(TaskBase):
         self.webtitle = self.get_option('webtitle', options, self.webtitle)
         self.whatweb = self.get_option('whatweb', options, self.whatweb)
         self.iplocation = self.get_option('iplocation', options, self.iplocation)
+        self.bin = self.get_option('bin', options, self.bin)
         # 将域名转换为IP
         target_ip = []
         ipdomain = IpDomain()
@@ -67,10 +71,13 @@ class PortScan(TaskBase):
         '''执行端口扫描任务
         '''
         self.prepare(options)
-        # nmap扫描
-        nmap_app = Nmap()
-        nmap_app.prepare(options)
-        ip_ports = nmap_app.execute()
+        # 扫描
+        if self.bin == 'nmap':
+            scan_app = Nmap()
+        else:
+            scan_app = Masscan()
+        scan_app.prepare(options)
+        ip_ports = scan_app.execute()
         # iplocation:
         if self.iplocation:
             iplocation_app = IpLocation()

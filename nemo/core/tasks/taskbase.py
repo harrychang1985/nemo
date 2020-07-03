@@ -46,10 +46,10 @@ class TaskBase():
                 ip['org_id'] = self.org_id
             ip_id = ip_app.save_and_update(ip)
             if ip_id > 0:
-                result['port'] += len(ip['port'])
                 # 保存每个端口数据
                 if 'port' not in ip:
                     continue
+                result['port'] += len(ip['port'])
                 for port in ip['port']:
                     port['ip_id'] = ip_id
                     port_id = port_app.save_and_update(port)

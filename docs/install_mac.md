@@ -41,12 +41,12 @@ brew install mysql@5.7
   FLUSH PRIVILEGES;
   ```
 
-### 3、nmap
+### 3、nmap&masscan
 
 ```
-brew install nmap
-cd /usr/local/Cellar/nmap/7.80_1/bin
+brew install nmap masscan
 # 因为nmap的SYN扫描需要root权限，为避免使用sudo，为nmap设置root权限的suid
+cd /usr/local/Cellar/nmap/7.80_1/bin
 sudo chown root nmap
 sudo chmod u+s nmap
 ```
@@ -112,7 +112,7 @@ pip3 install -r requirements.txt
 
    ```bash
    export PYTHONOPTIMIZE=1
-   celery -A nemo.core.tasks.tasks worker --loglevel info
+   celery -A nemo.core.tasks.tasks worker --loglevel info -c 4
    ```
 
 ### 3. celery flower

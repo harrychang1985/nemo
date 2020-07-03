@@ -75,7 +75,7 @@ def ip_asset_view():
                     "location": ip_row['location'].split(',')[0] if ip_row['location'] else '',
                     "create_time": str(ip_row['create_datetime']),
                     "update_time": str(ip_row['update_datetime']),
-                    "port": ', '.join([str(x) for x in port_list]),
+                    "port": port_list,
                     "title": ', '.join(list(title_set)),
                     "banner": ', '.join(list(banner_set))
                 })

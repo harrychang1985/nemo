@@ -13,7 +13,7 @@ Nemo的初衷是用来进行自动化信息收集的一个简单平台，实现�
 
 主要实现了以下功能（代码目前在完善和优化中...）
 
-- Nmap进行端口扫描（需本地nmap）
+- Nmap/Masscan进行端口扫描（需本地nmap/masscan）
 - ~~端口标题查询(性能不太好，建议使用whatweb）~~
 - 第三方接口查询IP归属地
 - Sublist3r实现子域名收集
@@ -60,8 +60,6 @@ ps aux|grep "app.py"|awk '{print $2}'|xargs kill
 [开发环境配置](docs/config.md)
 
 [MacOS安装配置](docs/install_mac.md)
-
-由于调用nmap和whatweb使用了终端重定向功能直接读取程序执行的输出结果，暂时只能支持linux/mac下使用；后续版本再改进对windows的支持。
 
 
 ## 目标

@@ -2,6 +2,8 @@
 # coding:utf-8
 import subprocess
 import re
+import os
+from tempfile import NamedTemporaryFile
 from .taskbase import TaskBase
 from nemo.common.utils.config import load_config
 
@@ -41,13 +43,13 @@ class Nmap(TaskBase):
         self.rate = config_datajson['nmap']['rate']
         self.tech = config_datajson['nmap']['tech']
         self.ping = config_datajson['nmap']['ping']
-        self.nmap_bin = config_datajson['nmap']['bin']
+        self.nmap_bin = config_datajson['nmap']['nmap_bin']
 
     def __parse_nmap_grepable_file(self, nmap_grepable_file):
         '''解析nmap扫描输出的grepable文件
         '''
         results = []
-        for line in nmap_grepable_file:
+        for line in nmap_grepable_file.split(os.linesep):
             line_str = line.strip()
             if line_str.startswith('#'):
                 continue
@@ -75,27 +77,25 @@ class Nmap(TaskBase):
     def __nmap_scan(self, ip, port):
         '''调用nmap对指定IP和端口进行扫描
         '''
-        nmap_bin = [self.nmap_bin, self.tech, '-T4', '-oG', '-',  '--open',
-                    '-n', '--randomize-hosts', '--min-rate', str(self.rate)]
-        if not self.ping:
-            nmap_bin.append('-Pn')
-        # 两种方式：指定端口（包括全端口）和常用top端口（--top-ports 1000）
-        if port.startswith('--top'):
-            nmap_bin.append('--top-ports')
-            nmap_bin.append(port.split(' ')[1].strip())
-        else:
-            nmap_bin.append('-p')
-            nmap_bin.append(port)
-        nmap_bin.append(ip)
-        # 调用nmap进行扫描
-        child = subprocess.Popen(nmap_bin, stdout=subprocess.PIPE)
-        # 读取扫描结果
-        scan_result = []
-        while child.poll() is None:
-            line = child.stdout.readline().decode()
-            scan_result.append(line)
-        # 解析nmap扫描结果
-        return self.__parse_nmap_grepable_file(scan_result)
+        with NamedTemporaryFile('w+t') as tfile_output:
+            nmap_bin = [self.nmap_bin, self.tech, '-T4', '-oG', tfile_output.name,  '--open',
+                        '-n', '--randomize-hosts', '--min-rate', str(self.rate)]
+            if not self.ping:
+                nmap_bin.append('-Pn')
+            # 两种方式：指定端口（包括全端口）和常用top端口（--top-ports 1000）
+            if port.startswith('--top'):
+                nmap_bin.append('--top-ports')
+                nmap_bin.append(port.split(' ')[1].strip())
+            else:
+                nmap_bin.append('-p')
+                nmap_bin.append(port)
+            nmap_bin.append(ip)
+            # 调用nmap进行扫描
+            child = subprocess.Popen(nmap_bin, stdout=subprocess.PIPE)
+            child.wait()
+            # 读取扫描结果
+            # 解析nmap扫描结果
+            return self.__parse_nmap_grepable_file(tfile_output.read())
 
     def prepare(self, options):
         '''解析参数

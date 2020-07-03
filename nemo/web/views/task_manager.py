@@ -78,6 +78,7 @@ def task_start_portscan_view():
         fofasearch = request.form.get('fofasearch')
         shodansearch = request.form.get('shodansearch')
         subtask = request.form.get('subtask')
+        portscan_bin = request.form.get('bin')
 
         if not target:
             return jsonify({'status': 'fail', 'msg': 'no target or port'})
@@ -91,7 +92,7 @@ def task_start_portscan_view():
             task_target =  [target]
         for t in task_target:
             # 任务选项options
-            options = {'target': t, 'port': port,
+            options = {'target': t, 'port': port,'bin':portscan_bin,
                    'org_id': org_id, 'rate': rate, 'ping': _str2bool(ping), 'tech': nmap_tech,
                    'iplocation': _str2bool(iplocation), 'webtitle': _str2bool(webtitle), 'whatweb': _str2bool(whatweb)
                    }

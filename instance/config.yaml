@@ -1,5 +1,6 @@
 nmap:
-  bin: nmap
+  masscan_bin: masscan
+  nmap_bin: nmap
   ping: false
   port: --top-port 1000
   rate: '3000'

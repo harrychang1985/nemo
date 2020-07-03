@@ -40,6 +40,7 @@ $(function () {
                 'rate': rate,
                 'portscan':$('#checkbox_portscan').is(":checked"),
                 'nmap_tech': $('#select_tech').val(),
+                'bin': $('#select_bin').val(),
                 'org_id': $('#select_org_id_task').val(),
                 'iplocation': $('#checkbox_iplocation').is(":checked"),
                 'webtitle': $('#checkbox_webtitle').is(":checked"),
@@ -76,6 +77,7 @@ $(function () {
         if(this.checked){
             $("#input_port").prop("disabled", false);
             $("#select_tech").prop("disabled", false);
+            $("#select_bin").prop("disabled", false);
             $("#input_rate").prop("disabled", false);
             $("#checkbox_webtitle").prop("disabled", false);
             $("#checkbox_whatweb").prop("disabled", false);
@@ -83,6 +85,7 @@ $(function () {
         }else{
             $("#input_port").prop("disabled", true);
             $("#select_tech").prop("disabled", true);
+            $("#select_bin").prop("disabled", true);
             $("#input_rate").prop("disabled", true);
             $("#checkbox_webtitle").prop("disabled", true);
             $("#checkbox_whatweb").prop("disabled", true);
@@ -139,7 +142,22 @@ $(function () {
                     }
                 },
                 { data: "location", title: "归属地", width: "10%" },
-                { data: "port", title: "开放端口", width: "15%" },
+                { data: "port", title: "开放端口", width: "15%" ,
+                    "render": function (data, type, row, meta) {
+                        var strData='<div style="width:100%;white-space:normal;word-wrap:break-word;word-break:break-all;">';
+                        var pre_link = "";
+                        for(j=0,len=data.length;j<len;j++){
+                            strData += pre_link;
+                            strData += '<a href="';
+                            if(data[j]==443) strData+="https";
+                            else strData+='http';
+                            strData+='://'+row['ip']+':'+data[j]+'" target="_blank">'+data[j]+'</a>';
+                            pre_link = ",";
+                        }
+                        strData += '</div>'
+                        return strData;
+                }
+                },
                 { data: "title", title: "标题", width: "20%" },
                 { data: "banner", title: "Banner", width: "20%" },
                 {

@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 # coding:utf-8
 import re
+import os
 import subprocess
 from multiprocessing.dummy import Pool
+from tempfile import NamedTemporaryFile
 from .taskbase import TaskBase
 from nemo.common.utils.config import load_config
 from nemo.common.utils.iputils import check_ip_or_domain
@@ -42,30 +44,23 @@ class WhatWeb(TaskBase):
     def __exe_whatweb(self, url):
         '''调用nmap对指定IP和端口进行扫描
         '''
-        whatweb_bin = [self.whatweb_bin, '-q', '--color=never', '--log-brief', '-','--max-threads',str(self.whatweb_threads),
-                       '-U=Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/52.0.2743.116 Safari/537.36 Edge/15.15063',
-                       url]
-        # 调用whatweb进行扫描
-        try:
-            child = subprocess.Popen(whatweb_bin, stdout=subprocess.PIPE)
-            # 读取扫描结果
-            scan_result = []
-            while child.poll() is None:
-                line = child.stdout.readline().decode()
-                scan_result.append(line)
-            # 解析nmap扫描结果
-            result = ''.join(scan_result)
-
-            if result.startswith('ERROR'):
+        with NamedTemporaryFile('w+t') as tfile_output:
+            whatweb_bin = [self.whatweb_bin, '-q', '--color=never', '--log-brief', tfile_output.name,'--max-threads',str(self.whatweb_threads),
+                        '--open-timeout',str(5),'--read-timeou',str(10),
+                        '-U=Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/52.0.2743.116 Safari/537.36 Edge/15.15063',
+                        url]
+            # 调用whatweb进行扫描
+            try:
+                child = subprocess.Popen(whatweb_bin, stdout=subprocess.PIPE)
+                child.wait()
+                result = tfile_output.read()
+                if result.startswith('ERROR'):
+                    result = None
+            except Exception as e2:
                 result = None
-        except FileNotFoundError as e1:
-            result = None
-            print(e1)
-        except Exception as e2:
-            result = None
-            print(e2)
+                print(e2)
 
-        return result
+            return result
 
     def prepare(self, options):
         '''解析参数
