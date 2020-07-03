@@ -11,7 +11,7 @@ RUN set -x \
     && apt-get install -y python3.7 python3.7-dev python3-pip python3-setuptools \
     wget curl vim net-tools git unzip \
     mysql-server rabbitmq-server \
-    nmap whatweb --fix-missing
+    nmap whatweb masscan --fix-missing
 
 # pip package
 COPY requirements.txt /tmp
