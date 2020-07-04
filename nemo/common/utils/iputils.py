@@ -51,13 +51,3 @@ def check_ip_or_domain(ip_or_domain):
     m = re.match(p1, ip_or_domain) or re.match(p2, ip_or_domain)
 
     return True if m else False
-
-
-def main():
-    print(get_ip('192.168.1.2'))
-    print(get_ip('192.168.1.1/24'))
-    print(get_ip('192.168.1.5-192.168.1.10'))
-
-
-if __name__ == '__main__':
-    main()

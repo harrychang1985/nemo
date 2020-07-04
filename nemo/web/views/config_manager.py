@@ -6,8 +6,9 @@ from flask import render_template
 from flask import jsonify
 from flask import request
 
-from .authenticate import login_check
 from nemo.common.utils.config import load_config, save_config
+
+from .authenticate import login_check
 
 config_manager = Blueprint('config_manager', __name__)
 

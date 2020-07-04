@@ -1,12 +1,15 @@
 #!/usr/bin/env python3
 # coding:utf-8
-import subprocess
-import re
 import os
+import re
+import subprocess
 from tempfile import NamedTemporaryFile
-from .taskbase import TaskBase
+
 from nemo.common.utils.config import load_config
 from nemo.common.utils.parseservice import ParsePortService
+
+from .taskbase import TaskBase
+
 
 class Masscan(TaskBase):
     '''调用masscan的扫描任务
@@ -56,7 +59,7 @@ class Masscan(TaskBase):
                     ip = data[3].strip()
                     port = data[2].strip()
                     results.append({'ip': ip, 'status': 'alive', 'port': [
-                                   {'port': port, 'status': 'open','service':port_service.get_service(port)}]})
+                                   {'port': port, 'status': 'open', 'service': port_service.get_service(port)}]})
         except Exception as e:
             print(e)
             pass
@@ -64,7 +67,7 @@ class Masscan(TaskBase):
         return results
 
     def __get_top_ports_by_nmap(self, top_number):
-        '''调用nmap对指定IP和端口进行扫描
+        '''调用nmap获得--top-ports的定义
         '''
         config_datajson = load_config()
         with NamedTemporaryFile('w+t') as f:
@@ -73,7 +76,7 @@ class Masscan(TaskBase):
             # 调用nmap
             child = subprocess.Popen(nmap_bin, stdout=subprocess.PIPE)
             child.wait()
-            # 读取扫描结果
+            # 读取结果
             p_re = r'TCP\('+str(top_number)+r';(.+?)\)'
             m = re.findall(p_re, ''.join(f.read()))
             if m:
@@ -103,7 +106,6 @@ class Masscan(TaskBase):
             masscan_bin.append(tfile_ip.name)
             # 调用masscan进行扫描
             child = subprocess.Popen(masscan_bin, stdout=subprocess.PIPE)
-            # 读取扫描结果
             child.wait()
             # 解析masscan扫描结果
             result = self.__parse_masscan_output_file(tfile_output.read())

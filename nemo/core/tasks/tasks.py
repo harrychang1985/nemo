@@ -1,16 +1,14 @@
 #!/usr/bin/env python3
 # coding:utf-8
-from copy  import deepcopy
 from celery import Celery, Task
 
-from .portscan import PortScan
-from .fofa import Fofa
-from .shodan_search import Shodan
-from .domainscan import DomainScan
-from .iplocation import IpLocation
-
-from nemo.common.utils.config import load_config
 from instance.config import ProductionConfig
+
+from .domainscan import DomainScan
+from .fofa import Fofa
+from .iplocation import IpLocation
+from .portscan import PortScan
+from .shodan_search import Shodan
 
 broker = 'amqp://{}:{}@{}:{}/'.format(ProductionConfig.MQ_USERNAME,
                                       ProductionConfig.MQ_PASSWORD, ProductionConfig.MQ_HOST, ProductionConfig.MQ_PORT)
@@ -85,8 +83,6 @@ def domainscan_with_portscan(options):
     '''
     domainscan = DomainScan()
     portscan = PortScan()
-    iplocation = IpLocation()
-    config_datajson = load_config()
     # 域名任务
     domainscan.prepare(options)
     domain_list = domainscan.execute()

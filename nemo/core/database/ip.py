@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 # coding:utf-8
+import ipaddress
+import re
+
 from . import dbutils
 from . import daobase
-import re
-import ipaddress
 
 
 class Ip(daobase.DAOBase):
@@ -47,7 +48,6 @@ class Ip(daobase.DAOBase):
             self.copy_exist(data_update, data, 'org_id')
             self.copy_exist(data_update, data, 'location')
             self.update(obj[0]['id'], data_update)
-            # if self.update(obj[0]['id'], data_update) else 0
             return obj[0]['id']
         # 如果不存在，则生成新记录
         else:

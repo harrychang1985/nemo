@@ -4,14 +4,12 @@ from copy import copy
 from tempfile import NamedTemporaryFile
 
 from openpyxl import load_workbook
-from openpyxl.styles import Border, Alignment, Font
 
 from nemo.common.utils.assertinfoparser import AssertInfoParser
-from nemo.core.database.ip import Ip
+from nemo.core.database.attr import DomainAttr
 from nemo.core.database.domain import Domain
-from nemo.core.database.port import Port
+from nemo.core.database.ip import Ip
 from nemo.core.database.organization import Organization
-from nemo.core.database.attr import DomainAttr, PortAttr
 
 template_path = 'nemo/web/templates'
 template_file_domain = '{}/domain-export.xlsx'.format(template_path)
@@ -136,7 +134,7 @@ def export_ips(org_id=None, domain_address=None, ip_address=None, port=None):
                     row_start += 1
         else:
             row_start += 1
-            
+
         ws.merge_cells(start_row=merged_row_start, start_column=1,
                        end_row=row_start-1, end_column=1)
         ws.merge_cells(start_row=merged_row_start, start_column=2,

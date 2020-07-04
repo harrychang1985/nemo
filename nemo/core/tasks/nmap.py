@@ -1,11 +1,14 @@
 #!/usr/bin/env python3
 # coding:utf-8
-import subprocess
-import re
 import os
+import re
+import subprocess
 from tempfile import NamedTemporaryFile
-from .taskbase import TaskBase
+
 from nemo.common.utils.config import load_config
+
+from .taskbase import TaskBase
+
 
 class Nmap(TaskBase):
     '''调用Nmap的扫描任务
@@ -92,7 +95,6 @@ class Nmap(TaskBase):
             # 调用nmap进行扫描
             child = subprocess.Popen(nmap_bin, stdout=subprocess.PIPE)
             child.wait()
-            # 读取扫描结果
             # 解析nmap扫描结果
             return self.__parse_nmap_grepable_file(tfile_output.read())
 

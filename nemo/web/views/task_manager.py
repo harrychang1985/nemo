@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # coding:utf-8
-from datetime import datetime
 from copy import deepcopy
+from datetime import datetime
 
 from flask import request
 from flask import render_template
@@ -9,12 +9,10 @@ from flask import Blueprint
 from flask import jsonify
 from tld import get_fld
 
-from .authenticate import login_check
-from nemo.core.database.organization import Organization
-from nemo.core.database.ip import Ip
-from nemo.core.database.domain import Domain
-from nemo.core.tasks.taskapi import TaskAPI
 from nemo.common.utils.config import load_config
+from nemo.core.tasks.taskapi import TaskAPI
+
+from .authenticate import login_check
 
 
 task_manager = Blueprint("task_manager", __name__)
@@ -89,13 +87,13 @@ def task_start_portscan_view():
         if _str2bool(subtask):
             task_target = [[x] for x in target]
         else:
-            task_target =  [target]
+            task_target = [target]
         for t in task_target:
             # 任务选项options
-            options = {'target': t, 'port': port,'bin':portscan_bin,
-                   'org_id': org_id, 'rate': rate, 'ping': _str2bool(ping), 'tech': nmap_tech,
-                   'iplocation': _str2bool(iplocation), 'webtitle': _str2bool(webtitle), 'whatweb': _str2bool(whatweb)
-                   }
+            options = {'target': t, 'port': port, 'bin': portscan_bin,
+                       'org_id': org_id, 'rate': rate, 'ping': _str2bool(ping), 'tech': nmap_tech,
+                       'iplocation': _str2bool(iplocation), 'webtitle': _str2bool(webtitle), 'whatweb': _str2bool(whatweb)
+                       }
             # 启动portscan任务
             if _str2bool(portscan):
                 result = taskapi.start_task(
@@ -140,6 +138,7 @@ def task_start_domainscan_view():
 
         if not target:
             return jsonify({'status': 'fail', 'msg': 'no target'})
+        result = {'status': 'success', 'result': {'task-id': 0}}
         # 格式化tatget
         target = list(set([x.strip() for x in target.split('\n')]))
         # 提取顶级域名加入到目标中
@@ -155,12 +154,12 @@ def task_start_domainscan_view():
         if _str2bool(subtask):
             task_target = [[x] for x in target]
         else:
-            task_target =  [target]
+            task_target = [target]
         for t in task_target:
             # 任务选项options
             options = {'target': t,
-                    'org_id': org_id, 'subdomain': _str2bool(subdomain), 'webtitle': _str2bool(webtitle),
-                    'portscan': _str2bool(portscan), 'networkscan': _str2bool(networkscan), 'whatweb': _str2bool(whatweb)}
+                       'org_id': org_id, 'subdomain': _str2bool(subdomain), 'webtitle': _str2bool(webtitle),
+                       'portscan': _str2bool(portscan), 'networkscan': _str2bool(networkscan), 'whatweb': _str2bool(whatweb)}
             # 是否有portscan任务
             if _str2bool(portscan) or _str2bool(networkscan):
                 result = taskapi.start_task(
@@ -171,7 +170,7 @@ def task_start_domainscan_view():
             # 是否有FOFA搜索
             if _str2bool(fofasearch):
                 taskapi.start_task('fofasearch', kwargs={
-                                'options': deepcopy(options)})
+                    'options': deepcopy(options)})
 
         return jsonify(result)
     except Exception as e:
@@ -191,9 +190,6 @@ def task_list_view():
     data = []
     try:
         draw = int(request.form.get('draw'))
-        start = int(request.form.get('start'))
-        length = int(request.form.get('length'))
-
         task_status = request.form.get('task_status')
         task_limit = request.form.get('task_limit', default=None)
         task_status = None if not task_status else task_status
@@ -226,7 +222,6 @@ def task_list_view():
         return jsonify(json_data)
     except Exception as e:
         print(e)
-        return jsonify({'draw': draw, 'data': [], 'recordsTotal': 0, 'recordsFiltered': 0})
 
 
 @task_manager.route('/task-stop', methods=['POST'])

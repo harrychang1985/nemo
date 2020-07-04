@@ -5,11 +5,12 @@ from flask import Blueprint
 from flask import render_template
 from flask import jsonify
 from flask import request
-from .authenticate import login_check
 
-from nemo.core.database.ip import Ip
 from nemo.core.database.domain import Domain
+from nemo.core.database.ip import Ip
 from nemo.core.tasks.taskapi import TaskAPI
+
+from .authenticate import login_check
 
 dashboard = Blueprint('dashboard', __name__)
 

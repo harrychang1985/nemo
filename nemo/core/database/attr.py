@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # coding:utf-8
 import hashlib
+
 from . import daobase
 
 
@@ -46,7 +47,7 @@ class AttrBase(daobase.DAOBase):
             data_update = {}
             # 只更新update_datetime
             self.update(obj[0]['id'], data_update)
-            return obj[0]['id'] #if self.update(obj[0]['id'], data_update) else 0
+            return obj[0]['id']
         # 如果不存在，则生成新记录
         else:
             data_new = {'r_id': data['r_id'], 'tag': data['tag'],
@@ -65,6 +66,7 @@ class PortAttr(AttrBase):
         super().__init__()
         self.table_name = 'port_attr'
         self.order_by = 'tag,source'
+
 
 class DomainAttr(AttrBase):
     def __init__(self):

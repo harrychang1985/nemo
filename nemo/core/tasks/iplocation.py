@@ -1,14 +1,15 @@
 #!/usr/bin/env python3
 # coding:utf-8
-import re
-import requests
-import dns.resolver
 from multiprocessing.dummy import Pool
+import re
 
-from .taskbase import TaskBase
-from .domainscan import IpDomain
-from nemo.core.database.ip import Ip
+import requests
+
 from nemo.common.utils.iputils import check_ip_or_domain, parse_ip
+from nemo.core.database.ip import Ip
+
+from .domainscan import IpDomain
+from .taskbase import TaskBase
 
 
 class IpLocation(TaskBase):

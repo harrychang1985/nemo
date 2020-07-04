@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
 # coding:utf-8
-import re
 import base64
+
 import requests
-from tld import get_fld
+
+from instance.config import APIConfig
+from nemo.common.utils.iputils import check_ip_or_domain, parse_ip
 
 from .taskbase import TaskBase
-from nemo.common.utils.iputils import check_ip_or_domain,parse_ip
-from instance.config import APIConfig
+
 
 class Fofa(TaskBase):
     '''调用fofa API接口进行资产收集
@@ -128,7 +129,7 @@ class Fofa(TaskBase):
         for t in options['target']:
             if check_ip_or_domain(t):
                 ip_target = parse_ip(t)
-                if ip_target and isinstance(ip_target,(tuple,list)):
+                if ip_target and isinstance(ip_target, (tuple, list)):
                     self.target.extend(ip_target)
                 else:
                     self.target.append(ip_target)
@@ -143,7 +144,8 @@ class Fofa(TaskBase):
         domain_ip = []
         for t in target:
             # 查询FOFA
-            result = self.__fofa_search('{}="{}" || host="{}"'.format('ip' if check_ip_or_domain(t) else 'domain', t, t))
+            result = self.__fofa_search('{}="{}" || host="{}"'.format(
+                'ip' if check_ip_or_domain(t) else 'domain', t, t))
             # 解析结果
             for line in result:
                 ipp = self.__parse_ip_port(line)

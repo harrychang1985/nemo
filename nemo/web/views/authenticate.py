@@ -1,27 +1,26 @@
 #!/usr/bin/env python3
 # coding:utf-8
-from flask import Flask
+from functools import wraps
+
 from flask import Blueprint
 from flask import render_template
 from flask import request
 from flask import redirect
 from flask import url_for
 from flask import session
-from functools import wraps
 
 from instance import config
 
 authenticate = Blueprint('authenticate', __name__)
 ProductionConfig = config.ProductionConfig
-app = Flask(__name__)
-app.config.from_object(ProductionConfig)
+
 
 @authenticate.route('/login', methods=['POST', 'GET'])
 def login_view():
     if request.method == 'POST':
         username = request.form.get('username')
         password = request.form.get('password')
-        if password == app.config.get('WEB_PASSWORD'):
+        if password == ProductionConfig.WEB_PASSWORD:
             try:
                 session['login'] = 'A1akPTQJiz9wi9yo4rDz8ubM1b1'
                 return redirect(url_for('index.view_index'))

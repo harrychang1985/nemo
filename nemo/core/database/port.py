@@ -21,7 +21,7 @@ class Port(daobase.DAOBase):
             data_update = {}
             self.copy_exist(data_update, data, 'status')
             self.update(obj[0]['id'], data_update)
-            return obj[0]['id'] #if self.update(obj[0]['id'], data_update) else 0
+            return obj[0]['id']
         # 如果obj不存在，则生成新记录
         else:
             data_new = {'ip_id': data['ip_id'], 'port': data['port']}

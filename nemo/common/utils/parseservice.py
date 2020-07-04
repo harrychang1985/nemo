@@ -27,4 +27,4 @@ class ParsePortService():
     def get_service(self, port, type='tcp'):
         '''根据端口号查找Service名称
         '''
-        return self.port_service.get('{}/{}'.format(port,type),'unknown')
+        return self.port_service.get('{}/{}'.format(port, type), 'unknown')

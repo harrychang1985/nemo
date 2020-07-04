@@ -2,9 +2,10 @@
 # coding:utf-8
 import shodan
 
-from .taskbase import TaskBase
-from nemo.common.utils.iputils import check_ip_or_domain,parse_ip
 from instance.config import APIConfig
+from nemo.common.utils.iputils import check_ip_or_domain, parse_ip
+
+from .taskbase import TaskBase
 
 
 class Shodan(TaskBase):

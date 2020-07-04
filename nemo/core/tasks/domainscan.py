@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 # coding:utf-8
-from .taskbase import TaskBase
-from .ipdomain import IpDomain
-from .webtitle import WebTitle
-from .subdomain import SubDmain
-from .whatweb import WhatWeb
-from .fofa import Fofa
 from nemo.common.utils.iputils import check_ip_or_domain
+
+from .ipdomain import IpDomain
+from .subdomain import SubDmain
+from .taskbase import TaskBase
+from .webtitle import WebTitle
+from .whatweb import WhatWeb
 
 
 class DomainScan(TaskBase):
@@ -47,7 +47,7 @@ class DomainScan(TaskBase):
         self.org_id = self.get_option('org_id', options, self.org_id)
         self.webtitle = self.get_option('webtitle', options, self.webtitle)
         self.subdomain = self.get_option('subdomain', options, self.subdomain)
-        self.whatweb = self.get_option('whatweb',options,self.whatweb)
+        self.whatweb = self.get_option('whatweb', options, self.whatweb)
         self.target = options['target']
 
     def execute(self):
@@ -55,7 +55,7 @@ class DomainScan(TaskBase):
         '''
         # 获取当前域名的IP
         ipdomain = IpDomain()
-        domain_target = []  
+        domain_target = []
         # 筛选出域名目标
         for host in self.target:
             if not check_ip_or_domain(host):

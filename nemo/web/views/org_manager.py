@@ -1,16 +1,14 @@
 #!/usr/bin/env python3
 # coding:utf-8
 
-import json
-import hashlib
-
 from flask import request
 from flask import render_template
 from flask import Blueprint
 from flask import jsonify
 
-from .authenticate import login_check
 from nemo.core.database.organization import Organization
+
+from .authenticate import login_check
 
 org_manager = Blueprint("org_manager", __name__)
 
@@ -26,14 +24,15 @@ def org_add_view():
     org_table = Organization()
     org_name = request.form['org_name'].encode('utf-8')
     sort_order = request.form['sort_order']
-    data={
+    data = {
         'org_name': org_name,
         'status': request.form['status'],
         'sort_order': sort_order
     }
     row_id = org_table.add(data)
 
-    return jsonify({'status':'success','msg':row_id})
+    return jsonify({'status': 'success', 'msg': row_id})
+
 
 @org_manager.route('/org-update/<int:org_id>', methods=['POST'])
 @login_check
@@ -43,15 +42,16 @@ def org_update_view(org_id):
     org_table = Organization()
     org_name = request.form['org_name'].encode('utf-8')
     sort_order = request.form['sort_order']
-    data={
+    data = {
         'org_name': org_name,
         'status': request.form['status'],
         'sort_order': sort_order
     }
-    row_id = org_table.update(org_id,data)
+    row_id = org_table.update(org_id, data)
 
-    return jsonify({'status':'success','msg':row_id})
-    
+    return jsonify({'status': 'success', 'msg': row_id})
+
+
 @org_manager.route('/org-delete/<int:org_id>', methods=['POST'])
 @login_check
 def org_delete_view(org_id):
@@ -60,7 +60,7 @@ def org_delete_view(org_id):
     org_table = Organization()
     del_rows = org_table.delete(org_id)
 
-    return jsonify({'status':'success','msg':str(del_rows)})
+    return jsonify({'status': 'success', 'msg': str(del_rows)})
 
 
 @org_manager.route('/org-get/<int:org_id>', methods=['POST'])
@@ -72,7 +72,8 @@ def org_get_view(org_id):
     org_row = org_table.get(org_id)
 
     return jsonify(org_row)
-    
+
+
 @org_manager.route('/org-list', methods=['GET', 'POST'])
 @login_check
 def org_list_view():
@@ -90,9 +91,6 @@ def org_list_view():
         draw = int(request.form.get('draw'))
         start = int(request.form.get('start'))
         length = int(request.form.get('length'))
-        search_key = request.form.get('search[value]')
-        order_column = request.form.get('order[0][column]')
-        order_column = request.form.get('order[0][dir]')
         for org in org_table.gets(page=(start//length) + 1, rows_per_page=length):
             org_list.append({
                 "id": org['id'],

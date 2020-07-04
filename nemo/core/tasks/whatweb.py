@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
 # coding:utf-8
-import re
-import os
-import subprocess
 from multiprocessing.dummy import Pool
+import re
+import subprocess
 from tempfile import NamedTemporaryFile
-from .taskbase import TaskBase
+
 from nemo.common.utils.config import load_config
 from nemo.common.utils.iputils import check_ip_or_domain
+
+from .taskbase import TaskBase
 
 
 class WhatWeb(TaskBase):
@@ -33,7 +34,7 @@ class WhatWeb(TaskBase):
         # 参数
         self.org_id = None
         self.source = 'whatweb'
-        self.result_attr_keys = ('whatweb','title','server' )
+        self.result_attr_keys = ('whatweb', 'title', 'server')
         self.threads = 5
         self.whatweb_threads = 5
         # 默认的参数
@@ -45,10 +46,10 @@ class WhatWeb(TaskBase):
         '''调用nmap对指定IP和端口进行扫描
         '''
         with NamedTemporaryFile('w+t') as tfile_output:
-            whatweb_bin = [self.whatweb_bin, '-q', '--color=never', '--log-brief', tfile_output.name,'--max-threads',str(self.whatweb_threads),
-                        '--open-timeout',str(5),'--read-timeou',str(10),
-                        '-U=Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/52.0.2743.116 Safari/537.36 Edge/15.15063',
-                        url]
+            whatweb_bin = [self.whatweb_bin, '-q', '--color=never', '--log-brief', tfile_output.name, '--max-threads', str(self.whatweb_threads),
+                           '--open-timeout', str(5), '--read-timeou', str(10),
+                           '-U=Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/52.0.2743.116 Safari/537.36 Edge/15.15063',
+                           url]
             # 调用whatweb进行扫描
             try:
                 child = subprocess.Popen(whatweb_bin, stdout=subprocess.PIPE)

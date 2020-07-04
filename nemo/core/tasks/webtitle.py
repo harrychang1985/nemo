@@ -2,12 +2,13 @@
 # coding:utf-8
 # Build By LandGrey
 # Modified by Hancool
-import re
-import ssl
-import socket
-import requests
 from html.parser import HTMLParser
 from multiprocessing.dummy import Pool
+import re
+import socket
+import ssl
+
+import requests
 from requests.adapters import HTTPAdapter
 
 from .taskbase import TaskBase

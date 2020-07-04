@@ -1,12 +1,15 @@
 #!/usr/bin/env python3
 # coding:utf-8
 import re
-import requests
+
 import dns.resolver
-from .taskbase import TaskBase
-from nemo.core.database.ip import Ip
-from nemo.core.database.domain import Domain
+import requests
+
 from nemo.common.utils.iputils import check_ip_or_domain
+from nemo.core.database.domain import Domain
+from nemo.core.database.ip import Ip
+
+from .taskbase import TaskBase
 
 
 class IpDomain(TaskBase):
@@ -21,6 +24,7 @@ class IpDomain(TaskBase):
         {'domain': 'www.sgcc.com.cn', 'CNAME': [], 'A': ['210.77.176.16']}, 
         {'domain': '95598.gd.csg.cn', 'CNAME': [], 'A': ['121.8.169.18']}]
     '''
+
     def __init__(self):
         super().__init__()
         self.task_name = 'ipdomain'
@@ -31,12 +35,11 @@ class IpDomain(TaskBase):
             'User-Agent': 'Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 5.1; Trident/4.0)'}
         self.timeout = 5
 
-
     def fetch_domain_ip(self, domain):
         '''查询域名对应的IP，返回结果A是域名对应的IP地址
         如果返回结果包含了CNAME（域名的别名），返回的地址可能是CDN的地址
         '''
-        iplist = {'domain':domain,'CNAME': [], 'A': []}
+        iplist = {'domain': domain, 'CNAME': [], 'A': []}
         try:
             A = dns.resolver.query(domain, 'A')
             for i in A.response.answer:
@@ -68,14 +71,13 @@ class IpDomain(TaskBase):
     def prepare(self, options):
         '''解析参数
         '''
-        self.org_id = self.get_option('org_id',options,self.org_id)
+        self.org_id = self.get_option('org_id', options, self.org_id)
         self.target = []
         for host in options['target']:
             if check_ip_or_domain(host):
                 self.target.append({'ip': host})
             else:
                 self.target.append({'domain': host})
-
 
     def execute(self, domains):
         '''查询domain对应的IP

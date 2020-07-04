@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 # coding:utf-8
-from nemo.core.database.ip import Ip
-from nemo.core.database.port import Port
+from nemo.core.database.attr import DomainAttr, PortAttr
 from nemo.core.database.domain import Domain
+from nemo.core.database.ip import Ip
 from nemo.core.database.organization import Organization
-from nemo.core.database.attr import IpAttr, PortAttr, DomainAttr
+from nemo.core.database.port import Port
 
 
 class AssertInfoParser():
@@ -123,10 +123,8 @@ class AssertInfoParser():
                 whatweb_set.add(domain_attr_obj['content'])
             elif domain_attr_obj['tag'] == 'server':
                 banner_set.add(domain_attr_obj['content'])
-        # domain_info.update(title=list(title_set))
         # 获取域名关联的IP端口详情：
         port_set = set()
-        #title_set = set()
 
         ip_port_list = []
         for domain_ip in ip_set:

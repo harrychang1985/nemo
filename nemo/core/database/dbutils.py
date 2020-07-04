@@ -14,12 +14,12 @@ Python Mysql 工具包
 7. *_process 重构方法, 方便支持批量数据处理
 """
 
-import pymysql
-from DBUtils.PooledDB import PooledDB
-# 数据库连接的配置文件保存位置
-from instance.config import ProductionConfig
-# 日志
 import traceback
+
+from DBUtils.PooledDB import PooledDB
+import pymysql
+
+from instance.config import ProductionConfig
 from nemo.common.utils.loggerutils import logger
 
 #DBUtils连接池

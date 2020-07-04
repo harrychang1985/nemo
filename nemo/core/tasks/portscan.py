@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
 # coding:utf-8
-from .taskbase import TaskBase
-from .nmap import Nmap
-from .masscan import Masscan
+from nemo.common.utils.iputils import check_ip_or_domain
+
 from .ipdomain import IpDomain
+from .iplocation import IpLocation
+from .masscan import Masscan
+from .nmap import Nmap
+from .taskbase import TaskBase
 from .webtitle import WebTitle
 from .whatweb import WhatWeb
-from .iplocation import IpLocation
-from nemo.common.utils.iputils import check_ip_or_domain
 
 
 class PortScan(TaskBase):
