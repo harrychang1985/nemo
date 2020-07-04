@@ -7,7 +7,6 @@ from tempfile import NamedTemporaryFile
 from .taskbase import TaskBase
 from nemo.common.utils.config import load_config
 
-
 class Nmap(TaskBase):
     '''调用Nmap的扫描任务
     通过nmap执行扫描任务，因此参数格式遵循nmap调用格式

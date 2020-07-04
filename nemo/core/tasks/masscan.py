@@ -6,7 +6,7 @@ import os
 from tempfile import NamedTemporaryFile
 from .taskbase import TaskBase
 from nemo.common.utils.config import load_config
-
+from nemo.common.utils.parseservice import ParsePortService
 
 class Masscan(TaskBase):
     '''调用masscan的扫描任务
@@ -44,7 +44,7 @@ class Masscan(TaskBase):
         '''解析masscan的扫描结果
         '''
         results = []
-
+        port_service = ParsePortService()
         try:
             for line in output_results.split(os.linesep):
                 if line.strip() == '':
@@ -53,10 +53,10 @@ class Masscan(TaskBase):
                     continue
                 data = line.strip().split(' ')
                 if data[0] == 'open' and data[1] == 'tcp':
-                    ip = data[3]
-                    port = data[2]
+                    ip = data[3].strip()
+                    port = data[2].strip()
                     results.append({'ip': ip, 'status': 'alive', 'port': [
-                                   {'port': port, 'status': 'open'}]})
+                                   {'port': port, 'status': 'open','service':port_service.get_service(port)}]})
         except Exception as e:
             print(e)
             pass

@@ -67,8 +67,8 @@ def ip_asset_view():
                 port_list, title_set, banner_set, ports_attr_info = aip.get_ip_port_info(
                     ip_row['ip'], ip_row['id'])
                 ip_list.append({
-                    'id': ip_row['id'],  # 表内序号
-                    "index": index+start,  # 显示序号
+                    'id': ip_row['id'],  
+                    "index": index+start,  
                     "org_name": org_table.get(int(ip_row['org_id']))['org_name'] if ip_row['org_id'] else '',
                     "ip": ip_row['ip'],
                     "status": ip_row['status'],
@@ -147,11 +147,38 @@ def ip_export_view():
     domain_address = request.args.get('domain_address')
     ip_address = request.args.get('ip_address')
     port = request.args.get('port')
-    
+
     data = export_ips(org_id, domain_address, ip_address, port)
     response = Response(data, content_type='application/octet-stream')
     response.headers["Content-disposition"] = 'attachment; filename={}'.format(
         "ip-export.xlsx")
+
+    return response
+
+
+@asset_manager.route('/ip-statistics', methods=['GET'])
+@login_check
+def ip_statistics_view():
+    '''统计IP数据
+    '''
+    org_id = request.args.get('org_id')
+    domain_address = request.args.get('domain_address')
+    ip_address = request.args.get('ip_address')
+    port = request.args.get('port')
+
+    ip_list, ip_c_set, port_set = AssertInfoParser().statistics_ip(
+        org_id, domain_address, ip_address, port)
+    data = []
+    data.append('Port:')
+    data.append(','.join([str(x) for x in sorted(port_set)]))
+    data.append('\nNetwork:')
+    data.extend(sorted(ip_c_set))
+    data.append('\nIP:')
+    data.extend(ip_list)
+    response = Response(
+        '\n'.join(data), content_type='application/octet-stream')
+    response.headers["Content-disposition"] = 'attachment; filename={}'.format(
+        "ip-statistics.txt")
 
     return response
 

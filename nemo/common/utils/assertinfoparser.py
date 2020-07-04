@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 # coding:utf-8
-
 from nemo.core.database.ip import Ip
 from nemo.core.database.port import Port
 from nemo.core.database.domain import Domain
@@ -122,13 +121,13 @@ class AssertInfoParser():
                 ip_set.add(domain_attr_obj['content'])
             elif domain_attr_obj['tag'] == 'whatweb':
                 whatweb_set.add(domain_attr_obj['content'])
-            elif  domain_attr_obj['tag'] == 'server':
+            elif domain_attr_obj['tag'] == 'server':
                 banner_set.add(domain_attr_obj['content'])
-        #domain_info.update(title=list(title_set))
+        # domain_info.update(title=list(title_set))
         # 获取域名关联的IP端口详情：
         port_set = set()
         #title_set = set()
-       
+
         ip_port_list = []
         for domain_ip in ip_set:
             ip_obj = Ip().gets(query={'ip': domain_ip})
@@ -148,3 +147,29 @@ class AssertInfoParser():
         domain_info.update(port_attr=ip_port_list)
 
         return domain_info
+
+    def statistics_ip(self, org_id=None, domain_address=None, ip_address=None, port=None):
+        '''根据查询条件，统计IP、IP的C段地址和相关的所有端口
+        '''
+        ip_table = Ip()
+        port_table = Port()
+
+        ip_list = []
+        ip_c_set = set()
+        port_set = set()
+        ips = ip_table.gets_by_org_domain_ip_port(org_id, domain_address, ip_address, port,
+                                                  page=1, rows_per_page=100000)
+        if ips:
+            for ip_row in ips:
+                # ip
+                ip_list.append(ip_row['ip'])
+                # C段
+                ip_c = ip_row['ip'].split('.')[0:3]
+                ip_c.append('0/24')
+                ip_c_set.add('.'.join(ip_c))
+                # port
+                ports_obj = port_table.gets(query={'ip_id': ip_row['id']})
+                for port_obj in ports_obj:
+                    port_set.add(port_obj['port'])
+
+        return ip_list, ip_c_set, port_set

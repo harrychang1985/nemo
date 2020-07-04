@@ -7,7 +7,7 @@ $(function () {
     // //获取任务的状态信息
     // get_task_status();
     setInterval(function () {
-       get_task_status();
+        get_task_status();
     }, 60 * 1000);
     //搜索
     $("#search").click(function () {
@@ -38,7 +38,7 @@ $(function () {
                 "target": target,
                 "port": port,
                 'rate': rate,
-                'portscan':$('#checkbox_portscan').is(":checked"),
+                'portscan': $('#checkbox_portscan').is(":checked"),
                 'nmap_tech': $('#select_tech').val(),
                 'bin': $('#select_bin').val(),
                 'org_id': $('#select_org_id_task').val(),
@@ -48,7 +48,7 @@ $(function () {
                 'ping': $('#checkbox_ping').is(":checked"),
                 'fofasearch': $('#checkbox_fofasearch').is(":checked"),
                 'shodansearch': $('#checkbox_shodansearch').is(":checked"),
-                'subtask':$('#checkbox_subtask').is(":checked")
+                'subtask': $('#checkbox_subtask').is(":checked")
             }, function (data, e) {
                 if (e === "success" && data['status'] == 'success') {
                     swal({
@@ -73,8 +73,8 @@ $(function () {
         var check = $(this).prop("checked");
         $(".checkchild").prop("checked", check);
     });
-    $("#checkbox_portscan").click(function(){
-        if(this.checked){
+    $("#checkbox_portscan").click(function () {
+        if (this.checked) {
             $("#input_port").prop("disabled", false);
             $("#select_tech").prop("disabled", false);
             $("#select_bin").prop("disabled", false);
@@ -82,7 +82,7 @@ $(function () {
             $("#checkbox_webtitle").prop("disabled", false);
             $("#checkbox_whatweb").prop("disabled", false);
             $("#checkbox_ping").prop("disabled", false);
-        }else{
+        } else {
             $("#input_port").prop("disabled", true);
             $("#select_tech").prop("disabled", true);
             $("#select_bin").prop("disabled", true);
@@ -94,6 +94,14 @@ $(function () {
     })
     $("#export_excel").click(function () {
         var url = 'ip-export?';
+        url += 'org_id=' + encodeURI($('#select_org_id_search').val());
+        url += '&domain_address=' + encodeURI($('#domain_address').val());
+        url += '&ip_address=' + encodeURI($('#ip_address').val());
+        url += '&port=' + encodeURI($('#port').val());
+        window.open(url);
+    });
+    $("#ip_statistics").click(function () {
+        var url = 'ip-statistics?';
         url += 'org_id=' + encodeURI($('#select_org_id_search').val());
         url += '&domain_address=' + encodeURI($('#domain_address').val());
         url += '&ip_address=' + encodeURI($('#ip_address').val());
@@ -116,7 +124,7 @@ $(function () {
                 "data": function (d) {
                     return $.extend({}, d, {
                         "org_id": $('#select_org_id_search').val(),
-                        "domain_address":$('#domain_address').val(),
+                        "domain_address": $('#domain_address').val(),
                         "ip_address": $('#ip_address').val(),
                         "port": $('#port').val()
                     });
@@ -142,24 +150,37 @@ $(function () {
                     }
                 },
                 { data: "location", title: "归属地", width: "10%" },
-                { data: "port", title: "开放端口", width: "15%" ,
+                {
+                    data: "port", title: "开放端口", width: "15%",
                     "render": function (data, type, row, meta) {
-                        var strData='<div style="width:100%;white-space:normal;word-wrap:break-word;word-break:break-all;">';
+                        var strData = '<div style="width:100%;white-space:normal;word-wrap:break-word;word-break:break-all;">';
                         var pre_link = "";
-                        for(j=0,len=data.length;j<len;j++){
+                        for (j = 0, len = data.length; j < len; j++) {
                             strData += pre_link;
                             strData += '<a href="';
-                            if(data[j]==443) strData+="https";
-                            else strData+='http';
-                            strData+='://'+row['ip']+':'+data[j]+'" target="_blank">'+data[j]+'</a>';
+                            if (data[j] == 443) strData += "https";
+                            else strData += 'http';
+                            strData += '://' + row['ip'] + ':' + data[j] + '" target="_blank">' + data[j] + '</a>';
                             pre_link = ",";
                         }
                         strData += '</div>'
                         return strData;
-                }
+                    }
                 },
-                { data: "title", title: "标题", width: "20%" },
-                { data: "banner", title: "Banner", width: "20%" },
+                {
+                    data: "title", title: "标题", width: "20%",
+                    "render": function (data, type, row, meta) {
+                        var strData = '<div style="width:100%;white-space:normal;word-wrap:break-word;word-break:break-all;">' + data + '</div>'
+                        return strData;
+                    }
+                },
+                {
+                    data: "banner", title: "Banner", width: "20%",
+                    "render": function (data, type, row, meta) {
+                        var strData = '<div style="width:100%;white-space:normal;word-wrap:break-word;word-break:break-all;">' + data + '</div>'
+                        return strData;
+                    }
+                },
                 {
                     title: "操作",
                     width: "8%",
@@ -172,11 +193,11 @@ $(function () {
             infoCallback: function (settings, start, end, max, total, pre) {
                 var api = this.api();
                 var pageInfo = api.page.info();
-                return "共<b>" +total + "</b>条记录，当前显示" + start + "到" + end + "记录";
+                return "共<b>" + total + "</b>条记录，当前显示" + start + "到" + end + "记录";
             },
         }
     );//end datatable
-    $(".checkall").click(function() {
+    $(".checkall").click(function () {
         var check = $(this).prop("checked");
         $(".checkchild").prop("checked", check);
     });
@@ -186,7 +207,7 @@ function load_nmap_config() {
         $('#input_port').val(data['nmap']['port']);
         $('#select_tech').val(data['nmap']['tech']);
         $('#input_rate').val(data['nmap']['rate']);
-        $('#checkbox_ping').prop("checked",data['nmap']['ping']);
+        $('#checkbox_ping').prop("checked", data['nmap']['ping']);
     });
 }
 //删除一个IP
@@ -213,7 +234,7 @@ function delete_ip(id) {
             });
         });
 }
-function get_task_status(){
+function get_task_status() {
     $.post("/dashboard-task-info", function (data) {
         $("#span_show_task").html(data['task_info']);
     });
