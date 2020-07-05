@@ -2,12 +2,13 @@
 # coding:utf-8
 from multiprocessing.dummy import Pool
 import re
+import traceback
 import subprocess
 from tempfile import NamedTemporaryFile
 
 from nemo.common.utils.config import load_config
 from nemo.common.utils.iputils import check_ip_or_domain
-
+from nemo.common.utils.loggerutils import logger
 from .taskbase import TaskBase
 
 
@@ -58,6 +59,8 @@ class WhatWeb(TaskBase):
                 if result.startswith('ERROR'):
                     result = None
             except Exception as e2:
+                logger.error(traceback.format_exc())
+                logger.error('whatweb url:{}'.format(url))
                 result = None
                 print(e2)
 
@@ -156,4 +159,5 @@ class WhatWeb(TaskBase):
 
             return result
         except Exception as e:
+            logger.error(traceback.format_exc())
             return {'status': 'fail', 'msg': str(e)}

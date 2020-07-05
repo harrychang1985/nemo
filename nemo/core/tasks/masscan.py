@@ -2,10 +2,12 @@
 # coding:utf-8
 import os
 import re
+import traceback
 import subprocess
 from tempfile import NamedTemporaryFile
 
 from nemo.common.utils.config import load_config
+from nemo.common.utils.loggerutils import logger
 from nemo.common.utils.parseservice import ParsePortService
 
 from .taskbase import TaskBase
@@ -61,8 +63,7 @@ class Masscan(TaskBase):
                     results.append({'ip': ip, 'status': 'alive', 'port': [
                                    {'port': port, 'status': 'open', 'service': port_service.get_service(port)}]})
         except Exception as e:
-            print(e)
-            pass
+            logger.error(traceback.format_exc())
 
         return results
 
@@ -129,8 +130,8 @@ class Masscan(TaskBase):
         try:
             ip_ports = self.__masscan_scan(self.target, self.port)
         except Exception as e:
-            print(e)
-            pass
+            logger.error(traceback.format_exc())
+            logger.error('masscan target:{},port:{}'.format(self.target,self.port))
 
         return ip_ports
 
@@ -145,4 +146,6 @@ class Masscan(TaskBase):
 
             return result
         except Exception as e:
+            logger.error(traceback.format_exc())
+            
             return {'status': 'fail', 'msg': str(e)}

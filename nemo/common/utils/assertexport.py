@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
 # coding:utf-8
+import traceback
 from copy import copy
 from tempfile import NamedTemporaryFile
 
 from openpyxl import load_workbook
 
 from nemo.common.utils.assertinfoparser import AssertInfoParser
+from nemo.common.utils.loggerutils import logger
 from nemo.core.database.attr import DomainAttr
 from nemo.core.database.domain import Domain
 from nemo.core.database.ip import Ip
@@ -129,7 +131,7 @@ def export_ips(org_id=None, domain_address=None, ip_address=None, port=None):
                     ws.cell(column=9, row=row_start,
                             value="{0}".format(port['update_datetime']))
                 except:
-                    pass
+                    logger.error(traceback.format_exc())
                 finally:
                     row_start += 1
         else:

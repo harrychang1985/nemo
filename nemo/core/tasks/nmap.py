@@ -2,10 +2,12 @@
 # coding:utf-8
 import os
 import re
+import traceback
 import subprocess
 from tempfile import NamedTemporaryFile
 
 from nemo.common.utils.config import load_config
+from nemo.common.utils.loggerutils import logger
 
 from .taskbase import TaskBase
 
@@ -118,7 +120,8 @@ class Nmap(TaskBase):
             for ip in self.target:
                 ip_ports.extend(self.__nmap_scan(ip, self.port))
         except Exception as e:
-            pass
+            logger.error(traceback.format_exc())
+            logger.error('nmap scan target:{},port:{}'.format(self.target,self.port))
 
         return ip_ports
 
@@ -133,4 +136,5 @@ class Nmap(TaskBase):
 
             return result
         except Exception as e:
+            logger.error(traceback.format_exc())
             return {'status': 'fail', 'msg': str(e)}

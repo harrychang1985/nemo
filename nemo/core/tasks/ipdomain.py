@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
 # coding:utf-8
 import re
-
+import traceback
 import dns.resolver
 import requests
 
 from nemo.common.utils.iputils import check_ip_or_domain
+from nemo.common.utils.loggerutils import logger
 from nemo.core.database.domain import Domain
 from nemo.core.database.ip import Ip
 
@@ -49,7 +50,8 @@ class IpDomain(TaskBase):
                     elif j.rdtype == 1:
                         iplist['A'].append(j.address)
         except Exception as e:
-            pass
+            logger.error(traceback.format_exc())
+            logger.error('fetch ip of domain:{}'.format(domain))
 
         return iplist
 
@@ -64,7 +66,8 @@ class IpDomain(TaskBase):
                 m = re.findall(p, r.text)
                 return m
         except:
-            pass
+            logger.error(traceback.format_exc())
+            logger.error('fetch same domain of ip:{}'.format(ip))
 
         return []
 

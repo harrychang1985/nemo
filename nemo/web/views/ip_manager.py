@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # coding:utf-8
-
+import traceback
 from flask import render_template
 from flask import Blueprint
 from flask import request
@@ -10,6 +10,7 @@ from flask import Response
 
 from nemo.common.utils.assertexport import export_ips
 from nemo.common.utils.assertinfoparser import AssertInfoParser
+from nemo.common.utils.loggerutils import logger
 from nemo.core.database.attr import PortAttr
 from nemo.core.database.ip import Ip
 from nemo.core.database.organization import Organization
@@ -89,6 +90,7 @@ def ip_asset_view():
         }
 
     except Exception as e:
+        logger.error(traceback.format_exc())
         print(e)
 
     return jsonify(json_data)

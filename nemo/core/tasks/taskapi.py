@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 # coding:utf-8
+import traceback
 import requests
 from requests.auth import HTTPBasicAuth
 
 from instance.config import ProductionConfig
-
+from nemo.common.utils.loggerutils import logger
 
 class TaskAPI():
     def __init__(self):
@@ -31,6 +32,7 @@ class TaskAPI():
             else:
                 result['status'] = 'fail'
         except Exception as e:
+            logger.error(traceback.format_exc())
             result['code'] = '-1'
             result['status'] = str(e)
 
@@ -52,6 +54,7 @@ class TaskAPI():
                               timeout=self.timeout)
             result = self.__process_result(r)
         except Exception as e:
+            logger.error(traceback.format_exc())
             result['code'] = '-1'
             result['status'] = str(e)
 
@@ -83,6 +86,7 @@ class TaskAPI():
                              params=params, timeout=self.timeout)
             result = self.__process_result(r)
         except Exception as e:
+            logger.error(traceback.format_exc())
             result['code'] = '-1'
             result['status'] = str(e)
 
@@ -98,6 +102,7 @@ class TaskAPI():
             r = requests.get(url, auth=self.auth, timeout=self.timeout)
             result = self.__process_result(r)
         except Exception as e:
+            logger.error(traceback.format_exc())
             result['code'] = '-1'
             result['status'] = str(e)
 
@@ -113,6 +118,7 @@ class TaskAPI():
             r = requests.get(url, auth=self.auth, timeout=self.timeout)
             result = self.__process_result(r)
         except Exception as e:
+            logger.error(traceback.format_exc())
             result['code'] = '-1'
             result['status'] = str(e)
 
@@ -129,6 +135,7 @@ class TaskAPI():
             r = requests.post(url, auth=self.auth, timeout=self.timeout)
             result = self.__process_result(r)
         except Exception as e:
+            logger.error(traceback.format_exc())
             result['code'] = '-1'
             result['status'] = str(e)
 
@@ -144,6 +151,7 @@ class TaskAPI():
             r = requests.get(url, auth=self.auth, timeout=self.timeout)
             result = self.__process_result(r)
         except Exception as e:
+            logger.error(traceback.format_exc())
             result['code'] = '-1'
             result['status'] = str(e)
 

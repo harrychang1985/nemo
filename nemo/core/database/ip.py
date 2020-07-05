@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
 # coding:utf-8
+import traceback
 import ipaddress
 import re
 
 from . import dbutils
 from . import daobase
 
+from nemo.common.utils.loggerutils import logger
 
 class Ip(daobase.DAOBase):
     def __init__(self):
@@ -90,8 +92,8 @@ class Ip(daobase.DAOBase):
                     sql.append(' ip=%s ')
                 link_word = ' and '
             except Exception as e:
-                print(e)
-                pass
+                logger.error(traceback.format_exc())
+                logger.error('ip address wrong:{}'.format(ip))
         if port:
             sql.append(link_word)
             sql.append(' id in (select distinct ip_id from port where ')
@@ -104,8 +106,8 @@ class Ip(daobase.DAOBase):
                     param.append(p_int)
                     port_link_word = ' or '
                 except Exception as e:
-                    print(e)
-                    pass
+                    logger.error(traceback.format_exc())
+                    logger.error('port error:{}'.format(port))
             sql.append(')')
             link_word = ' and '
 

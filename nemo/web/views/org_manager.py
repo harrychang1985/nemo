@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
 # coding:utf-8
-
+import traceback
 from flask import request
 from flask import render_template
 from flask import Blueprint
 from flask import jsonify
 
 from nemo.core.database.organization import Organization
+from nemo.common.utils.loggerutils import logger
 
 from .authenticate import login_check
 
@@ -110,6 +111,7 @@ def org_list_view():
             'data': org_list,
         }
     except Exception as e:
+        logger.error(traceback.format_exc())
         print(e)
 
     return jsonify(json_data)

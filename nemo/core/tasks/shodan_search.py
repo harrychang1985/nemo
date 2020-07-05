@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 # coding:utf-8
+import traceback
 import shodan
 
 from instance.config import APIConfig
 from nemo.common.utils.iputils import check_ip_or_domain, parse_ip
+from nemo.common.utils.loggerutils import logger
 
 from .taskbase import TaskBase
 
@@ -40,6 +42,7 @@ class Shodan(TaskBase):
             host = api.host(target)
             return self.__parse_ip_port(host)
         except Exception as ex:
+            logger.error(traceback.format_exc())
             print(ex)
             return None
 

@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 # coding:utf-8
+import traceback
 from copy import deepcopy
 from datetime import datetime
 
@@ -10,6 +11,7 @@ from flask import jsonify
 from tld import get_fld
 
 from nemo.common.utils.config import load_config
+from nemo.common.utils.loggerutils import logger
 from nemo.core.tasks.taskapi import TaskAPI
 
 from .authenticate import login_check
@@ -113,6 +115,7 @@ def task_start_portscan_view():
 
         return jsonify(result)
     except Exception as e:
+        logger.error(traceback.format_exc())
         print(e)
         return jsonify({'status': 'fail', 'msg': str(e)})
 
@@ -174,6 +177,7 @@ def task_start_domainscan_view():
 
         return jsonify(result)
     except Exception as e:
+        logger.error(traceback.format_exc())
         print(e)
         return jsonify({'status': 'fail', 'msg': str(e)})
 
@@ -221,6 +225,7 @@ def task_list_view():
         }
         return jsonify(json_data)
     except Exception as e:
+        logger.error(traceback.format_exc())
         print(e)
 
 

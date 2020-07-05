@@ -2,10 +2,12 @@
 # coding:utf-8
 from multiprocessing.dummy import Pool
 import re
+import traceback
 
 import requests
 
 from nemo.common.utils.iputils import check_ip_or_domain, parse_ip
+from nemo.common.utils.loggerutils import logger
 from nemo.core.database.ip import Ip
 
 from .domainscan import IpDomain
@@ -62,7 +64,8 @@ class IpLocation(TaskBase):
                             m = re.findall(p, r3.text)
                             return m
         except:
-            pass
+            logger.error(traceback.format_exc())
+            logger.error('fetch ip location from 7188,ip:{}'.format(ip))
 
         return None
 
@@ -78,7 +81,8 @@ class IpLocation(TaskBase):
                 m = re.findall(p, r.text)
                 return m
         except:
-            pass
+            logger.error(traceback.format_exc())
+            logger.error('fetch ip location from ipcn,ip:{}'.format(ip))
 
         return None
 

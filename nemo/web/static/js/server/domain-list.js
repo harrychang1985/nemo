@@ -108,14 +108,18 @@ $(function () {
                 {
                     data: "title", title: "标题", width: "25%",
                     "render": function (data, type, row, meta) {
-                        var strData = '<div style="width:100%;white-space:normal;word-wrap:break-word;word-break:break-all;">' + data + '</div>'
+                        var title=data.substr(0,100);
+                        if(data.length>100) title += '......';
+                        var strData = '<div style="width:100%;white-space:normal;word-wrap:break-word;word-break:break-all;">' + title + '</div>'
                         return strData;
                     }
                 },
                 {
                     data: "banner", title: "Banner", width: "25%",
                     "render": function (data, type, row, meta) {
-                        var strData = '<div style="width:100%;white-space:normal;word-wrap:break-word;word-break:break-all;">' + data + '</div>'
+                        var title=data.substr(0,100);
+                        if(data.length>100) title += '......';
+                        var strData = '<div style="width:100%;white-space:normal;word-wrap:break-word;word-break:break-all;">' + title + '</div>'
                         return strData;
                     }
                 },

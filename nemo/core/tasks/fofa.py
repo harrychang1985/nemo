@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 # coding:utf-8
 import base64
-
+import traceback
 import requests
 
 from instance.config import APIConfig
 from nemo.common.utils.iputils import check_ip_or_domain, parse_ip
-
+from nemo.common.utils.loggerutils import logger
 from .taskbase import TaskBase
 
 
@@ -49,6 +49,9 @@ class Fofa(TaskBase):
             return req.json()
         except requests.exceptions.ConnectionError:
             error_msg = {"error": True, "errmsg": "Connect error"}
+            logger.error(traceback.format_exc())
+            logger.error(error_msg)
+
             return error_msg
 
     def __get_data(self, query_str='', page=1, fields='host,ip,port'):
@@ -65,7 +68,9 @@ class Fofa(TaskBase):
             return req.json()
         except requests.exceptions.ConnectionError:
             error_msg = {"error": True, "errmsg": "Connect error"}
-            # print(error_msg)
+            logger.error(traceback.format_exc())
+            logger.error(error_msg)
+            
             return None
 
     def __fofa_search(self, query_str):
