@@ -45,10 +45,13 @@ brew install mysql@5.7
 
 ```
 brew install nmap masscan
-# 因为nmap的SYN扫描需要root权限，为避免使用sudo，为nmap设置root权限的suid
+# 因为nmap、masscan的SYN扫描需要root权限，为避免使用sudo，设置root权限的suid
 cd /usr/local/Cellar/nmap/7.80_1/bin
 sudo chown root nmap
 sudo chmod u+s nmap
+cd /usr/local/Cellar/masscan/1.0.5/bin
+sudo chown root masscan
+sudo chmod u+s masscan
 ```
 
 ### 4、whatweb
