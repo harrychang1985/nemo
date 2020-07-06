@@ -7,6 +7,7 @@ import traceback
 import requests
 
 from nemo.common.utils.iputils import check_ip_or_domain, parse_ip
+from nemo.common.utils.parseiplocation import IPLocationCustom
 from nemo.common.utils.loggerutils import logger
 from nemo.core.database.ip import Ip
 
@@ -35,6 +36,8 @@ class IpLocation(TaskBase):
             'User-Agent': 'Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 5.1; Trident/4.0)'}
         self.timeout = 5
         self.threads = 5
+
+        self.iplocation_custom = None
        
 
     def __fetch_iplocation_from_7188(self, ip):
@@ -110,12 +113,20 @@ class IpLocation(TaskBase):
                 if len(iplist['CNAME']) == 0 and len(iplist['A']) > 0:
                     for ip in iplist['A']:
                         self.target.append({'ip': ip})
+        # 自定义IP与位置
+        self.iplocation_custom = IPLocationCustom()
 
     def __execute(self, ip):
         '''查询IP归属地
         '''
         if 'ip' not in ip:
             return
+        # 查询自定义IP
+        ip_loc = self.iplocation_custom.get_iplocation(ip['ip'])
+        if ip_loc:
+            ip['location'] = ip_loc
+            return 
+        # 从第三方接口查询IP
         ip_loc = self.__fetch_iplocation_from_7188(ip['ip'])
         if ip_loc and len(ip_loc) > 0:
             ip['location'] = ','.join(ip_loc)

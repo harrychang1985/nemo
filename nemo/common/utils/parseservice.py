@@ -19,7 +19,13 @@ class ParsePortService():
         # 自定义端口
         self.custom_service_file = 'nemo/common/utils/custom-services.txt'
         self.custom_port_service = {}
-        # 读取映射关系:nmap-services
+
+        self.__load_services()
+        
+
+    def __load_services(self):
+        '''读取映射关系:nmap-services
+        '''
         try:
             with open(self.nmap_services_file) as f:
                 for line in f:
@@ -32,7 +38,6 @@ class ParsePortService():
                         port = datas[1]
                         self.port_service[port] = service
         except FileNotFoundError:
-            logger.error(traceback.format_exc())
             logger.error('nmap-services file not found')
         except:
             logger.error(traceback.format_exc())
@@ -49,7 +54,6 @@ class ParsePortService():
                         service = datas[1].strip()
                         self.custom_port_service[port] = service
         except FileNotFoundError:
-            logger.error(traceback.format_exc())
             logger.error('custom-services.txt file not found')
         except:
             logger.error(traceback.format_exc())
