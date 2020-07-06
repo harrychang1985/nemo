@@ -8,6 +8,7 @@ from tempfile import NamedTemporaryFile
 
 from nemo.common.utils.config import load_config
 from nemo.common.utils.loggerutils import logger
+from nemo.common.utils.parseservice import ParsePortService
 
 from .taskbase import TaskBase
 
@@ -53,6 +54,7 @@ class Nmap(TaskBase):
         '''解析nmap扫描输出的grepable文件
         '''
         results = []
+        service_app = ParsePortService()
         for line in nmap_grepable_file.split(os.linesep):
             line_str = line.strip()
             if line_str.startswith('#'):
@@ -72,6 +74,9 @@ class Nmap(TaskBase):
                         port = int(p[0].strip())
                         service = p[4].strip()
                         banner = p[6].strip()
+                        service_custom = service_app.get_service(port)
+                        if service_custom and service_custom != 'unknown':
+                            service = service_custom
                         ports.append(
                             {'port': port, 'service': service, 'banner': banner, 'status': status})
                 results.append({'ip': ip, 'status': 'alive', 'port': ports})

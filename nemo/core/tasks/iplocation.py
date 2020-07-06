@@ -113,8 +113,6 @@ class IpLocation(TaskBase):
                 if len(iplist['CNAME']) == 0 and len(iplist['A']) > 0:
                     for ip in iplist['A']:
                         self.target.append({'ip': ip})
-        # 自定义IP与位置
-        self.iplocation_custom = IPLocationCustom()
 
     def __execute(self, ip):
         '''查询IP归属地
@@ -138,6 +136,9 @@ class IpLocation(TaskBase):
     def execute(self, target_list):
         '''执行任务
         '''
+         # 自定义IP与位置
+        self.iplocation_custom = IPLocationCustom()
+        
         pool = Pool(self.threads)
         pool.map(self.__execute, target_list)
         pool.close()
