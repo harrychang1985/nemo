@@ -64,7 +64,7 @@ class DAOBase():
 
     def add(self, data):
         '''增加一条记录
-        data:   增加的字段和值，字典格式如{'name':'sgcc','sort_order':300}
+        data:   增加的字段和值，字典格式如{'name':'google','sort_order':300}
         '''
         self.set_default_datetime(data)
         # sql语句
@@ -81,7 +81,7 @@ class DAOBase():
     def update(self, Id, data):
         '''更新一条记录
         Id:     记录的id
-        data:   要更新的字段和值，字典格式如{'name':'sgcc','sort_order':300}
+        data:   要更新的字段和值，字典格式如{'name':'google','sort_order':300}
         '''
         self.update_datetime(data)
         # sql语句

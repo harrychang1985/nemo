@@ -30,7 +30,7 @@ def domain_asset_view():
         org_list = org_table.gets()
         if not org_list:
             org_list = []
-        org_list.insert(0, {'id': '', 'org_name': '--选择组织机构--'})
+        org_list.insert(0, {'id': '', 'org_name': '--组织机构--'})
 
         data = {'org_list': org_list, 'domain_address': session.get(
             'domain_address', default=''), 'ip_address_domain': session.get('ip_address_domain', default=''), 'session_org_id': session.get('session_org_id', default='')}

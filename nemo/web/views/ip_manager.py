@@ -30,7 +30,7 @@ def ip_asset_view():
         org_list = org_table.gets()
         if not org_list:
             org_list = []
-        org_list.insert(0, {'id': '', 'org_name': '--选择组织机构--'})
+        org_list.insert(0, {'id': '', 'org_name': '--组织机构--'})
 
         data = {'org_list': org_list, 'ip_address_ip': session.get('ip_address_ip', default=''), 'domain_address': session.get('domain_address', default=''),
                 'port': session.get('port', default=''), 'session_org_id': session.get('session_org_id', default='')}
@@ -52,6 +52,8 @@ def ip_asset_view():
         ip_address = request.form.get('ip_address')
         domain_address = request.form.get('domain_address')
         port = request.form.get('port')
+        content = request.form.get('content')
+        iplocation = request.form.get('iplocation')
 
         session['ip_address_ip'] = ip_address
         session['domain_address'] = domain_address
@@ -59,8 +61,8 @@ def ip_asset_view():
         session['session_org_id'] = org_id
 
         count = 0
-        ips = ip_table.gets_by_org_domain_ip_port(org_id, domain_address,
-                                                  ip_address, port, page=(start//length)+1, rows_per_page=length)
+        ips = ip_table.gets_by_search(org_id=org_id, domain=domain_address, ip=ip_address,
+                                                  port=port, content=content,iplocation=iplocation,page=(start//length)+1, rows_per_page=length)
         if ips:
             for ip_row in ips:
                 port_list, title_set, banner_set, ports_attr_info = aip.get_ip_port_info(
@@ -80,8 +82,8 @@ def ip_asset_view():
                 })
                 index += 1
 
-            count = ip_table.count_by_org_domain_ip_port(
-                org_id, domain_address, ip_address, port)
+            count = ip_table.count_by_search(org_id=org_id, domain=domain_address,
+                                                  ip=ip_address, port=port, content=content,iplocation=iplocation)
         json_data = {
             'draw': draw,
             'recordsTotal': count,
@@ -147,8 +149,10 @@ def ip_export_view():
     domain_address = request.args.get('domain_address')
     ip_address = request.args.get('ip_address')
     port = request.args.get('port')
+    content = request.args.get('content')
+    iplocation = request.args.get('iplocation')
 
-    data = export_ips(org_id, domain_address, ip_address, port)
+    data = export_ips(org_id, domain_address, ip_address, port,content,iplocation)
     response = Response(data, content_type='application/octet-stream')
     response.headers["Content-disposition"] = 'attachment; filename={}'.format(
         "ip-export.xlsx")
@@ -165,9 +169,11 @@ def ip_statistics_view():
     domain_address = request.args.get('domain_address')
     ip_address = request.args.get('ip_address')
     port = request.args.get('port')
+    content = request.args.get('content')
+    iplocation = request.args.get('iplocation')
 
     ip_list, ip_c_set, port_set = AssertInfoParser().statistics_ip(
-        org_id, domain_address, ip_address, port)
+        org_id, domain_address, ip_address, port,content,iplocation)
     data = []
     data.append('Port:')
     data.append(','.join([str(x) for x in sorted(port_set)]))

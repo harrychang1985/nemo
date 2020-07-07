@@ -98,6 +98,8 @@ $(function () {
         url += '&domain_address=' + encodeURI($('#domain_address').val());
         url += '&ip_address=' + encodeURI($('#ip_address').val());
         url += '&port=' + encodeURI($('#port').val());
+        url += '&content=' + encodeURI($('#content').val());
+        url += '&iplocation=' + encodeURI($('#iplocation').val());
         window.open(url);
     });
     $("#ip_statistics").click(function () {
@@ -106,6 +108,8 @@ $(function () {
         url += '&domain_address=' + encodeURI($('#domain_address').val());
         url += '&ip_address=' + encodeURI($('#ip_address').val());
         url += '&port=' + encodeURI($('#port').val());
+        url += '&content=' + encodeURI($('#content').val());
+        url += '&iplocation=' + encodeURI($('#iplocation').val());
         window.open(url);
     });
     //IP列表
@@ -126,7 +130,9 @@ $(function () {
                         "org_id": $('#select_org_id_search').val(),
                         "domain_address": $('#domain_address').val(),
                         "ip_address": $('#ip_address').val(),
-                        "port": $('#port').val()
+                        "port": $('#port').val(),
+                        "content": $('#content').val(),
+                        "iplocation": $('#iplocation').val()
                     });
                 }
             },

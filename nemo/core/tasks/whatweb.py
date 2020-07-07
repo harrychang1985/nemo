@@ -16,13 +16,13 @@ class WhatWeb(TaskBase):
     '''调用WhatWeb的获取CMS的指纹
     参数:options  
             {   
-                'target':   [url1,url2,ur3...],url列表可是以doamin或IP:PORT，如www.cq.sgcc.com.cn 或 58.17.138.70:80
+                'target':   [url1,url2,ur3...],url列表可是以doamin或IP:PORT，如www.google.com 或 8.8.8.8:80
                 'org_id':   id,target关联的组织机构ID
             }
     任务结果:
         保存为ip或domain资产格式的列表：
         [{'ip':'192.168.1.1','port':[{'port':80,'whatweb':'xxx,yyy,zzz','source':'whatweb'},...]},...]
-        [{'domain':'www.cq.sgcc.com.cn','whatweb':['xxx',]},...]
+        [{'domain':'www.google.com,'whatweb':['xxx',]},...]
     '''
 
     def __init__(self):

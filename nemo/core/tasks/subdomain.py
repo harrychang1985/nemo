@@ -16,8 +16,8 @@ class SubDmain(TaskBase):
             }
     任务结果：
         保存为domain资产的格式
-        {'domain': 'www.sgcc.com.cn', 'CNAME': [], 'A': ['210.77.176.16']}, 
-        {'domain': '95598.gd.csg.cn', 'CNAME': [], 'A': ['121.8.169.18']}]
+        {'domain': 'www.google.com', 'CNAME': [], 'A': ['8.8.8.8']}, 
+        {'domain': 'dns.google.com', 'CNAME': [], 'A': ['9.9.9.9']}]
     '''
 
     def __init__(self):

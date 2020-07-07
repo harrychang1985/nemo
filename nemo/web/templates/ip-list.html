@@ -11,7 +11,7 @@
       <div class="tile">
         <div class="tile-body">
           <form class="row">
-            <div class="form-group col-md-2">
+            <div class="form-group col-sm-2">
               <label class="control-label" for="select_org_id_search">组织机构
               </label>
               <select class="form-control" title="机构组构" id="select_org_id_search">
@@ -34,17 +34,44 @@
               <label class="control-label" for="port">Port</label>
               <input class="form-control" type="text" id="port" placeholder="端口（多个以逗号分隔）" value="{{ data['port']}}">
             </div>
+
             <div class="form-group col-md-4 align-self-end">
+              <div class="btn-group" role="group">
+                <button id="btnGroupDrop1" type="button" class="btn btn-secondary dropdown-toggle"
+                  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  功能
+                </button>
+                <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
+                  <a class="dropdown-item" href="#" id="export_excel"><i
+                      class="fa fa-fw fa-lg fa-file-excel-o"></i>导出</a>
+                  <a class="dropdown-item" href="#" id="ip_statistics"><i
+                      class="fa fa-fw fa-lg fa-line-chart"></i>统计</a>
+                  <a class="dropdown-item btn" data-toggle="collapse" href="#collapseExample" role="button"
+                    aria-expanded="false" aria-controls="collapseExample">
+                    </i>更多筛选条件
+                  </a>
+                </div>
+              </div>
               <button class="btn btn-primary" type="button" id="search"><i
                   class="fa fa-fw fa-lg fa-check-circle"></i>搜索</button>
-              <button class="btn btn-primary" type="button" id="export_excel">
-                <i class="fa fa-fw fa-lg fa-file-excel-o"></i>导出</button>
-              <button class="btn btn-primary" type="button" id="ip_statistics">
-                <i class="fa fa-fw fa-lg fa-line-chart"></i>统计</button>
               <button class="btn btn-primary" type="button" id="create_task"><i class="fa fa-plus"></i>新建任务</button>
             </div>
             <input type="hidden" value="{{ data['session_org_id'] }}" id="hidden_org_id">
           </form>
+        </div>
+        <div>
+          <div class="collapse" id="collapseExample">
+            <form class="row">
+              <div class="form-group col-md-2">
+                <label class="control-label" for="iplocation">IP归属地</label>
+                <input class="form-control" type="text" id="iplocation" placeholder="归属地(模糊搜索）" value="">
+              </div>
+              <div class="form-group col-md-2">
+                <label class="control-label" for="content">属性</label>
+                <input class="form-control" type="text" id="content" placeholder="属性内容(模糊搜索）" value="">
+              </div>
+            </form>
+          </div>
         </div>
       </div>
       <div class="tile">

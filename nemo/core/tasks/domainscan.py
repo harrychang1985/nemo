@@ -24,7 +24,7 @@ class DomainScan(TaskBase):
         }
     任务结果：
         保存为domain资产的格式
-        {'domain': 'www.sgcc.com.cn', 'CNAME': [], 'A': ['210.77.176.16'],'title':['aaa','bbb']}, 
+        {'domain': 'www.google.com', 'CNAME': [], 'A': ['8.8.8.8'],'title':['aaa','bbb']}, 
     注意：
         fofasearch、portscan不由DomainScan启动，由上一级调用者进行启动
     '''

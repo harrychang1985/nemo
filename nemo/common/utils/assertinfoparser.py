@@ -146,7 +146,7 @@ class AssertInfoParser():
 
         return domain_info
 
-    def statistics_ip(self, org_id=None, domain_address=None, ip_address=None, port=None):
+    def statistics_ip(self, org_id=None, domain_address=None, ip_address=None, port=None, content=None, iplocation=None):
         '''根据查询条件，统计IP、IP的C段地址和相关的所有端口
         '''
         ip_table = Ip()
@@ -155,8 +155,8 @@ class AssertInfoParser():
         ip_list = []
         ip_c_set = set()
         port_set = set()
-        ips = ip_table.gets_by_org_domain_ip_port(org_id, domain_address, ip_address, port,
-                                                  page=1, rows_per_page=100000)
+        ips = ip_table.gets_by_search(org_id=org_id, domain=domain_address, ip=ip_address, port=port, content=content,
+                                      iplocation=iplocation, page=1, rows_per_page=100000)
         if ips:
             for ip_row in ips:
                 # ip

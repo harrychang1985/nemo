@@ -21,9 +21,9 @@ class IpDomain(TaskBase):
             }
     任务结果：
         保存为ip或domain资产的格式
-        [{'ip': '218.19.148.193', 'location': 'xxx'}, {'ip': '121.8.169.18', 'location': 'xxx'}, 
-        {'domain': 'www.sgcc.com.cn', 'CNAME': [], 'A': ['210.77.176.16']}, 
-        {'domain': '95598.gd.csg.cn', 'CNAME': [], 'A': ['121.8.169.18']}]
+        [{'ip': '7.7.7.7', 'location': 'xxx'}, {'ip': '8.8.8.8', 'location': 'xxx'}, 
+        {'domain': 'www.google.com', 'CNAME': [], 'A': ['8.8.8.8']}, 
+        {'domain': 'dns.google.com', 'CNAME': [], 'A': ['8.8.8.8']}]
     '''
 
     def __init__(self):
