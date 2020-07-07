@@ -11,9 +11,9 @@ class IPLocationCustom():
     '''
 
     def __init__(self):
-        self.iplocation_custome_file = 'nemo/common/utils/iplocation_custom.txt'
+        self.iplocation_custome_file = 'nemo/common/utils/iplocation-custom.txt'
         self.ip_location_dict = {}
-
+        # 加载IP地址定义
         self.__load_iplocation()
 
     def __load_iplocation(self):
@@ -25,13 +25,15 @@ class IPLocationCustom():
                     txt = line.strip()
                     if not txt:
                         continue
+                    if txt.startswith('#'):
+                        continue
                     datas = txt.split(' ')
                     if datas and len(datas) >= 2:
                         ip = datas[0].strip()
                         location = datas[1].strip()
                         self.ip_location_dict[ip] = location
         except FileNotFoundError:
-            logger.error('iplocation_custom.txt file not found')
+            logger.error('iplocation-custom file not found')
         except:
             logger.error(traceback.format_exc())
 

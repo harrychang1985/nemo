@@ -55,7 +55,8 @@ class AssertInfoParser():
                 if port_attr_obj['tag'] == 'title':
                     title_set.add(port_attr_obj['content'])
                 elif port_attr_obj['tag'] in ('banner', 'tag', 'server'):
-                    banner_set.add(port_attr_obj['content'])
+                    if port_attr_obj['content'] and port_attr_obj['content']!='unknown':
+                        banner_set.add(port_attr_obj['content'])
 
                 ports_attr_info.append(pai)
 

@@ -54,7 +54,7 @@ class ParsePortService():
                         service = datas[1].strip()
                         self.custom_port_service[port] = service
         except FileNotFoundError:
-            logger.error('custom-services.txt file not found')
+            logger.error('custom-services file not found')
         except:
             logger.error(traceback.format_exc())
 

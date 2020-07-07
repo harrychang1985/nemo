@@ -10,7 +10,7 @@
             <div class="bs-component">
                 <div class="card">
                     <h4 class="card-header">
-                        <a  href="http://{{ ip_info['ip'] }}" target="_blank">{{ ip_info['ip'] }}</a>
+                        <a href="http://{{ ip_info['ip'] }}" target="_blank">{{ ip_info['ip'] }}</a>
                     </h4>
                     <div class="card-body">
                         {% if ip_info['domain'] %}
@@ -81,11 +81,11 @@
                             {% endif %}
                             <td>
                                 {% if row['ip'] and row['port']%}
-                                    {% if row['port']==443 %}
-                                    <a href="https://{{ row['ip'] }}" target="_blank">{{ row['ip'] }}</a>
-                                    {% else %}
-                                    <a href="http://{{ row['ip'] }}:{{ row['port'] }}" target="_blank">{{ row['ip'] }}</a>
-                                    {% endif %}
+                                {% if row['port']==443 %}
+                                <a href="https://{{ row['ip'] }}" target="_blank">{{ row['ip'] }}</a>
+                                {% else %}
+                                <a href="http://{{ row['ip'] }}:{{ row['port'] }}" target="_blank">{{ row['ip'] }}</a>
+                                {% endif %}
                                 {% endif %}
                             </td>
                             <td>{{ row['port'] }}</td>
@@ -100,13 +100,13 @@
                             </td>
                             <td>{{ row['tag'] }}</td>
                             <td>
-                                <div style="width:100%;white-space:normal;word-wrap:break-word;word-break:break-all;">
+                                <div id="div_content" style="width:100%;white-space:normal;word-wrap:break-word;word-break:break-all;">
                                     {{ row['content'] }}
                                 </div>
                             </td>
                             <td>{{ row['update_datetime'] }}</td>
-                            <td><a class="btn btn-sm btn-danger" href="javascript:delete_port_attr({{ row['id'] }})" role="button" title="Delete"><i
-                                        class="fa fa-trash-o"></i></a>
+                            <td><a class="btn btn-sm btn-danger" href="javascript:delete_port_attr({{ row['id'] }})"
+                                    role="button" title="Delete"><i class="fa fa-trash-o"></i></a>
                             </td>
                         </tr>
                         {% endfor %}
