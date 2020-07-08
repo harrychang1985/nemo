@@ -150,12 +150,12 @@ $(function () {
                 {
                     data: "ip",
                     title: "IP地址",
-                    width: "12%",
+                    width: "10%",
                     render: function (data, type, row, meta) {
                         return '<a href="/ip-info?ip=' + data + '" target="_blank">' + data + '</a>';
                     }
                 },
-                { data: "location", title: "归属地", width: "10%" },
+                { data: "location", title: "归属地", width: "12%" },
                 {
                     data: "port", title: "开放端口", width: "15%",
                     "render": function (data, type, row, meta) {
