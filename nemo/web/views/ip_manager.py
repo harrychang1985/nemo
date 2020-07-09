@@ -62,14 +62,14 @@ def ip_asset_view():
 
         count = 0
         ips = ip_table.gets_by_search(org_id=org_id, domain=domain_address, ip=ip_address,
-                                                  port=port, content=content,iplocation=iplocation,page=(start//length)+1, rows_per_page=length)
+                                      port=port, content=content, iplocation=iplocation, page=(start//length)+1, rows_per_page=length)
         if ips:
             for ip_row in ips:
                 port_list, title_set, banner_set, ports_attr_info = aip.get_ip_port_info(
                     ip_row['ip'], ip_row['id'])
                 ip_list.append({
-                    'id': ip_row['id'],  
-                    "index": index+start,  
+                    'id': ip_row['id'],
+                    "index": index+start,
                     "org_name": org_table.get(int(ip_row['org_id']))['org_name'] if ip_row['org_id'] else '',
                     "ip": ip_row['ip'],
                     "status": ip_row['status'],
@@ -83,7 +83,7 @@ def ip_asset_view():
                 index += 1
 
             count = ip_table.count_by_search(org_id=org_id, domain=domain_address,
-                                                  ip=ip_address, port=port, content=content,iplocation=iplocation)
+                                             ip=ip_address, port=port, content=content, iplocation=iplocation)
         json_data = {
             'draw': draw,
             'recordsTotal': count,
@@ -152,7 +152,8 @@ def ip_export_view():
     content = request.args.get('content')
     iplocation = request.args.get('iplocation')
 
-    data = export_ips(org_id, domain_address, ip_address, port,content,iplocation)
+    data = export_ips(org_id, domain_address, ip_address,
+                      port, content, iplocation)
     response = Response(data, content_type='application/octet-stream')
     response.headers["Content-disposition"] = 'attachment; filename={}'.format(
         "ip-export.xlsx")
@@ -172,14 +173,21 @@ def ip_statistics_view():
     content = request.args.get('content')
     iplocation = request.args.get('iplocation')
 
-    ip_list, ip_c_set, port_set = AssertInfoParser().statistics_ip(
-        org_id, domain_address, ip_address, port,content,iplocation)
+    ip_list, ip_c_set, port_set, port_count_dict = AssertInfoParser().statistics_ip(
+        org_id, domain_address, ip_address, port, content, iplocation)
     data = []
-    data.append('Port:')
+    data.append('Port: ({})'.format(len(port_set)))
     data.append(','.join([str(x) for x in sorted(port_set)]))
-    data.append('\nNetwork:')
+
+    port_count_list = sorted(port_count_dict.items(),
+                             key=lambda x: x[1], reverse=True)
+    data.append('\nPort Count:')
+    for pc in port_count_list:
+        data.append('{:<6}:{}'.format(pc[0], pc[1]))
+
+    data.append('\nNetwork: ({})'.format(len(ip_c_set)))
     data.extend(sorted(ip_c_set))
-    data.append('\nIP:')
+    data.append('\nIP: ({})'.format(len(ip_list)))
     data.extend(ip_list)
     response = Response(
         '\n'.join(data), content_type='application/octet-stream')
