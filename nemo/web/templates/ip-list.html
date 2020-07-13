@@ -36,10 +36,13 @@
             </div>
 
             <div class="form-group col-md-4 align-self-end">
+              <button class="btn btn-primary" type="button" id="search"><i
+                  class="fa fa-fw fa-lg fa-search"></i>搜索</button>
+              <button class="btn btn-primary" type="button" id="create_task"><i class="fa fa-plus"></i>新建任务</button>
               <div class="btn-group" role="group">
                 <button id="btnGroupDrop1" type="button" class="btn btn-secondary dropdown-toggle"
                   data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  功能
+                  <i class="fa fa-angle-double-down"></i>功能
                 </button>
                 <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
                   <a class="dropdown-item" href="#" id="export_excel"><i
@@ -52,9 +55,6 @@
                   </a>
                 </div>
               </div>
-              <button class="btn btn-primary" type="button" id="search"><i
-                  class="fa fa-fw fa-lg fa-check-circle"></i>搜索</button>
-              <button class="btn btn-primary" type="button" id="create_task"><i class="fa fa-plus"></i>新建任务</button>
             </div>
             <input type="hidden" value="{{ data['session_org_id'] }}" id="hidden_org_id">
           </form>

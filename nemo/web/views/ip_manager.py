@@ -173,7 +173,7 @@ def ip_statistics_view():
     content = request.args.get('content')
     iplocation = request.args.get('iplocation')
 
-    ip_list, ip_c_set, port_set, port_count_dict = AssertInfoParser().statistics_ip(
+    ip_list, ip_c_set, port_set, port_count_dict,ip_port_list = AssertInfoParser().statistics_ip(
         org_id, domain_address, ip_address, port, content, iplocation)
     data = []
     data.append('Port: ({})'.format(len(port_set)))
@@ -189,6 +189,9 @@ def ip_statistics_view():
     data.extend(sorted(ip_c_set))
     data.append('\nIP: ({})'.format(len(ip_list)))
     data.extend(ip_list)
+    data.append('\nTarget: ({})'.format(len(ip_port_list)))
+    data.extend(ip_port_list)
+
     response = Response(
         '\n'.join(data), content_type='application/octet-stream')
     response.headers["Content-disposition"] = 'attachment; filename={}'.format(

@@ -155,6 +155,7 @@ class AssertInfoParser():
         port_table = Port()
 
         ip_list = []
+        ip_port_list = []
         ip_c_set = set()
         port_set = set()
         #统计每个端口出现的次数
@@ -174,5 +175,6 @@ class AssertInfoParser():
                 for port_obj in ports_obj:
                     port_set.add(port_obj['port'])
                     port_count_dict[str(port_obj['port'])] += 1
+                    ip_port_list.append('{}:{}'.format(ip_row['ip'],port_obj['port']))
 
-        return ip_list, ip_c_set, port_set,port_count_dict
+        return ip_list, ip_c_set, port_set,port_count_dict,ip_port_list
