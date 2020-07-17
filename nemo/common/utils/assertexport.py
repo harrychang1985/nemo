@@ -50,15 +50,15 @@ def _get_domains(org_id, domain_address, ip_address):
     return domain_list
 
 
-def _get_ips(org_id, domain_address, ip_address, port, content, iplocation):
+def _get_ips(org_id, domain_address, ip_address, port, content, iplocation, port_status):
     '''获取IP
     '''
     ip_table = Ip()
     aip = AssertInfoParser()
 
     ip_list = []
-    ips = ip_table.gets_by_search(org_id=org_id, domain=domain_address,
-                                  ip=ip_address, port=port, content=content, iplocation=iplocation,
+    ips = ip_table.gets_by_search(org_id=org_id, domain=domain_address,ip=ip_address, port=port, 
+                                  content=content, iplocation=iplocation,port_status=port_status,
                                   page=1, rows_per_page=100000)
     if ips:
         for i, ip_row in enumerate(ips):
@@ -107,13 +107,13 @@ def export_domains(org_id=None, domain_address=None, ip_address=None):
         return data
 
 
-def export_ips(org_id=None, domain_address=None, ip_address=None, port=None, content=None, iplocation=None):
+def export_ips(org_id=None, domain_address=None, ip_address=None, port=None, content=None, iplocation=None,port_status=None):
     '''导出IP为excel文件
     '''
     wb = load_workbook(template_file_ip)
     ws = wb.active
     ips = _get_ips(org_id, domain_address, ip_address,
-                   port, content, iplocation)
+                   port, content, iplocation, port_status)
     row_start = 2
     for ip in ips:
         merged_row_start = row_start

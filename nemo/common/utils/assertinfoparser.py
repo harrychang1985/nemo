@@ -30,14 +30,17 @@ class AssertInfoParser():
     def get_ip_port_info(self, ip, ip_id):
         '''获取IP端口属性，并生成port、title、banner聚合信息
         '''
-        port_list = []
-        title_set = set()
-        banner_set = set()
-        ports_attr_info = []
+        port_list = []          # 端口列表
+        port_status_dict = {}   # 端口对应的状态字典
+        title_set = set()       # 标题聚合
+        banner_set = set()      # banner聚合
+        ports_attr_info = []    # 每一个端口的详细属性
 
         ports_obj = Port().gets(query={'ip_id': ip_id})
         for port_obj in ports_obj:
             port_list.append(port_obj['port'])
+            if port_obj['status']:
+                port_status_dict[str(port_obj['port'])] = port_obj['status']
             # 获取端口属性
             port_attrs_obj = PortAttr().gets(query={'r_id': port_obj['id']})
             FIRST_ROW = True
@@ -61,7 +64,7 @@ class AssertInfoParser():
 
                 ports_attr_info.append(pai)
 
-        return port_list, title_set, banner_set, ports_attr_info
+        return port_list, title_set, banner_set, ports_attr_info,port_status_dict
 
     def get_ip_info(self, Id):
         '''聚合一个IP的详情
@@ -81,7 +84,7 @@ class AssertInfoParser():
         else:
             ip_info.update(Organization='')
         # 端口、标题、banner、端口详情
-        port_list, title_set, banner_set, ports_attr_info = self.get_ip_port_info(
+        port_list, title_set, banner_set, ports_attr_info, port_status_dict = self.get_ip_port_info(
             ip_obj['ip'], ip_obj['id'])
         ip_info.update(port_attr=ports_attr_info)
         ip_info.update(title=list(title_set))
@@ -133,7 +136,7 @@ class AssertInfoParser():
             ip_obj = Ip().gets(query={'ip': domain_ip})
             if ip_obj and len(ip_obj) > 0:
                 #port_list, title_set, banner_set, ports_attr_info
-                p, t, b, pai = self.get_ip_port_info(
+                p, t, b, pai, ps = self.get_ip_port_info(
                     ip_obj[0]['ip'], ip_obj[0]['id'])
                 port_set.update(p)
                 title_set.update(t)
@@ -148,7 +151,7 @@ class AssertInfoParser():
 
         return domain_info
 
-    def statistics_ip(self, org_id=None, domain_address=None, ip_address=None, port=None, content=None, iplocation=None):
+    def statistics_ip(self, org_id=None, domain_address=None, ip_address=None, port=None, content=None, iplocation=None, port_status=None):
         '''根据查询条件，统计IP、IP的C段地址和相关的所有端口
         '''
         ip_table = Ip()
@@ -161,7 +164,7 @@ class AssertInfoParser():
         #统计每个端口出现的次数
         port_count_dict = defaultdict(lambda : 0)
         ips = ip_table.gets_by_search(org_id=org_id, domain=domain_address, ip=ip_address, port=port, content=content,
-                                      iplocation=iplocation, page=1, rows_per_page=100000)
+                                      iplocation=iplocation, port_status=port_status, page=1, rows_per_page=100000)
         if ips:
             for ip_row in ips:
                 # ip

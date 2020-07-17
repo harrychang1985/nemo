@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 # coding:utf-8
+import re
 import traceback
 from flask import render_template
 from flask import Blueprint
@@ -54,6 +55,7 @@ def ip_asset_view():
         port = request.form.get('port')
         content = request.form.get('content')
         iplocation = request.form.get('iplocation')
+        port_status = request.form.get('port_status')
 
         session['ip_address_ip'] = ip_address
         session['domain_address'] = domain_address
@@ -61,12 +63,19 @@ def ip_asset_view():
         session['session_org_id'] = org_id
 
         count = 0
-        ips = ip_table.gets_by_search(org_id=org_id, domain=domain_address, ip=ip_address,
-                                      port=port, content=content, iplocation=iplocation, page=(start//length)+1, rows_per_page=length)
+        ips = ip_table.gets_by_search(org_id=org_id, domain=domain_address, ip=ip_address,port=port, content=content,
+                                    iplocation=iplocation, port_status=port_status, page=(start//length)+1, rows_per_page=length)
         if ips:
             for ip_row in ips:
-                port_list, title_set, banner_set, ports_attr_info = aip.get_ip_port_info(
+                port_list, title_set, banner_set, _, port_status_dict = aip.get_ip_port_info(
                     ip_row['ip'], ip_row['id'])
+                port_with_status_list = []
+                for p in port_list:
+                    if str(p) in port_status_dict and re.match(r'^\d{3}$',port_status_dict[str(p)]):
+                        port_with_status_list.append("{}[{}]".format(p,port_status_dict[str(p)]))
+                    else:
+                        port_with_status_list.append(str(p))
+
                 ip_list.append({
                     'id': ip_row['id'],
                     "index": index+start,
@@ -76,14 +85,14 @@ def ip_asset_view():
                     "location": ip_row['location'].split(',')[0] if ip_row['location'] else '',
                     "create_time": str(ip_row['create_datetime']),
                     "update_time": str(ip_row['update_datetime']),
-                    "port": port_list,
+                    "port": port_with_status_list,
                     "title": ', '.join(list(title_set)),
                     "banner": ', '.join(list(banner_set))
                 })
                 index += 1
 
             count = ip_table.count_by_search(org_id=org_id, domain=domain_address,
-                                             ip=ip_address, port=port, content=content, iplocation=iplocation)
+                                             ip=ip_address, port=port, content=content, iplocation=iplocation,port_status=port_status)
         json_data = {
             'draw': draw,
             'recordsTotal': count,
@@ -151,9 +160,10 @@ def ip_export_view():
     port = request.args.get('port')
     content = request.args.get('content')
     iplocation = request.args.get('iplocation')
+    port_status = request.args.get('port_status')
 
     data = export_ips(org_id, domain_address, ip_address,
-                      port, content, iplocation)
+                      port, content, iplocation, port_status)
     response = Response(data, content_type='application/octet-stream')
     response.headers["Content-disposition"] = 'attachment; filename={}'.format(
         "ip-export.xlsx")
@@ -172,9 +182,10 @@ def ip_statistics_view():
     port = request.args.get('port')
     content = request.args.get('content')
     iplocation = request.args.get('iplocation')
+    port_status = request.args.get('port_status')
 
     ip_list, ip_c_set, port_set, port_count_dict,ip_port_list = AssertInfoParser().statistics_ip(
-        org_id, domain_address, ip_address, port, content, iplocation)
+        org_id, domain_address, ip_address, port, content, iplocation, port_status)
     data = []
     data.append('Port: ({})'.format(len(port_set)))
     data.append(','.join([str(x) for x in sorted(port_set)]))

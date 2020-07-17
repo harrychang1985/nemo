@@ -25,6 +25,6 @@ class Port(daobase.DAOBase):
         # 如果obj不存在，则生成新记录
         else:
             data_new = {'ip_id': data['ip_id'], 'port': data['port']}
-            self.copy_key(data_new, data, 'status', 'open')
+            self.copy_key(data_new, data, 'status', 'N/A')
 
             return self.add(data_new)

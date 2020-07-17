@@ -100,6 +100,7 @@ $(function () {
         url += '&port=' + encodeURI($('#port').val());
         url += '&content=' + encodeURI($('#content').val());
         url += '&iplocation=' + encodeURI($('#iplocation').val());
+        url += '&port_status=' + encodeURI($('#port_status').val());
         window.open(url);
     });
     $("#ip_statistics").click(function () {
@@ -110,6 +111,7 @@ $(function () {
         url += '&port=' + encodeURI($('#port').val());
         url += '&content=' + encodeURI($('#content').val());
         url += '&iplocation=' + encodeURI($('#iplocation').val());
+        url += '&port_status=' + encodeURI($('#port_status').val());
         window.open(url);
     });
     //IP列表
@@ -132,7 +134,8 @@ $(function () {
                         "ip_address": $('#ip_address').val(),
                         "port": $('#port').val(),
                         "content": $('#content').val(),
-                        "iplocation": $('#iplocation').val()
+                        "iplocation": $('#iplocation').val(),
+                        "port_status": $('#port_status').val()
                     });
                 }
             },
@@ -162,11 +165,18 @@ $(function () {
                         var strData = '<div style="width:100%;white-space:normal;word-wrap:break-word;word-break:break-all;">';
                         var pre_link = "";
                         for (j = 0, len = data.length; j < len; j++) {
+                            //提取出端口和状态
+                            var port = data[j].replace(/\[.+?\]/g,"");
+                            var status = data[j].replace(/^.+?\[/g,"");
                             strData += pre_link;
                             strData += '<a href="';
                             if (data[j] == 443) strData += "https";
                             else strData += 'http';
-                            strData += '://' + row['ip'] + ':' + data[j] + '" target="_blank">' + data[j] + '</a>';
+                            // 快速链接地址
+                            strData += '://' + row['ip'] + ':' + port + '" target="_blank">' + port + '</a>';
+                            // 端口状态
+                            if(status != port) strData += "["+status;
+
                             pre_link = ",";
                         }
                         strData += '</div>'

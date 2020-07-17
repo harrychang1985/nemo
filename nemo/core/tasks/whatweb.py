@@ -151,6 +151,11 @@ class WhatWeb(TaskBase):
             m = re.findall(p_title.format(k), content)
             if m:
                 result[v] = ','.join(list(set(m)))
+                
+        status_code = r'\[(\d{3}) .+?\]'
+        m = re.findall(status_code,content)
+        if m:
+            result['status'] = m[0]
 
         result.update(whatweb=content)
 
