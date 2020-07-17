@@ -118,8 +118,11 @@ class WhatWeb(TaskBase):
             for port in target['port']:
                 if str(port['port']) in self.black_port:
                     continue
-                content = self.__exe_whatweb(
-                    '{}:{}'.format(target['ip'], port['port']))
+                if str(port['port']) in ['443','8443']:
+                    url = 'https://{}:{}'.format(target['ip'], port['port'])
+                else:
+                    url = 'http://{}:{}'.format(target['ip'], port['port'])
+                content = self.__exe_whatweb(url)
                 if content:
                     port.update(self.__parse_whatweb(content))
 
