@@ -170,7 +170,7 @@ $(function () {
                             var status = data[j].replace(/^.+?\[/g,"");
                             strData += pre_link;
                             strData += '<a href="';
-                            if (data[j] == 443) strData += "https";
+                            if (port == 443 || port == 8443) strData += "https";
                             else strData += 'http';
                             // 快速链接地址
                             strData += '://' + row['ip'] + ':' + port + '" target="_blank">' + port + '</a>';

@@ -71,8 +71,8 @@
                             {% endif %}
                             <td>
                                 {% if row['ip'] and row['port']%}
-                                    {% if row['port']==443 %}
-                                    <a href="https://{{ row['ip'] }}" target="_blank">{{ row['ip'] }}</a>
+                                    {% if row['port']==443  or row['port']==8443 %}
+                                    <a href="https://{{ row['ip'] }}:{{ row['port'] }}" target="_blank">{{ row['ip'] }}</a>
                                     {% else %}
                                     <a href="http://{{ row['ip'] }}:{{ row['port'] }}" target="_blank">{{ row['ip'] }}</a>
                                     {% endif %}

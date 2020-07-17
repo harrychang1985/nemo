@@ -31,7 +31,7 @@ def ip_asset_view():
         org_list = org_table.gets()
         if not org_list:
             org_list = []
-        org_list.insert(0, {'id': '', 'org_name': '--组织机构--'})
+        org_list.insert(0, {'id': '', 'org_name': '--全部--'})
 
         data = {'org_list': org_list, 'ip_address_ip': session.get('ip_address_ip', default=''), 'domain_address': session.get('domain_address', default=''),
                 'port': session.get('port', default=''), 'session_org_id': session.get('session_org_id', default='')}
@@ -67,15 +67,16 @@ def ip_asset_view():
                                     iplocation=iplocation, port_status=port_status, page=(start//length)+1, rows_per_page=length)
         if ips:
             for ip_row in ips:
-                port_list, title_set, banner_set, _, port_status_dict = aip.get_ip_port_info(
-                    ip_row['ip'], ip_row['id'])
+                # 查询每一个IP的详细属性
+                port_list, title_set, banner_set, _, port_status_dict = aip.get_ip_port_info(ip_row['ip'], ip_row['id'])
+                # 端口+HTTP状态码
                 port_with_status_list = []
                 for p in port_list:
                     if str(p) in port_status_dict and re.match(r'^\d{3}$',port_status_dict[str(p)]):
                         port_with_status_list.append("{}[{}]".format(p,port_status_dict[str(p)]))
                     else:
                         port_with_status_list.append(str(p))
-
+                # 显示的数据
                 ip_list.append({
                     'id': ip_row['id'],
                     "index": index+start,
@@ -90,7 +91,7 @@ def ip_asset_view():
                     "banner": ', '.join(list(banner_set))
                 })
                 index += 1
-
+            # 查询的记录数量
             count = ip_table.count_by_search(org_id=org_id, domain=domain_address,
                                              ip=ip_address, port=port, content=content, iplocation=iplocation,port_status=port_status)
         json_data = {
