@@ -116,9 +116,9 @@ class WhatWeb(TaskBase):
         # IP:PORT
         if 'ip' in target and 'port' in target:
             for port in target['port']:
-                if port['port'] in self.black_port:
+                if int(port['port']) in self.black_port:
                     continue
-                if port['port'] in [443,8443]:
+                if int(port['port']) in [443,8443]:
                     url = 'https://{}:{}'.format(target['ip'], port['port'])
                 else:
                     url = '{}:{}'.format(target['ip'], port['port'])
