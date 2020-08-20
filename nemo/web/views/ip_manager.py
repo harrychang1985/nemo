@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 # coding:utf-8
-from nemo.core.database.memo import IpMemo
 import re
 import traceback
 from flask import render_template
@@ -17,6 +16,7 @@ from nemo.core.database.attr import PortAttr
 from nemo.core.database.ip import Ip
 from nemo.core.database.organization import Organization
 from nemo.core.database.colortag import IpColorTag
+from nemo.core.database.memo import IpMemo
 
 from .authenticate import login_check
 
@@ -70,7 +70,7 @@ def ip_asset_view():
 
         count = 0
         ips = ip_table.gets_by_search(org_id=org_id, domain=domain_address, ip=ip_address, port=port, content=content, iplocation=iplocation,
-                                      port_status=port_status, color_tag=color_tag, memo_content=memo_content,page=(start//length)+1, rows_per_page=length)
+                                      port_status=port_status, color_tag=color_tag, memo_content=memo_content, page=(start//length)+1, rows_per_page=length)
         if ips:
             for ip_row in ips:
                 # 查询每一个IP的详细属性
@@ -106,8 +106,8 @@ def ip_asset_view():
                 })
                 index += 1
             # 查询的记录数量
-            count = ip_table.count_by_search(org_id=org_id, domain=domain_address,ip=ip_address, port=port, content=content, 
-                                             iplocation=iplocation, port_status=port_status,color_tag=color_tag, memo_content=memo_content)
+            count = ip_table.count_by_search(org_id=org_id, domain=domain_address, ip=ip_address, port=port, content=content,
+                                             iplocation=iplocation, port_status=port_status, color_tag=color_tag, memo_content=memo_content)
         json_data = {
             'draw': draw,
             'recordsTotal': count,
@@ -178,8 +178,8 @@ def ip_export_view():
     color_tag = request.args.get('color_tag')
     memo_content = request.args.get('memo_content')
 
-    data = export_ips(org_id, domain_address, ip_address,port, content,
-                       iplocation, port_status,color_tag,memo_content)
+    data = export_ips(org_id, domain_address, ip_address, port, content,
+                      iplocation, port_status, color_tag, memo_content)
     response = Response(data, content_type='application/octet-stream')
     response.headers["Content-disposition"] = 'attachment; filename={}'.format(
         "ip-export.xlsx")
@@ -203,7 +203,7 @@ def ip_statistics_view():
     memo_content = request.args.get('memo_content')
 
     ip_list, ip_c_set, port_set, port_count_dict, ip_port_list = AssertInfoParser().statistics_ip(
-        org_id, domain_address, ip_address, port, content, iplocation, port_status,color_tag,memo_content)
+        org_id, domain_address, ip_address, port, content, iplocation, port_status, color_tag, memo_content)
     data = []
     data.append('Port: ({})'.format(len(port_set)))
     data.append(','.join([str(x) for x in sorted(port_set)]))
@@ -225,6 +225,32 @@ def ip_statistics_view():
         '\n'.join(data), content_type='application/octet-stream')
     response.headers["Content-disposition"] = 'attachment; filename={}'.format(
         "ip-statistics.txt")
+
+    return response
+
+
+@ip_manager.route('/ip-memo-export', methods=['GET'])
+@login_check
+def ip_memo_export_view():
+    '''导出备忘录信息
+    '''
+    org_id = request.args.get('org_id')
+    domain_address = request.args.get('domain_address')
+    ip_address = request.args.get('ip_address')
+    port = request.args.get('port')
+    content = request.args.get('content')
+    iplocation = request.args.get('iplocation')
+    port_status = request.args.get('port_status')
+    color_tag = request.args.get('color_tag')
+    memo_content = request.args.get('memo_content')
+
+    memo_list = AssertInfoParser().export_ip_memo(
+        org_id, domain_address, ip_address, port, content, iplocation, port_status, color_tag, memo_content)
+
+    response = Response(
+        '\n'.join(memo_list), content_type='application/octet-stream')
+    response.headers["Content-disposition"] = 'attachment; filename={}'.format(
+        "ip-memo.txt")
 
     return response
 

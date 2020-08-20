@@ -1,12 +1,3 @@
-function html2Escape(sHtml) {
-    var temp = document.createElement("div");
-    (temp.textContent != null) ? (temp.textContent = sHtml) : (temp.innerText = sHtml);
-    var output = temp.innerHTML.replace(/\"/g, "&quot;").replace(/\'/g, "&acute;");
-    temp = null;
-
-    return output;
-}
-
 $(function () {
     $('#btnsiderbar').click();
     $('#select_org_id_search').val($('#hidden_org_id').val());
@@ -101,32 +92,28 @@ $(function () {
             $("#checkbox_ping").prop("disabled", true);
         }
     })
+
     $("#export_excel").click(function () {
         var url = 'ip-export?';
-        url += 'org_id=' + encodeURI($('#select_org_id_search').val());
-        url += '&domain_address=' + encodeURI($('#domain_address').val());
-        url += '&ip_address=' + encodeURI($('#ip_address').val());
-        url += '&port=' + encodeURI($('#port').val());
-        url += '&content=' + encodeURI($('#content').val());
-        url += '&iplocation=' + encodeURI($('#iplocation').val());
-        url += '&port_status=' + encodeURI($('#port_status').val());
-        url += '&color_tag=' + encodeURI($('#select_color_tag').val());
-        url += '&memo_content=' + encodeURI($('#memo_content').val());
+        url += get_export_options();
+
         window.open(url);
     });
+
     $("#ip_statistics").click(function () {
         var url = 'ip-statistics?';
-        url += 'org_id=' + encodeURI($('#select_org_id_search').val());
-        url += '&domain_address=' + encodeURI($('#domain_address').val());
-        url += '&ip_address=' + encodeURI($('#ip_address').val());
-        url += '&port=' + encodeURI($('#port').val());
-        url += '&content=' + encodeURI($('#content').val());
-        url += '&iplocation=' + encodeURI($('#iplocation').val());
-        url += '&port_status=' + encodeURI($('#port_status').val());
-        url += '&color_tag=' + encodeURI($('#select_color_tag').val());
-        url += '&memo_content=' + encodeURI($('#memo_content').val());
+        url += get_export_options();
+
         window.open(url);
     });
+
+    $("#ip_memo_export").click(function () {
+        var url = 'ip-memo-export?';
+        url += get_export_options();
+
+        window.open(url);
+    });
+
     //IP列表
     $('#ip_table').DataTable(
         {
@@ -149,8 +136,8 @@ $(function () {
                         "content": $('#content').val(),
                         "iplocation": $('#iplocation').val(),
                         "port_status": $('#port_status').val(),
-                        "color_tag":$('#select_color_tag').val(),
-                        "memo_content":$('#memo_content').val()
+                        "color_tag": $('#select_color_tag').val(),
+                        "memo_content": $('#memo_content').val()
                     });
                 }
             },
@@ -163,7 +150,7 @@ $(function () {
                     "render": function (data, type, row) {
                         var strData = '<input type="checkbox" class="checkchild" value="' + row['ip'] + '"/>';
                         if (row['memo_content']) {
-                            strData += '&nbsp;<span class="badge badge-pill badge-primary" data-toggle="tooltip" data-html="true" title="' + html2Escape(row['memo_content']) + '">M</span>';
+                            strData += '&nbsp;<span class="badge badge-primary" data-toggle="tooltip" data-html="true" title="' + html2Escape(row['memo_content']) + '"><i class="fa fa-paw"></span>';
                         }
                         return strData;
                     }
@@ -179,7 +166,7 @@ $(function () {
                     width: "10%",
                     render: function (data, type, row, meta) {
                         if (row['color_tag']) {
-                            strData = '<h5><a href="/ip-info?ip=' + data + '" target="_blank" class="badge ' + row['color_tag'] +'">' + data + '</a></h5>';
+                            strData = '<h5><a href="/ip-info?ip=' + data + '" target="_blank" class="badge ' + row['color_tag'] + '">' + data + '</a></h5>';
                         }
                         else {
                             strData = '<a href="/ip-info?ip=' + data + '" target="_blank">' + data + '</a>';
@@ -288,4 +275,28 @@ function get_task_status() {
     $.post("/dashboard-task-info", function (data) {
         $("#span_show_task").html(data['task_info']);
     });
+}
+
+function html2Escape(sHtml) {
+    var temp = document.createElement("div");
+    (temp.textContent != null) ? (temp.textContent = sHtml) : (temp.innerText = sHtml);
+    var output = temp.innerHTML.replace(/\"/g, "&quot;").replace(/\'/g, "&acute;");
+    temp = null;
+
+    return output;
+}
+
+function get_export_options() {
+    var url = '';
+    url += 'org_id=' + encodeURI($('#select_org_id_search').val());
+    url += '&domain_address=' + encodeURI($('#domain_address').val());
+    url += '&ip_address=' + encodeURI($('#ip_address').val());
+    url += '&port=' + encodeURI($('#port').val());
+    url += '&content=' + encodeURI($('#content').val());
+    url += '&iplocation=' + encodeURI($('#iplocation').val());
+    url += '&port_status=' + encodeURI($('#port_status').val());
+    url += '&color_tag=' + encodeURI($('#select_color_tag').val());
+    url += '&memo_content=' + encodeURI($('#memo_content').val());
+
+    return url;
 }

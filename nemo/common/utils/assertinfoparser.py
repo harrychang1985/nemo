@@ -6,8 +6,8 @@ from nemo.core.database.domain import Domain
 from nemo.core.database.ip import Ip
 from nemo.core.database.organization import Organization
 from nemo.core.database.port import Port
-from nemo.core.database.colortag import IpColorTag,DomainColorTag
-from nemo.core.database.memo import IpMemo,DomainMemo
+from nemo.core.database.colortag import IpColorTag, DomainColorTag
+from nemo.core.database.memo import IpMemo, DomainMemo
 
 
 class AssertInfoParser():
@@ -61,12 +61,12 @@ class AssertInfoParser():
                 if port_attr_obj['tag'] == 'title':
                     title_set.add(port_attr_obj['content'])
                 elif port_attr_obj['tag'] in ('banner', 'tag', 'server'):
-                    if port_attr_obj['content'] and port_attr_obj['content']!='unknown':
+                    if port_attr_obj['content'] and port_attr_obj['content'] != 'unknown':
                         banner_set.add(port_attr_obj['content'])
 
                 ports_attr_info.append(pai)
 
-        return port_list, title_set, banner_set, ports_attr_info,port_status_dict
+        return port_list, title_set, banner_set, ports_attr_info, port_status_dict
 
     def get_ip_info(self, Id):
         '''聚合一个IP的详情
@@ -76,7 +76,7 @@ class AssertInfoParser():
         ip_obj = Ip().get(Id)
         if not ip_obj:
             return None
-        ip_info.update(id=ip_obj['id'],ip=ip_obj['ip'], location=ip_obj['location'], status=ip_obj['status'], create_datetime=ip_obj['create_datetime'].strftime(
+        ip_info.update(id=ip_obj['id'], ip=ip_obj['ip'], location=ip_obj['location'], status=ip_obj['status'], create_datetime=ip_obj['create_datetime'].strftime(
             '%Y-%m-%d %H:%M'), update_datetime=ip_obj['update_datetime'].strftime('%Y-%m-%d %H:%M'))
         # 获取组织名称
         if ip_obj['org_id']:
@@ -97,7 +97,8 @@ class AssertInfoParser():
         ip_info.update(domain=list(domain_set))
         # 获取标记颜色：
         color_tag_obj = IpColorTag().get(ip_obj['id'])
-        ip_info.update(color_tag=color_tag_obj['color'] if color_tag_obj else '')
+        ip_info.update(
+            color_tag=color_tag_obj['color'] if color_tag_obj else '')
         # 获取备忘录信息：
         memo_obj = IpMemo().get(ip_obj['id'])
         ip_info.update(memo=memo_obj['content'] if memo_obj else '')
@@ -113,7 +114,7 @@ class AssertInfoParser():
         if not domain_obj:
             return None
         domain_info.update(id=domain_obj['id'],
-            domain=domain_obj['domain'], create_datetime=domain_obj['create_datetime'].strftime('%Y-%m-%d %H:%M'), update_datetime=domain_obj['update_datetime'].strftime('%Y-%m-%d %H:%M'))
+                           domain=domain_obj['domain'], create_datetime=domain_obj['create_datetime'].strftime('%Y-%m-%d %H:%M'), update_datetime=domain_obj['update_datetime'].strftime('%Y-%m-%d %H:%M'))
         # 获取组织名称
         if domain_obj['org_id']:
             organziation__obj = Organization().get(domain_obj['org_id'])
@@ -158,14 +159,15 @@ class AssertInfoParser():
         domain_info.update(port_attr=ip_port_list)
         # 获取标记颜色：
         color_tag_obj = DomainColorTag().get(domain_obj['id'])
-        domain_info.update(color_tag=color_tag_obj['color'] if color_tag_obj else '')
+        domain_info.update(
+            color_tag=color_tag_obj['color'] if color_tag_obj else '')
         # 获取备忘录信息：
         memo_obj = DomainMemo().get(domain_obj['id'])
         domain_info.update(memo=memo_obj['content'] if memo_obj else '')
 
         return domain_info
 
-    def statistics_ip(self, org_id=None, domain_address=None, ip_address=None, port=None, content=None, iplocation=None, port_status=None,color_tag = None,memo_content=None):
+    def statistics_ip(self, org_id=None, domain_address=None, ip_address=None, port=None, content=None, iplocation=None, port_status=None, color_tag=None, memo_content=None):
         '''根据查询条件，统计IP、IP的C段地址和相关的所有端口
         '''
         ip_table = Ip()
@@ -175,10 +177,10 @@ class AssertInfoParser():
         ip_port_list = []
         ip_c_set = set()
         port_set = set()
-        #统计每个端口出现的次数
-        port_count_dict = defaultdict(lambda : 0)
+        # 统计每个端口出现的次数
+        port_count_dict = defaultdict(lambda: 0)
         ips = ip_table.gets_by_search(org_id=org_id, domain=domain_address, ip=ip_address, port=port, content=content,
-                                      iplocation=iplocation, port_status=port_status, color_tag = color_tag,memo_content=memo_content,page=1, rows_per_page=100000)
+                                      iplocation=iplocation, port_status=port_status, color_tag=color_tag, memo_content=memo_content, page=1, rows_per_page=100000)
         if ips:
             for ip_row in ips:
                 # ip
@@ -192,6 +194,45 @@ class AssertInfoParser():
                 for port_obj in ports_obj:
                     port_set.add(port_obj['port'])
                     port_count_dict[str(port_obj['port'])] += 1
-                    ip_port_list.append('{}:{}'.format(ip_row['ip'],port_obj['port']))
+                    ip_port_list.append('{}:{}'.format(
+                        ip_row['ip'], port_obj['port']))
 
-        return ip_list, ip_c_set, port_set,port_count_dict,ip_port_list
+        return ip_list, ip_c_set, port_set, port_count_dict, ip_port_list
+
+    def export_ip_memo(self, org_id=None, domain_address=None, ip_address=None, port=None, content=None, iplocation=None, port_status=None, color_tag=None, memo_content=None):
+        '''导出ip相关的备忘录信息
+        '''
+        ip_table = Ip()
+        memo_table = IpMemo()
+
+        memo_list = []
+        ips = ip_table.gets_by_search(org_id=org_id, domain=domain_address, ip=ip_address, port=port, content=content,
+                                      iplocation=iplocation, port_status=port_status, color_tag=color_tag, memo_content=memo_content, page=1, rows_per_page=100000)
+        if ips:
+            for ip_row in ips:
+                memo_obj = memo_table.get(ip_row['id'])
+                if memo_obj:
+                    memo_list.append('[+]{}'.format(ip_row['ip']))
+                    memo_list.append(memo_obj['content'])
+                    memo_list.append("")
+
+        return memo_list
+
+    def export_domain_memo(self, org_id=None, domain_address=None, ip_address=None, color_tag=None, memo_content=None):
+        '''导出Domain相关的备忘录信息
+        '''
+        domain_table = Domain()
+        memo_table = DomainMemo()
+
+        memo_list = []
+        domains = domain_table.gets_by_search(org_id, domain_address,
+                                              ip_address, color_tag, memo_content)
+        if domains:
+            for domain_row in domains:
+                memo_obj = memo_table.get(domain_row['id'])
+                if memo_obj:
+                    memo_list.append('[+]{}'.format(domain_row['domain']))
+                    memo_list.append(memo_obj['content'])
+                    memo_list.append("")
+
+        return memo_list

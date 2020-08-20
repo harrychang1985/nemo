@@ -1,12 +1,3 @@
-function html2Escape(sHtml) {
-    var temp = document.createElement("div");
-    (temp.textContent != null) ? (temp.textContent = sHtml) : (temp.innerText = sHtml);
-    var output = temp.innerHTML.replace(/\"/g, "&quot;").replace(/\'/g, "&acute;");
-    temp = null;
-
-    return output;
-}
-
 $(function () {
     $('#btnsiderbar').click();
     $('#select_org_id_search').val($('#hidden_org_id').val());
@@ -67,15 +58,21 @@ $(function () {
             });
 
     });
+
     $("#export_excel").click(function () {
         var url = 'domain-export?';
-        url += 'org_id=' + encodeURI($('#select_org_id_search').val());
-        url += '&ip_address=' + encodeURI($('#ip_address').val());
-        url += '&domain_address=' + encodeURI($('#domain_address').val());
-        url += '&color_tag=' + encodeURI($('#select_color_tag').val());
-        url += '&memo_content=' + encodeURI($('#memo_content').val());
+        url += get_export_options();
+
         window.open(url);
     });
+
+    $("#domain_memo_export").click(function () {
+        var url = 'domain-memo-export?';
+        url += get_export_options();
+
+        window.open(url);
+    });
+
     $('#domain_table').DataTable(
         {
             "paging": true,
@@ -93,8 +90,8 @@ $(function () {
                         "org_id": $('#select_org_id_search').val(),
                         "ip_address": $('#ip_address').val(),
                         "domain_address": $('#domain_address').val(),
-                        "color_tag":$('#select_color_tag').val(),
-                        "memo_content":$('#memo_content').val()
+                        "color_tag": $('#select_color_tag').val(),
+                        "memo_content": $('#memo_content').val()
                     });
                 }
             },
@@ -107,7 +104,7 @@ $(function () {
                     "render": function (data, type, row) {
                         var strData = '<input type="checkbox" class="checkchild" value="' + row['domain'] + '"/>';
                         if (row['memo_content']) {
-                            strData += '&nbsp;<span class="badge badge-pill badge-primary" data-toggle="tooltip" data-html="true" title="' + html2Escape(row['memo_content']) + '">M</span>';
+                            strData += '&nbsp;<span class="badge  badge-primary" data-toggle="tooltip" data-html="true" title="' + html2Escape(row['memo_content']) + '"><i class="fa fa-paw"></i></span>';
                         }
                         return strData;
                     }
@@ -116,10 +113,10 @@ $(function () {
                 {
                     data: "domain",
                     title: "域名",
-                    width: "12%",                   
+                    width: "12%",
                     render: function (data, type, row, meta) {
                         if (row['color_tag']) {
-                            strData = '<h5><a href="/domain-info?domain=' + data + '" target="_blank" class="badge ' + row['color_tag'] +'">' + data + '</a></h5>';
+                            strData = '<h5><a href="/domain-info?domain=' + data + '" target="_blank" class="badge ' + row['color_tag'] + '">' + data + '</a></h5>';
                         }
                         else {
                             strData = '<a href="/domain-info?domain=' + data + '" target="_blank">' + data + '</a>';
@@ -131,8 +128,8 @@ $(function () {
                 {
                     data: "title", title: "标题", width: "25%",
                     "render": function (data, type, row, meta) {
-                        var title=data.substr(0,100);
-                        if(data.length>100) title += '......';
+                        var title = data.substr(0, 100);
+                        if (data.length > 100) title += '......';
                         var strData = '<div style="width:100%;white-space:normal;word-wrap:break-word;word-break:break-all;">' + title + '</div>'
                         return strData;
                     }
@@ -140,8 +137,8 @@ $(function () {
                 {
                     data: "banner", title: "Banner", width: "25%",
                     "render": function (data, type, row, meta) {
-                        var title=data.substr(0,100);
-                        if(data.length>100) title += '......';
+                        var title = data.substr(0, 100);
+                        if (data.length > 100) title += '......';
                         var strData = '<div style="width:100%;white-space:normal;word-wrap:break-word;word-break:break-all;">' + title + '</div>'
                         return strData;
                     }
@@ -166,7 +163,7 @@ $(function () {
         var check = $(this).prop("checked");
         $(".checkchild").prop("checked", check);
     });
-    $('#domain_statistics').click(function(){
+    $('#domain_statistics').click(function () {
         alert("功能尚未完成...");
     });
 });
@@ -195,9 +192,29 @@ function delete_domain(id) {
         });
 }
 
+function html2Escape(sHtml) {
+    var temp = document.createElement("div");
+    (temp.textContent != null) ? (temp.textContent = sHtml) : (temp.innerText = sHtml);
+    var output = temp.innerHTML.replace(/\"/g, "&quot;").replace(/\'/g, "&acute;");
+    temp = null;
+
+    return output;
+}
+
+
 function get_task_status() {
     $.post("/dashboard-task-info", function (data) {
         $("#span_show_task").html(data['task_info']);
     });
 }
 
+function get_export_options() {
+    var url = "";
+    url += 'org_id=' + encodeURI($('#select_org_id_search').val());
+    url += '&ip_address=' + encodeURI($('#ip_address').val());
+    url += '&domain_address=' + encodeURI($('#domain_address').val());
+    url += '&color_tag=' + encodeURI($('#select_color_tag').val());
+    url += '&memo_content=' + encodeURI($('#memo_content').val());
+
+    return url;
+}

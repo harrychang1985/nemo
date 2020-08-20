@@ -11,10 +11,10 @@
                 <div class="card">
                     <h2 class="card-header">
                         <div class="form-check-inline">
-                            <button type="button" id="btn_editDomainMemo" class="btn btn-secondary">编辑备忘录</button>&nbsp;
+                            <button type="button" id="btn_editDomainMemo" class="btn btn-secondary"><i class="fa fa-pencil-square-o"></i>编辑备忘录</button>&nbsp;
                             <div class="dropdown">
                                 <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton"
-                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-tags"></i>
                                     标记颜色
                                 </button>
                                 &nbsp;
@@ -39,7 +39,7 @@
                             <a href="http://{{ domain_info['domain'] }}" class="badge {{ domain_info['color_tag'] }}"
                                 target="_blank">{{ domain_info['domain'] }}</a>
                             {% else %}
-                            <a href="http://{{ domain_info['ip'] }}" target="_blank">{{ domain_info['domain'] }}</a>
+                            <a href="http://{{ domain_info['domain'] }}" target="_blank">{{ domain_info['domain'] }}</a>
                             {% endif %}
                         </div>
                     </h2>

@@ -62,8 +62,8 @@ def domain_asset_view():
         session['session_org_id'] = org_id
 
         count = 0
-        domains = domain_table.gets_by_search(org_id, domain_address, ip_address,color_tag,memo_content,
-            page=start//length+1, rows_per_page=length)
+        domains = domain_table.gets_by_search(org_id, domain_address, ip_address, color_tag, memo_content,
+                                              page=start//length+1, rows_per_page=length)
         if domains:
             for domain_row in domains:
                 ips = domain_attr_table.gets(
@@ -84,7 +84,8 @@ def domain_asset_view():
                     'banner': ', '.join(domain_info['banner'])
                 })
                 index += 1
-            count = domain_table.count_by_search(org_id, domain_address, ip_address, color_tag, memo_content)
+            count = domain_table.count_by_search(
+                org_id, domain_address, ip_address, color_tag, memo_content)
         json_data = {
             'draw': draw,
             'recordsTotal': count,
@@ -141,12 +142,14 @@ def domain_export_view():
     color_tag = request.args.get('color_tag')
     memo_content = request.args.get('memo_content')
 
-    data = export_domains(org_id, domain_address, ip_address,color_tag,memo_content)
+    data = export_domains(org_id, domain_address,
+                          ip_address, color_tag, memo_content)
     response = Response(data, content_type='application/octet-stream')
     response.headers["Content-disposition"] = 'attachment; filename={}'.format(
         "domain-export.xlsx")
 
     return response
+
 
 @domain_manager.route('/domain-color-tag/<int:r_id>', methods=['POST'])
 @login_check
@@ -185,3 +188,24 @@ def ip_memo(r_id):
     ret_status = {'status': 'success' if id else 'fail'}
 
     return jsonify(ret_status)
+
+
+@domain_manager.route('/domain-memo-export', methods=['GET'])
+@login_check
+def domain_memo_export_view():
+    '''导出域名的备忘录信息
+    '''
+    org_id = request.args.get('org_id')
+    ip_address = request.args.get('ip_address')
+    domain_address = request.args.get('domain_address')
+    color_tag = request.args.get('color_tag')
+    memo_content = request.args.get('memo_content')
+
+    memo_list = AssertInfoParser().export_domain_memo(
+        org_id, domain_address, ip_address, color_tag, memo_content)
+    response = Response(
+        '\n'.join(memo_list), content_type='application/octet-stream')
+    response.headers["Content-disposition"] = 'attachment; filename={}'.format(
+        "domain-memo.txt")
+
+    return response
