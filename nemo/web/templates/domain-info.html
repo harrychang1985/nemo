@@ -9,9 +9,43 @@
         <div class="col-md-12">
             <div class="bs-component">
                 <div class="card">
-                    <h4 class="card-header">
-                        <a href="http://{{ domain_info['domain'] }}" target="_blank">{{ domain_info['domain'] }}</a>
-                    </h4>
+                    <h2 class="card-header">
+                        <div class="form-check-inline">
+                            <button type="button" id="btn_editDomainMemo" class="btn btn-secondary">编辑备忘录</button>&nbsp;
+                            <div class="dropdown">
+                                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton"
+                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    标记颜色
+                                </button>
+                                &nbsp;
+                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                    <a class="dropdown-item bg-info"
+                                        href="javascript:mark_domain_color_tag({{ domain_info['id'] }},'badge-info')">BLUE</a>
+                                    <a class="dropdown-item bg-secondary"
+                                        href="javascript:mark_domain_color_tag({{ domain_info['id'] }},'badge-secondary')">GRAY</a>
+                                    <a class="dropdown-item bg-success"
+                                        href="javascript:mark_domain_color_tag({{ domain_info['id'] }},'badge-success')">GREEN</a>
+                                    <a class="dropdown-item bg-danger"
+                                        href="javascript:mark_domain_color_tag({{ domain_info['id'] }},'badge-danger')">RED</a>
+                                    <a class="dropdown-item bg-warning"
+                                        href="javascript:mark_domain_color_tag({{ domain_info['id'] }},'badge-warning')">YELLOW</a>
+                                    <a class="dropdown-item bg-dark"
+                                        href="javascript:mark_domain_color_tag({{ domain_info['id'] }},'badge-dark')">BLANK</a>
+                                    <a class="dropdown-item  bg-white"
+                                        href="javascript:mark_domain_color_tag({{ domain_info['id'] }},'DELETE')">清除标记</a>
+                                </div>
+                            </div>
+                            {%  if domain_info['color_tag'] %}
+                            <a href="http://{{ domain_info['domain'] }}" class="badge {{ domain_info['color_tag'] }}"
+                                target="_blank">{{ domain_info['domain'] }}</a>
+                            {% else %}
+                            <a href="http://{{ domain_info['ip'] }}" target="_blank">{{ domain_info['domain'] }}</a>
+                            {% endif %}
+                        </div>
+                    </h2>
+
+                  
+
                     <div class="card-body">
                         <span class="btn btn-info">关联IP</span></b>
                         <span class="btn btn-warning text-left">
@@ -39,6 +73,18 @@
                         <br><br>
                         <span class="btn border-secondary text-left">WhatWeb：{{ domain_info['whatweb'] }}</span>
                         {% endif %}
+                        <p></p>
+                        <p>
+                            <button class="btn btn-info" type="button" data-toggle="collapse"
+                                data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+                                备忘录信息
+                            </button>
+                        </p>
+                        <div class="collapse.show" id="collapseExample">
+                            <div id="memo_content" class="card card-body">
+                                <pre>{{ domain_info['memo'] }}</pre>
+                            </div>
+                        </div>
                     </div>
                     <div class="card-footer text-muted">
                         <h5>IP与端口信息</h5>
@@ -108,6 +154,33 @@
     </div>
     <!--row-->
 </main>
+<!-- 模态对话框：编辑备忘录-->
+<div class="modal fade" id="editMemo" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header card-header bg-primary">
+                <h4 class="modal-title" id="myModalLabel">
+                    编辑备忘录
+                </h4>
+            </div>
+            <div class="modal-body ">
+                <form class="form-horizontal" role="form">
+                    <div class="form-group">
+                        <textarea class="form-control" id="text_content" rows="15" placeholder="输入备忘录信息..."></textarea>
+                    </div>
+                    <input type="hidden" id="r_id" value="{{ domain_info['id'] }}"/>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" aria-hidden="true">取消
+                </button>
+                <button class="btn btn-primary org-update" type="button" id="btn_saveDomainMemo">
+                    保存
+                </button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div> <!-- table responsive-->
 {% endblock %}
 
 {% block js %}

@@ -1,3 +1,12 @@
+function html2Escape(sHtml) {
+    var temp = document.createElement("div");
+    (temp.textContent != null) ? (temp.textContent = sHtml) : (temp.innerText = sHtml);
+    var output = temp.innerHTML.replace(/\"/g, "&quot;").replace(/\'/g, "&acute;");
+    temp = null;
+
+    return output;
+}
+
 $(function () {
     $('#btnsiderbar').click();
     $('#select_org_id_search').val($('#hidden_org_id').val());
@@ -101,6 +110,8 @@ $(function () {
         url += '&content=' + encodeURI($('#content').val());
         url += '&iplocation=' + encodeURI($('#iplocation').val());
         url += '&port_status=' + encodeURI($('#port_status').val());
+        url += '&color_tag=' + encodeURI($('#select_color_tag').val());
+        url += '&memo_content=' + encodeURI($('#memo_content').val());
         window.open(url);
     });
     $("#ip_statistics").click(function () {
@@ -112,6 +123,8 @@ $(function () {
         url += '&content=' + encodeURI($('#content').val());
         url += '&iplocation=' + encodeURI($('#iplocation').val());
         url += '&port_status=' + encodeURI($('#port_status').val());
+        url += '&color_tag=' + encodeURI($('#select_color_tag').val());
+        url += '&memo_content=' + encodeURI($('#memo_content').val());
         window.open(url);
     });
     //IP列表
@@ -135,7 +148,9 @@ $(function () {
                         "port": $('#port').val(),
                         "content": $('#content').val(),
                         "iplocation": $('#iplocation').val(),
-                        "port_status": $('#port_status').val()
+                        "port_status": $('#port_status').val(),
+                        "color_tag":$('#select_color_tag').val(),
+                        "memo_content":$('#memo_content').val()
                     });
                 }
             },
@@ -146,16 +161,30 @@ $(function () {
                     className: "dt-body-center",
                     title: '<input  type="checkbox" class="checkall" />',
                     "render": function (data, type, row) {
-                        return '<input type="checkbox" class="checkchild" value="' + row['ip'] + '"/>';
+                        var strData = '<input type="checkbox" class="checkchild" value="' + row['ip'] + '"/>';
+                        if (row['memo_content']) {
+                            strData += '&nbsp;<span class="badge badge-pill badge-primary" data-toggle="tooltip" data-html="true" title="' + html2Escape(row['memo_content']) + '">M</span>';
+                        }
+                        return strData;
                     }
                 },
-                { data: "index", title: "序号", width: "5%" },
+                {
+                    data: "index",
+                    title: "序号",
+                    width: "5%"
+                },
                 {
                     data: "ip",
                     title: "IP地址",
                     width: "10%",
                     render: function (data, type, row, meta) {
-                        return '<a href="/ip-info?ip=' + data + '" target="_blank">' + data + '</a>';
+                        if (row['color_tag']) {
+                            strData = '<h5><a href="/ip-info?ip=' + data + '" target="_blank" class="badge ' + row['color_tag'] +'">' + data + '</a></h5>';
+                        }
+                        else {
+                            strData = '<a href="/ip-info?ip=' + data + '" target="_blank">' + data + '</a>';
+                        }
+                        return strData;
                     }
                 },
                 { data: "location", title: "归属地", width: "12%" },
@@ -166,8 +195,8 @@ $(function () {
                         var pre_link = "";
                         for (j = 0, len = data.length; j < len; j++) {
                             //提取出端口和状态
-                            var port = data[j].replace(/\[.+?\]/g,"");
-                            var status = data[j].replace(/^.+?\[/g,"");
+                            var port = data[j].replace(/\[.+?\]/g, "");
+                            var status = data[j].replace(/^.+?\[/g, "");
                             strData += pre_link;
                             strData += '<a href="';
                             if (port == 443 || port == 8443) strData += "https";
@@ -175,7 +204,7 @@ $(function () {
                             // 快速链接地址
                             strData += '://' + row['ip'] + ':' + port + '" target="_blank">' + port + '</a>';
                             // 端口状态
-                            if(status != port) strData += "["+status;
+                            if (status != port) strData += "[" + status;
 
                             pre_link = ",";
                         }
@@ -186,8 +215,8 @@ $(function () {
                 {
                     data: "title", title: "标题", width: "20%",
                     "render": function (data, type, row, meta) {
-                        var title=data.substr(0,100);
-                        if(data.length>100) title += '......';
+                        var title = data.substr(0, 100);
+                        if (data.length > 100) title += '......';
                         var strData = '<div style="width:100%;white-space:normal;word-wrap:break-word;word-break:break-all;">' + title + '</div>'
                         return strData;
                     }
@@ -195,8 +224,8 @@ $(function () {
                 {
                     data: "banner", title: "Banner", width: "20%",
                     "render": function (data, type, row, meta) {
-                        var title=data.substr(0,100);
-                        if(data.length>100) title += '......';
+                        var title = data.substr(0, 100);
+                        if (data.length > 100) title += '......';
                         var strData = '<div style="width:100%;white-space:normal;word-wrap:break-word;word-break:break-all;">' + title + '</div>'
                         return strData;
                     }
@@ -221,6 +250,7 @@ $(function () {
         var check = $(this).prop("checked");
         $(".checkchild").prop("checked", check);
     });
+    $('[data-toggle="tooltip"]').tooltip();
 });
 function load_nmap_config() {
     $.post("/adv-config-list", function (data) {

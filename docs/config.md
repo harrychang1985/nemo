@@ -132,3 +132,4 @@ pip3 install -r requirements.txt
    export PYTHONOPTIMIZE=1
    celery -A nemo.core.tasks.tasks worker --loglevel info
    ```
+

@@ -19,6 +19,7 @@
                 {% endfor %}
               </select>
             </div>
+
             <div class="form-group col-md-2">
               <label class="control-label" for="domain_address">Domain</label>
               <input class="form-control" type="text" id="domain_address" placeholder="域名（模糊搜索）"
@@ -30,15 +31,50 @@
                 value="{{ data['ip_address_domain'] }}">
             </div>
             <div class="form-group col-md-4 align-self-end">
-              <button class="btn btn-primary" type="button" id="search">
-                <i class="fa fa-fw fa-lg fa-search"></i>搜索</button>
-                <button class="btn btn-primary" type="button" id="export_excel">
-                  <i class="fa fa-fw fa-lg fa-file-excel-o"></i>导出</button>
-              <button class="btn btn-primary" type="button" id="create_task">
-                <i class="fa fa-plus"></i>新建任务</button>
+              <button class="btn btn-primary" type="button" id="search"><i
+                  class="fa fa-fw fa-lg fa-search"></i>搜索</button>
+              <button class="btn btn-primary" type="button" id="create_task"><i class="fa fa-plus"></i>新建任务</button>
+              <div class="btn-group" role="group">
+                <button id="btnGroupDrop1" type="button" class="btn btn-secondary dropdown-toggle"
+                  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  <i class="fa fa-angle-double-down"></i>功能
+                </button>
+                <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
+                  <a class="dropdown-item" href="#" id="export_excel"><i
+                      class="fa fa-fw fa-lg fa-file-excel-o"></i>导出</a>
+                  <a class="dropdown-item" href="#" id="domain_statistics"><i
+                      class="fa fa-fw fa-lg fa-line-chart"></i>统计</a>
+                  <a class="dropdown-item btn" data-toggle="collapse" href="#collapseExample" role="button"
+                    aria-expanded="false" aria-controls="collapseExample">
+                    </i>更多筛选条件
+                  </a>
+                </div>
+              </div>
             </div>
             <input type="hidden" value="{{ data['session_org_id'] }}" id="hidden_org_id">
           </form>
+        </div>
+        <div>
+          <div class="collapse" id="collapseExample">
+            <form class="row">
+              <div class="form-group col-md-2">
+                <label class="control-label" for="select_color_tag">颜色标记</label>
+                <select class="form-control" title="颜色标记" id="select_color_tag">
+                  <option class="bg-white" value="">--不限--</option>
+                  <option class="bg-info" value="badge-info">BLUE</option>
+                  <option class="bg-secondary" value="badge-secondary">GRAY</option>
+                  <option class="bg-success" value="badge-success">GREEN</option>
+                  <option class="bg-danger" value="badge-danger">RED</option>
+                  <option class="bg-warning" value="badge-warning">YELLOW</option>
+                  <option class="bg-dark" value="badge-dark">BLANK</option>
+                </select>
+              </div>
+              <div class="form-group col-md-2">
+                <label class="control-label" for="memo_content">备忘录信息</label>
+                <input class="form-control" type="text" id="memo_content" placeholder="备忘录信息(模糊搜索）" value="">
+              </div>
+            </form>
+          </div>
         </div>
       </div>
       <div class="tile">

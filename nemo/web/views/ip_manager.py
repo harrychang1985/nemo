@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 # coding:utf-8
+from nemo.core.database.memo import IpMemo
 import re
 import traceback
 from flask import render_template
@@ -15,6 +16,7 @@ from nemo.common.utils.loggerutils import logger
 from nemo.core.database.attr import PortAttr
 from nemo.core.database.ip import Ip
 from nemo.core.database.organization import Organization
+from nemo.core.database.colortag import IpColorTag
 
 from .authenticate import login_check
 
@@ -40,6 +42,8 @@ def ip_asset_view():
 
     ip_table = Ip()
     org_table = Organization()
+    ip_color_tag_table = IpColorTag()
+    ip_memo_table = IpMemo()
     aip = AssertInfoParser()
     ip_list = []
     json_data = {}
@@ -56,6 +60,8 @@ def ip_asset_view():
         content = request.form.get('content')
         iplocation = request.form.get('iplocation')
         port_status = request.form.get('port_status')
+        color_tag = request.form.get('color_tag')
+        memo_content = request.form.get('memo_content')
 
         session['ip_address_ip'] = ip_address
         session['domain_address'] = domain_address
@@ -63,23 +69,31 @@ def ip_asset_view():
         session['session_org_id'] = org_id
 
         count = 0
-        ips = ip_table.gets_by_search(org_id=org_id, domain=domain_address, ip=ip_address,port=port, content=content,
-                                    iplocation=iplocation, port_status=port_status, page=(start//length)+1, rows_per_page=length)
+        ips = ip_table.gets_by_search(org_id=org_id, domain=domain_address, ip=ip_address, port=port, content=content, iplocation=iplocation,
+                                      port_status=port_status, color_tag=color_tag, memo_content=memo_content,page=(start//length)+1, rows_per_page=length)
         if ips:
             for ip_row in ips:
                 # 查询每一个IP的详细属性
-                port_list, title_set, banner_set, _, port_status_dict = aip.get_ip_port_info(ip_row['ip'], ip_row['id'])
+                port_list, title_set, banner_set, _, port_status_dict = aip.get_ip_port_info(
+                    ip_row['ip'], ip_row['id'])
                 # 端口+HTTP状态码
                 port_with_status_list = []
                 for p in port_list:
-                    if str(p) in port_status_dict and re.match(r'^\d{3}$',port_status_dict[str(p)]):
-                        port_with_status_list.append("{}[{}]".format(p,port_status_dict[str(p)]))
+                    if str(p) in port_status_dict and re.match(r'^\d{3}$', port_status_dict[str(p)]):
+                        port_with_status_list.append(
+                            "{}[{}]".format(p, port_status_dict[str(p)]))
                     else:
                         port_with_status_list.append(str(p))
+                # 获取颜色标记
+                color_tag_obj = ip_color_tag_table.get(ip_row['id'])
+                # 获取备忘录信息
+                memo_obj = ip_memo_table.get(ip_row['id'])
                 # 显示的数据
                 ip_list.append({
                     'id': ip_row['id'],
                     "index": index+start,
+                    'color_tag': color_tag_obj['color'] if color_tag_obj else '',
+                    'memo_content': memo_obj['content'] if memo_obj else '',
                     "org_name": org_table.get(int(ip_row['org_id']))['org_name'] if ip_row['org_id'] else '',
                     "ip": ip_row['ip'],
                     "status": ip_row['status'],
@@ -92,8 +106,8 @@ def ip_asset_view():
                 })
                 index += 1
             # 查询的记录数量
-            count = ip_table.count_by_search(org_id=org_id, domain=domain_address,
-                                             ip=ip_address, port=port, content=content, iplocation=iplocation,port_status=port_status)
+            count = ip_table.count_by_search(org_id=org_id, domain=domain_address,ip=ip_address, port=port, content=content, 
+                                             iplocation=iplocation, port_status=port_status,color_tag=color_tag, memo_content=memo_content)
         json_data = {
             'draw': draw,
             'recordsTotal': count,
@@ -104,7 +118,6 @@ def ip_asset_view():
     except Exception as e:
         logger.error(traceback.format_exc())
         print(e)
-
     return jsonify(json_data)
 
 
@@ -162,9 +175,11 @@ def ip_export_view():
     content = request.args.get('content')
     iplocation = request.args.get('iplocation')
     port_status = request.args.get('port_status')
+    color_tag = request.args.get('color_tag')
+    memo_content = request.args.get('memo_content')
 
-    data = export_ips(org_id, domain_address, ip_address,
-                      port, content, iplocation, port_status)
+    data = export_ips(org_id, domain_address, ip_address,port, content,
+                       iplocation, port_status,color_tag,memo_content)
     response = Response(data, content_type='application/octet-stream')
     response.headers["Content-disposition"] = 'attachment; filename={}'.format(
         "ip-export.xlsx")
@@ -184,9 +199,11 @@ def ip_statistics_view():
     content = request.args.get('content')
     iplocation = request.args.get('iplocation')
     port_status = request.args.get('port_status')
+    color_tag = request.args.get('color_tag')
+    memo_content = request.args.get('memo_content')
 
-    ip_list, ip_c_set, port_set, port_count_dict,ip_port_list = AssertInfoParser().statistics_ip(
-        org_id, domain_address, ip_address, port, content, iplocation, port_status)
+    ip_list, ip_c_set, port_set, port_count_dict, ip_port_list = AssertInfoParser().statistics_ip(
+        org_id, domain_address, ip_address, port, content, iplocation, port_status,color_tag,memo_content)
     data = []
     data.append('Port: ({})'.format(len(port_set)))
     data.append(','.join([str(x) for x in sorted(port_set)]))
@@ -210,3 +227,42 @@ def ip_statistics_view():
         "ip-statistics.txt")
 
     return response
+
+
+@ip_manager.route('/ip-color-tag/<int:r_id>', methods=['POST'])
+@login_check
+def mark_ip_tag_color(r_id):
+    '''对IP进行颜色标记
+    '''
+    color_tag_app = IpColorTag()
+    color = request.form.get('color')
+    # 清除标记
+    if color == 'DELETE':
+        color_tag_app.delete(r_id)
+        return jsonify({'status': 'success'})
+    # 标记颜色
+    data = {'r_id': r_id, 'color': color}
+    id = color_tag_app.save_and_update(data)
+    ret_status = {'status': 'success' if id else 'fail'}
+
+    return jsonify(ret_status)
+
+
+@ip_manager.route('/ip-memo/<int:r_id>', methods=['GET', 'POST'])
+@login_check
+def ip_memo(r_id):
+    '''读取和保存IP的备忘录信息
+    '''
+    memo_app = IpMemo()
+    # 读取备忘录信息
+    if request.method == 'GET':
+        meno_obj = memo_app.get(r_id)
+        memo_content = meno_obj['content'] if meno_obj else ''
+
+        return {'status': 'success', 'content': memo_content}
+    # 保存更新备忘录信息
+    memo = request.form.get('memo')
+    id = memo_app.save_and_update({'r_id': r_id, 'content': memo})
+    ret_status = {'status': 'success' if id else 'fail'}
+
+    return jsonify(ret_status)

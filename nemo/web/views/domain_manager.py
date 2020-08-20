@@ -14,6 +14,8 @@ from nemo.common.utils.loggerutils import logger
 from nemo.core.database.attr import DomainAttr
 from nemo.core.database.domain import Domain
 from nemo.core.database.organization import Organization
+from nemo.core.database.colortag import DomainColorTag
+from nemo.core.database.memo import DomainMemo
 
 from .authenticate import login_check
 
@@ -52,22 +54,26 @@ def domain_asset_view():
         org_id = request.form.get('org_id')
         ip_address = request.form.get('ip_address')
         domain_address = request.form.get('domain_address')
+        color_tag = request.form.get('color_tag')
+        memo_content = request.form.get('memo_content')
 
         session['ip_address_domain'] = ip_address
         session['domain_address'] = domain_address
         session['session_org_id'] = org_id
 
         count = 0
-        domains = domain_table.gets_by_org_domain_ip(
-            org_id, domain_address, ip_address, page=start//length+1, rows_per_page=length)
+        domains = domain_table.gets_by_search(org_id, domain_address, ip_address,color_tag,memo_content,
+            page=start//length+1, rows_per_page=length)
         if domains:
             for domain_row in domains:
                 ips = domain_attr_table.gets(
                     query={'tag': 'A', 'r_id': domain_row['id']})
                 domain_info = api.get_domain_info(domain_row['id'])
                 domain_list.append({
-                    'id': domain_row['id'],
+                    "id": domain_row['id'],
                     "index": index+start,
+                    "color_tag": domain_info['color_tag'],
+                    "memo_content": domain_info['memo'],
                     "domain": domain_row['domain'],
                     "ip": ', '.join(set(['<a href="/ip-info?ip={0}" target="_blank">{0}</a>'.format(ip_row['content']) for ip_row in ips])),
                     "org_name": org_table.get(int(domain_row['org_id']))['org_name'] if domain_row['org_id'] else '',
@@ -78,8 +84,7 @@ def domain_asset_view():
                     'banner': ', '.join(domain_info['banner'])
                 })
                 index += 1
-            count = domain_table.count_by_org_domain_ip(
-                org_id, domain_address, ip_address)
+            count = domain_table.count_by_search(org_id, domain_address, ip_address, color_tag, memo_content)
         json_data = {
             'draw': draw,
             'recordsTotal': count,
@@ -133,10 +138,50 @@ def domain_export_view():
     org_id = request.args.get('org_id')
     ip_address = request.args.get('ip_address')
     domain_address = request.args.get('domain_address')
+    color_tag = request.args.get('color_tag')
+    memo_content = request.args.get('memo_content')
 
-    data = export_domains(org_id, domain_address, ip_address)
+    data = export_domains(org_id, domain_address, ip_address,color_tag,memo_content)
     response = Response(data, content_type='application/octet-stream')
     response.headers["Content-disposition"] = 'attachment; filename={}'.format(
         "domain-export.xlsx")
 
     return response
+
+@domain_manager.route('/domain-color-tag/<int:r_id>', methods=['POST'])
+@login_check
+def mark_ip_tag_color(r_id):
+    '''对IP进行颜色标记
+    '''
+    color_tag_app = DomainColorTag()
+    color = request.form.get('color')
+    # 清除标记
+    if color == 'DELETE':
+        color_tag_app.delete(r_id)
+        return jsonify({'status': 'success'})
+    # 标记颜色
+    data = {'r_id': r_id, 'color': color}
+    id = color_tag_app.save_and_update(data)
+    ret_status = {'status': 'success' if id else 'fail'}
+
+    return jsonify(ret_status)
+
+
+@domain_manager.route('/domain-memo/<int:r_id>', methods=['GET', 'POST'])
+@login_check
+def ip_memo(r_id):
+    '''读取和保存IP的备忘录信息
+    '''
+    memo_app = DomainMemo()
+    # 读取备忘录信息
+    if request.method == 'GET':
+        meno_obj = memo_app.get(r_id)
+        memo_content = meno_obj['content'] if meno_obj else ''
+
+        return {'status': 'success', 'content': memo_content}
+    # 保存更新备忘录信息
+    memo = request.form.get('memo')
+    id = memo_app.save_and_update({'r_id': r_id, 'content': memo})
+    ret_status = {'status': 'success' if id else 'fail'}
+
+    return jsonify(ret_status)

@@ -6,6 +6,8 @@ from nemo.core.database.domain import Domain
 from nemo.core.database.ip import Ip
 from nemo.core.database.organization import Organization
 from nemo.core.database.port import Port
+from nemo.core.database.colortag import IpColorTag,DomainColorTag
+from nemo.core.database.memo import IpMemo,DomainMemo
 
 
 class AssertInfoParser():
@@ -74,7 +76,7 @@ class AssertInfoParser():
         ip_obj = Ip().get(Id)
         if not ip_obj:
             return None
-        ip_info.update(ip=ip_obj['ip'], location=ip_obj['location'], status=ip_obj['status'], create_datetime=ip_obj['create_datetime'].strftime(
+        ip_info.update(id=ip_obj['id'],ip=ip_obj['ip'], location=ip_obj['location'], status=ip_obj['status'], create_datetime=ip_obj['create_datetime'].strftime(
             '%Y-%m-%d %H:%M'), update_datetime=ip_obj['update_datetime'].strftime('%Y-%m-%d %H:%M'))
         # 获取组织名称
         if ip_obj['org_id']:
@@ -93,6 +95,12 @@ class AssertInfoParser():
         # IP关联的域名
         domain_set = self.__get_ip_domain(ip_obj['ip'])
         ip_info.update(domain=list(domain_set))
+        # 获取标记颜色：
+        color_tag_obj = IpColorTag().get(ip_obj['id'])
+        ip_info.update(color_tag=color_tag_obj['color'] if color_tag_obj else '')
+        # 获取备忘录信息：
+        memo_obj = IpMemo().get(ip_obj['id'])
+        ip_info.update(memo=memo_obj['content'] if memo_obj else '')
 
         return ip_info
 
@@ -104,7 +112,7 @@ class AssertInfoParser():
         domain_obj = Domain().get(Id)
         if not domain_obj:
             return None
-        domain_info.update(
+        domain_info.update(id=domain_obj['id'],
             domain=domain_obj['domain'], create_datetime=domain_obj['create_datetime'].strftime('%Y-%m-%d %H:%M'), update_datetime=domain_obj['update_datetime'].strftime('%Y-%m-%d %H:%M'))
         # 获取组织名称
         if domain_obj['org_id']:
@@ -148,10 +156,16 @@ class AssertInfoParser():
         domain_info.update(whatweb=list(whatweb_set))
         domain_info.update(banner=list(banner_set))
         domain_info.update(port_attr=ip_port_list)
+        # 获取标记颜色：
+        color_tag_obj = DomainColorTag().get(domain_obj['id'])
+        domain_info.update(color_tag=color_tag_obj['color'] if color_tag_obj else '')
+        # 获取备忘录信息：
+        memo_obj = DomainMemo().get(domain_obj['id'])
+        domain_info.update(memo=memo_obj['content'] if memo_obj else '')
 
         return domain_info
 
-    def statistics_ip(self, org_id=None, domain_address=None, ip_address=None, port=None, content=None, iplocation=None, port_status=None):
+    def statistics_ip(self, org_id=None, domain_address=None, ip_address=None, port=None, content=None, iplocation=None, port_status=None,color_tag = None,memo_content=None):
         '''根据查询条件，统计IP、IP的C段地址和相关的所有端口
         '''
         ip_table = Ip()
@@ -164,7 +178,7 @@ class AssertInfoParser():
         #统计每个端口出现的次数
         port_count_dict = defaultdict(lambda : 0)
         ips = ip_table.gets_by_search(org_id=org_id, domain=domain_address, ip=ip_address, port=port, content=content,
-                                      iplocation=iplocation, port_status=port_status, page=1, rows_per_page=100000)
+                                      iplocation=iplocation, port_status=port_status, color_tag = color_tag,memo_content=memo_content,page=1, rows_per_page=100000)
         if ips:
             for ip_row in ips:
                 # ip

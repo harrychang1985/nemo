@@ -60,7 +60,7 @@ class Ip(daobase.DAOBase):
             self.copy_key(data_new, data, 'location')
             return self.add(data_new)
 
-    def __fill_search_where(self, org_id, domain, ip, port, content, iplocation, port_status):
+    def __fill_search_where(self, org_id, domain, ip, port, content, iplocation, port_status, color_tag, memo_content):
         '''根据指定的字段，生成查询SQL语句和参数
         '''
         sql = []
@@ -127,29 +127,43 @@ class Ip(daobase.DAOBase):
                 ' id in (select ip_id from port  where id in (select r_id from port_attr where content like %s))')
             param.append('%'+content+'%')
             link_word = ' and '
+        if color_tag:
+            sql.append(link_word)
+            sql.append(' id in (select r_id from ip_color_tag where color=%s)')
+            param.append(color_tag)
+            link_word = ' and '
+        if memo_content:
+            sql.append(link_word)
+            sql.append(
+                ' id in (select r_id from ip_memo where content like %s)')
+            param.append('%' + memo_content+'%')
+            link_word = ' and '
 
         return sql, param
 
-    def count_by_search(self, org_id=None, domain=None, ip=None, port=None, content=None, iplocation=None, port_status=None):
+    def count_by_search(self, org_id=None, domain=None, ip=None, port=None, content=None, iplocation=None, port_status=None, color_tag=None, memo_content=None):
         '''统计记录总条数
         org_id:     组织的ID
         domain:     域名
         ip:         ip地址或ip/掩码,(192.168.1.5或172.16.0.0/16）
         port:       端口号，多个端口号以,分隔('21,22,80,8080')
         content:    端口属性内容
+        color_tag:  标记的颜色
+        memo_content:备忘录信息
         '''
         sql = []
         param = []
         sql.append('select count(id) from {} '.format(self.table_name))
         # 查询条件
         where_sql, where_param = self.__fill_search_where(
-            org_id, domain, ip, port, content, iplocation, port_status)
+            org_id, domain, ip, port, content, iplocation, port_status, color_tag, memo_content)
         sql.extend(where_sql)
         param.extend(where_param)
 
         return dbutils.queryone(''.join(sql), param)
 
-    def gets_by_search(self, org_id=None, domain=None, ip=None, port=None, content=None, iplocation=None, port_status=None, fields=None, page=1, rows_per_page=None, order_by=None):
+    def gets_by_search(self, org_id=None, domain=None, ip=None, port=None, content=None, iplocation=None, port_status=None, color_tag=None, memo_content=None,
+                       fields=None, page=1, rows_per_page=None, order_by=None):
         '''根据组织机构、IP地址（包括范围）及端口的综合查询
         org_id:     组织的ID
         domain:     域名
@@ -157,6 +171,8 @@ class Ip(daobase.DAOBase):
         port:       端口号，多个端口号以,分隔('21,22,80,8080')
         content:    端口属性内容
         iplocation: IP归属地
+        color_tag:  标记的颜色
+        memo_content:备忘录信息
         fields:     要返回的字段，列表格式('id','name','port')
         page:       分页位置，从1开始
         rows_per_page:  每页的记录数
@@ -168,7 +184,7 @@ class Ip(daobase.DAOBase):
             self.fill_fields(fields), self.table_name))
         # 查询条件
         where_sql, where_param = self.__fill_search_where(
-            org_id, domain, ip, port, content, iplocation, port_status)
+            org_id, domain, ip, port, content, iplocation, port_status, color_tag, memo_content)
         sql.extend(where_sql)
         param.extend(where_param)
         # 排序、分页

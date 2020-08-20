@@ -1,3 +1,12 @@
+function html2Escape(sHtml) {
+    var temp = document.createElement("div");
+    (temp.textContent != null) ? (temp.textContent = sHtml) : (temp.innerText = sHtml);
+    var output = temp.innerHTML.replace(/\"/g, "&quot;").replace(/\'/g, "&acute;");
+    temp = null;
+
+    return output;
+}
+
 $(function () {
     $('#btnsiderbar').click();
     $('#select_org_id_search').val($('#hidden_org_id').val());
@@ -63,6 +72,8 @@ $(function () {
         url += 'org_id=' + encodeURI($('#select_org_id_search').val());
         url += '&ip_address=' + encodeURI($('#ip_address').val());
         url += '&domain_address=' + encodeURI($('#domain_address').val());
+        url += '&color_tag=' + encodeURI($('#select_color_tag').val());
+        url += '&memo_content=' + encodeURI($('#memo_content').val());
         window.open(url);
     });
     $('#domain_table').DataTable(
@@ -81,27 +92,39 @@ $(function () {
                     return $.extend({}, d, {
                         "org_id": $('#select_org_id_search').val(),
                         "ip_address": $('#ip_address').val(),
-                        "domain_address": $('#domain_address').val()
+                        "domain_address": $('#domain_address').val(),
+                        "color_tag":$('#select_color_tag').val(),
+                        "memo_content":$('#memo_content').val()
                     });
                 }
             },
             columns: [
                 {
                     data: "id",
-                    width: "5%",
+                    width: "6%",
                     className: "dt-body-center",
                     title: '<input  type="checkbox" class="checkall" />',
                     "render": function (data, type, row) {
-                        return '<input type="checkbox" class="checkchild" value="' + row['domain'] + '"/>';
+                        var strData = '<input type="checkbox" class="checkchild" value="' + row['domain'] + '"/>';
+                        if (row['memo_content']) {
+                            strData += '&nbsp;<span class="badge badge-pill badge-primary" data-toggle="tooltip" data-html="true" title="' + html2Escape(row['memo_content']) + '">M</span>';
+                        }
+                        return strData;
                     }
                 },
                 { data: "index", title: "序号", width: "5%" },
                 {
                     data: "domain",
                     title: "域名",
-                    width: "12%",
+                    width: "12%",                   
                     render: function (data, type, row, meta) {
-                        return '<a href="/domain-info?domain=' + data + '" target="_blank">' + data + '</a>';
+                        if (row['color_tag']) {
+                            strData = '<h5><a href="/domain-info?domain=' + data + '" target="_blank" class="badge ' + row['color_tag'] +'">' + data + '</a></h5>';
+                        }
+                        else {
+                            strData = '<a href="/domain-info?domain=' + data + '" target="_blank">' + data + '</a>';
+                        }
+                        return strData;
                     }
                 },
                 { data: "ip", title: "IP地址", width: "20%" },
@@ -143,6 +166,9 @@ $(function () {
         var check = $(this).prop("checked");
         $(".checkchild").prop("checked", check);
     });
+    $('#domain_statistics').click(function(){
+        alert("功能尚未完成...");
+    });
 });
 
 function delete_domain(id) {
@@ -174,3 +200,4 @@ function get_task_status() {
         $("#span_show_task").html(data['task_info']);
     });
 }
+
