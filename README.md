@@ -19,10 +19,12 @@ Nemo的初衷是用来进行自动化信息收集的一个简单平台，实现�
 - Fofa的API接口对IP和域名信息收集（需要Fofa的KEY）
 - Shodan的API接口对IP信息收集（需要Shodan的KEY）
 - WhatWeb收集端口和域名的指纹（需本地whatweb）
+- IP/Domain信息导出、统计
+- IP/Domain信息的颜色标记、备忘录（new）
+
 - Celery实现分布式任务
 - Docker部署和运行
-
-
+- 
 
 ## Docker运行
 
