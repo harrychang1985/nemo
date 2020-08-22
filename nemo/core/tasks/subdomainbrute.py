@@ -25,8 +25,7 @@ class SubDmainBrute(TaskBase):
         self.task_name = 'subdomainbrute'
         self.task_description = '子域名爆破'
         self.source = 'subdomainbrute'
-  
-  
+
     def prepare(self, options):
         '''解析参数
         '''

@@ -75,7 +75,7 @@ class IpLocation(TaskBase):
     def __fetch_iplocation_from_ipcn(self, ip):
         '''调用ip.cn查询IP地址
         '''
-        url = 'https://ip.cn?ip={}'.format(ip)
+        url = 'http://ip.cn?ip={}'.format(ip)
 
         try:
             r = requests.get(url, headers=self.headers, timeout=self.timeout)
