@@ -32,6 +32,7 @@ $(function () {
                 "target": target,
                 'org_id': $('#select_org_id_task').val(),
                 'subdomain': $('#checkbox_subdomain').is(":checked"),
+                'subdomainbrute': $('#checkbox_subdomainbrute').is(":checked"),
                 'webtitle': $('#checkbox_webtitle').is(":checked"),
                 'whatweb': $('#checkbox_whatweb').is(":checked"),
                 'fld_domain': $('#checkbox_fld_domain').is(":checked"),

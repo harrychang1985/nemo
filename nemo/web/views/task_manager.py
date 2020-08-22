@@ -131,6 +131,7 @@ def task_start_domainscan_view():
         target = request.form.get('target', default='')
         org_id = request.form.get('org_id', type=int, default=None)
         subdomain = request.form.get('subdomain')
+        subdomainbrute = request.form.get('subdomainbrute')
         webtitle = request.form.get('webtitle')
         whatweb = request.form.get('whatweb')
         fofasearch = request.form.get('fofasearch')
@@ -161,7 +162,7 @@ def task_start_domainscan_view():
         for t in task_target:
             # 任务选项options
             options = {'target': t,
-                       'org_id': org_id, 'subdomain': _str2bool(subdomain), 'webtitle': _str2bool(webtitle),
+                       'org_id': org_id, 'subdomain': _str2bool(subdomain), 'subdomainbrute': _str2bool(subdomainbrute), 'webtitle': _str2bool(webtitle),
                        'portscan': _str2bool(portscan), 'networkscan': _str2bool(networkscan), 'whatweb': _str2bool(whatweb)}
             # 是否有portscan任务
             if _str2bool(portscan) or _str2bool(networkscan):

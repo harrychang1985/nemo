@@ -7,6 +7,7 @@ from .subdomain import SubDmain
 from .taskbase import TaskBase
 from .webtitle import WebTitle
 from .whatweb import WhatWeb
+from .subdomainbrute import SubDmainBrute
 
 
 class DomainScan(TaskBase):
@@ -16,6 +17,7 @@ class DomainScan(TaskBase):
             'target':   [ip1/domain,ip2/domain,ip3/domain...],domain列表
             'org_id':   id,target关联的组织机构ID
             'subdomain':True/False，是否扫描子域名
+            'subdomainbrute': True/False，是否进行子域名爆破
             'webtitle': True/False，是否读取网站标题
             'fofasearch':   True/False，是否调用fofa
             'portscan': True/False，对域名扫描结果是否生成portscan任务
@@ -40,6 +42,7 @@ class DomainScan(TaskBase):
         self.subdomain = True
         self.webtitle = True
         self.whatweb = False
+        self.subdomainbrute=True
 
     def prepare(self, options):
         '''解析参数
@@ -47,6 +50,7 @@ class DomainScan(TaskBase):
         self.org_id = self.get_option('org_id', options, self.org_id)
         self.webtitle = self.get_option('webtitle', options, self.webtitle)
         self.subdomain = self.get_option('subdomain', options, self.subdomain)
+        self.subdomainbrute = self.get_option('subdomainbrute', options, self.subdomainbrute)
         self.whatweb = self.get_option('whatweb', options, self.whatweb)
         self.target = options['target']
 
@@ -67,6 +71,11 @@ class DomainScan(TaskBase):
             subdomain = SubDmain()
             sub_domain_list = subdomain.execute(self.target)
             domain_result_list.extend(ipdomain.execute(sub_domain_list))
+        # 子域名爆破
+        if self.subdomainbrute:
+            subdomainbrute = SubDmainBrute()
+            sub_domain_list = subdomainbrute.execute(self.target)
+            domain_result_list.extend(sub_domain_list) 
         # 获取域名的title
         if self.webtitle:
             webtitle = WebTitle()
