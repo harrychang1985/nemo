@@ -105,7 +105,7 @@ $(function () {
                     "render": function (data, type, row) {
                         var strData = '<input type="checkbox" class="checkchild" value="' + row['domain'] + '"/>';
                         if (row['memo_content']) {
-                            strData += '&nbsp;<span class="badge  badge-primary" data-toggle="tooltip" data-html="true" title="' + html2Escape(row['memo_content']) + '"><i class="fa fa-paw"></i></span>';
+                            strData += '&nbsp;<span class="badge  badge-primary" data-toggle="tooltip" data-html="true" title="' + html2Escape(row['memo_content']) + '"><i class="fa fa-flag"></i></span>';
                         }
                         return strData;
                     }
