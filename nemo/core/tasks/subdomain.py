@@ -1,7 +1,10 @@
 #!/usr/bin/env python3
 # coding:utf-8
 
-import sublist3r
+import traceback
+
+from nemo.common.thirdparty.Sublist3r import sublist3r
+from nemo.common.utils.loggerutils import logger
 
 from .ipdomain import IpDomain
 from .taskbase import TaskBase
@@ -60,8 +63,12 @@ class SubDmain(TaskBase):
         '''
         domains = set()
         for domain in data:
-            domains.update(sublist3r.main(domain, self.threads, self.savefile,
+            try:
+                domains.update(sublist3r.main(domain, self.threads, self.savefile,
                                           self.ports, self.silent, self.verbose, self.bruteforce, self.engines))
+            except Exception as e:
+                logger.error(traceback.format_exc())
+                logger.error('subdomain target:{}'.format(domain))
         # 域名结果格式化
         domain_list = []
         for d in domains:

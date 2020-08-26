@@ -95,7 +95,6 @@
 
   ```
 pip3 install -r requirements.txt
-cd nemo/common/thirdparty/Sublist3r/ && python3.7 setup.py install && cd ../../../..
   ```
 
 

@@ -10,4 +10,13 @@ pyyaml
 shodan
 tld
 openpyxl
-ESD
+#ESD
+aiodns
+aiohttp
+async-timeout
+colorlog
+uvloop
+backoff
+pysocks 
+tldextract
+colorama

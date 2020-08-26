@@ -21,10 +21,8 @@ RUN set -x \
     && python3.7 -m pip install -U pip -i https://mirrors.aliyun.com/pypi/simple/ \
     && python3.7 -m pip install -r /tmp/requirements.txt -i https://mirrors.aliyun.com/pypi/simple/ 
     
-# app and third party
 RUN mkdir -p /opt/nemo
 COPY . /opt/nemo
-RUN cd /opt/nemo/common/thirdparty/Sublist3r/ && python3.7 setup.py install && cd /opt/nemo
 # init databse and rabbitmq
 RUN set -x \
     && service mysql start \

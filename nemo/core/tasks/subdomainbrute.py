@@ -1,14 +1,17 @@
 #!/usr/bin/env python3
 # coding:utf-8
 
-from ESD import EnumSubDomain
+import traceback
 
-from .ipdomain import IpDomain
+from nemo.common.thirdparty.ESD import EnumSubDomain
+from nemo.common.utils.loggerutils import logger
+
 from .taskbase import TaskBase
 
 
 class SubDmainBrute(TaskBase):
     '''子域名爆破，使用ESD（https://github.com/FeeiCN/ESD）
+    ESD为修改版本，去除了搜索引擎和API接口，只保留了爆破、CA、域传输方式
     参数：options
             {
                 'target':   ['domain',...],domain列表
@@ -37,10 +40,15 @@ class SubDmainBrute(TaskBase):
         '''
         domain_list = []
         for domain in data:
-            domains = EnumSubDomain(domain).run()
-            for k, v in domains.items():
-                d = {'domain': k, 'A': v}
-                domain_list.append(d)
+            try:
+                # engines = []，不启用接口查询功能
+                domains = EnumSubDomain(domain).run()
+                for k, v in domains.items():
+                    d = {'domain': k, 'A': v}
+                    domain_list.append(d)
+            except Exception as e:
+                logger.error(traceback.format_exc())
+                logger.error('subdomain target:{}'.format(domain))
 
         return domain_list
 
