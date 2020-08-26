@@ -95,6 +95,7 @@
 
   ```
 pip3 install -r requirements.txt
+cd nemo/common/thirdparty/Sublist3r/ && python3.7 setup.py install && cd ../../../..
   ```
 
 
@@ -109,7 +110,7 @@ pip3 install -r requirements.txt
 
    ```bash
    export PYTHONOPTIMIZE=1
-   celery -A nemo.core.tasks.tasks worker --loglevel info
+   celery -A nemo.core.tasks.tasks worker -c 2 --loglevel info
    ```
 
 3. 启动celery flower
@@ -130,6 +131,6 @@ pip3 install -r requirements.txt
 
    ```bash
    export PYTHONOPTIMIZE=1
-   celery -A nemo.core.tasks.tasks worker --loglevel info
+   celery -A nemo.core.tasks.tasks worker -c 2 --loglevel info
    ```
 

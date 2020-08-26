@@ -149,8 +149,11 @@ class Fofa(TaskBase):
         domain_ip = []
         for t in target:
             # 查询FOFA
-            result = self.__fofa_search('{}="{}" || host="{}"'.format(
-                'ip' if check_ip_or_domain(t) else 'domain', t, t))
+            if check_ip_or_domain(t):
+                query_str = 'ip="{0}" || host="{0}" '.format(t)
+            else:
+                query_str = 'domain="{0}" || host="{0}" || cert="{0}"'.format(t)
+            result = self.__fofa_search(query_str)
             # 解析结果
             for line in result:
                 ipp = self.__parse_ip_port(line)

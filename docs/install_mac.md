@@ -98,6 +98,8 @@ make install
 
   ```
 pip3 install -r requirements.txt
+cd nemo/common/thirdparty/Sublist3r/ && python3 setup.py install && cd ../../../..
+
   ```
 
 ### 

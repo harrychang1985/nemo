@@ -20,10 +20,12 @@ RUN set -x \
     # && python3.7 -m pip config set global.index-url 'https://pypi.mirrors.ustc.edu.cn/simple/' \
     && python3.7 -m pip install -U pip -i https://mirrors.aliyun.com/pypi/simple/ \
     && python3.7 -m pip install -r /tmp/requirements.txt -i https://mirrors.aliyun.com/pypi/simple/ 
-   
-# init databse and rabbitmq
+    
+# app and third party
 RUN mkdir -p /opt/nemo
 COPY . /opt/nemo
+RUN cd /opt/nemo/common/thirdparty/Sublist3r/ && python3.7 setup.py install && cd /opt/nemo
+# init databse and rabbitmq
 RUN set -x \
     && service mysql start \
     && mysql -u root -e 'CREATE DATABASE `nemo` DEFAULT CHARACTER SET utf8mb4;' \
