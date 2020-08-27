@@ -52,7 +52,7 @@
   mysql -u root nemo < nemo.sql
   ```
 
-- 创建用户并授权
+- 创建用户并授权
 
   ```
   CREATE USER 'nemo'@'%' IDENTIFIED BY 'nemo2020';

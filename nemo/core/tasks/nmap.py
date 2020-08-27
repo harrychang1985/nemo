@@ -83,10 +83,13 @@ class Nmap(TaskBase):
 
         return results
 
-    def __nmap_scan(self, ip, port):
+    def __nmap_scan(self, target, port):
         '''调用nmap对指定IP和端口进行扫描
         '''
-        with NamedTemporaryFile('w+t') as tfile_output:
+        with  NamedTemporaryFile('w+t') as tfile_ip, NamedTemporaryFile('w+t') as tfile_output:
+            # 将所有目标一次性写入文件中
+            tfile_ip.write('\n'.join(target))
+            tfile_ip.seek(0)
             nmap_bin = [self.nmap_bin, self.tech, '-T4', '-oG', tfile_output.name,  '--open',
                         '-n', '--randomize-hosts', '--min-rate', str(self.rate)]
             if not self.ping:
@@ -98,7 +101,8 @@ class Nmap(TaskBase):
             else:
                 nmap_bin.append('-p')
                 nmap_bin.append(port)
-            nmap_bin.append(ip)
+            nmap_bin.append('-iL')
+            nmap_bin.append(tfile_ip.name)
             # 调用nmap进行扫描
             child = subprocess.Popen(nmap_bin, stdout=subprocess.PIPE)
             child.wait()
@@ -122,8 +126,7 @@ class Nmap(TaskBase):
         '''
         ip_ports = []
         try:
-            for ip in self.target:
-                ip_ports.extend(self.__nmap_scan(ip, self.port))
+            ip_ports.extend(self.__nmap_scan(self.target, self.port))
         except Exception as e:
             logger.error(traceback.format_exc())
             logger.error('nmap scan target:{},port:{}'.format(self.target,self.port))

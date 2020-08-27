@@ -3,6 +3,7 @@
 from functools import wraps
 import traceback
 
+from flask import Flask
 from flask import Blueprint
 from flask import render_template
 from flask import request
@@ -10,21 +11,30 @@ from flask import redirect
 from flask import url_for
 from flask import session
 
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
+
 from instance import config
 from nemo.common.utils.loggerutils import logger
 
 authenticate = Blueprint('authenticate', __name__)
 ProductionConfig = config.ProductionConfig
 
+limiter = Limiter(
+    Flask(__name__),
+    key_func=get_remote_address,
+    default_limits=["5/minute", "30/hour"]
+)
 
 @authenticate.route('/login', methods=['POST', 'GET'])
+@limiter.limit("5/minute;30/hour")
 def login_view():
     if request.method == 'POST':
         username = request.form.get('username')
         password = request.form.get('password')
         if password == ProductionConfig.WEB_PASSWORD:
             try:
-                session['login'] = 'A1akPTQJiz9wi9yo4rDz8ubM1b1'
+                session['login'] = 'A1akPTQJiz9wi9yo4rDz8ubM1b1xqvH'
                 logger.info('[login success] from {}'.format(request.remote_addr))
                 return redirect(url_for('index.view_index'))
             except Exception as e:
@@ -50,7 +60,7 @@ def login_check(f):
     @wraps(f)
     def wrapper(*args, **kwargs):
         try:
-            if session['login'] == 'A1akPTQJiz9wi9yo4rDz8ubM1b1':
+            if session['login'] == 'A1akPTQJiz9wi9yo4rDz8ubM1b1xqvH':
                 return f(*args, **kwargs)
             else:
                 return redirect(url_for('authenticate.login_view'))

@@ -63,11 +63,15 @@ class WhatWeb(TaskBase):
     def __exe_whatweb(self, url):
         '''调用nmap对指定IP和端口进行扫描
         '''
-        with NamedTemporaryFile('w+t') as tfile_output:
+        with NamedTemporaryFile('w+t') as tfile_url,NamedTemporaryFile('w+t') as tfile_output:
+             # 将目标写入文件中
+            tfile_url.write(url)
+            tfile_url.seek(0)
             whatweb_bin = [self.whatweb_bin, '-q', '--color=never', '--log-brief', tfile_output.name, '--max-threads', str(self.whatweb_threads),
                            '--open-timeout', str(5), '--read-timeou', str(10),
                            '-U=Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/52.0.2743.116 Safari/537.36 Edge/15.15063',
-                           url]
+                           '--input-file',   
+                           tfile_url.name]
             # 调用whatweb进行扫描
             try:
                 child = subprocess.Popen(whatweb_bin, stdout=subprocess.PIPE)

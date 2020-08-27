@@ -30,30 +30,30 @@ def config_view():
     return jsonify(config_data)
 
 
-@config_manager.route('/adv-config-save-nmap', methods=['POST'])
-@login_check
-def config_save_nmap_view():
-    '''保存NMAP设置
-    '''
-    nmap_config = {'nmap_bin': request.form.get('nmap_bin'), 'masscan_bin': request.form.get('masscan_bin'),'port': request.form.get('nmap_port'),
-                   'tech': request.form.get('nmap_tech'), 'rate': request.form.get('nmap_rate'), 
-                   'ping': _str2bool(request.form.get('nmap_ping'))}
+# @config_manager.route('/adv-config-save-nmap', methods=['POST'])
+# @login_check
+# def config_save_nmap_view():
+#     '''保存NMAP设置
+#     '''
+#     nmap_config = {'nmap_bin': request.form.get('nmap_bin'), 'masscan_bin': request.form.get('masscan_bin'),'port': request.form.get('nmap_port'),
+#                    'tech': request.form.get('nmap_tech'), 'rate': request.form.get('nmap_rate'), 
+#                    'ping': _str2bool(request.form.get('nmap_ping'))}
 
-    config_jsondata = load_config()
-    config_jsondata.update(nmap=nmap_config)
+#     config_jsondata = load_config()
+#     config_jsondata.update(nmap=nmap_config)
 
-    save_config(config_jsondata)
-    return jsonify({'status': 'success'})
+#     save_config(config_jsondata)
+#     return jsonify({'status': 'success'})
 
-@config_manager.route('/adv-config-save-whatweb', methods=['POST'])
-@login_check
-def config_save_whatweb_view():
-    '''保存whatweb设置
-    '''
-    whatweb_config = {'bin': request.form.get('whatweb_bin')}
+# @config_manager.route('/adv-config-save-whatweb', methods=['POST'])
+# @login_check
+# def config_save_whatweb_view():
+#     '''保存whatweb设置
+#     '''
+#     whatweb_config = {'bin': request.form.get('whatweb_bin')}
 
-    config_jsondata = load_config()
-    config_jsondata.update(whatweb=whatweb_config)
+#     config_jsondata = load_config()
+#     config_jsondata.update(whatweb=whatweb_config)
 
-    save_config(config_jsondata)
-    return jsonify({'status': 'success'})
+#     save_config(config_jsondata)
+#     return jsonify({'status': 'success'})
