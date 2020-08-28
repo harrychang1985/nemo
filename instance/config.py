@@ -35,7 +35,9 @@ class ProductionConfig(Config):
 
     # flower
     FLOWER_BIND_ADDR = '127.0.0.1'
-    FLWOER_PORT = 5555
+    FLOWER_PORT = 5555
+    FLOWER_AUTH_USER = 'nemo'
+    FLOWER_AUTH_PASSWORD = 'nemo'
 
 
 class APIConfig():

@@ -33,7 +33,7 @@ brew install mysql@5.7
   mysql -u root nemo < nemo.sql
   ```
 
-- 创建用户并授权
+- 创建用户并授权
 
   ```
   CREATE USER 'nemo'@'%' IDENTIFIED BY 'nemo2020';
@@ -90,8 +90,10 @@ make install
 
   ```
   # flower
-   		FLOWER_BIND_ADDR = '127.0.0.1'
-      FLWOER_PORT = 5555
+      FLOWER_BIND_ADDR = '127.0.0.1'
+      FLOWER_PORT = 5555
+      FLOWER_AUTH_USER = 'nemo'
+      FLOWER_AUTH_PASSWORD = 'nemo'
   ```
 
 ### 6、python package
@@ -122,12 +124,12 @@ pip3 install -r requirements.txt
 ### 3. celery flower
 
    ```bash
-   celery flower -A nemo.core.tasks.tasks --address=127.0.0.1 -port-5555
+   celery flower -A nemo.core.tasks.tasks --basic_auth=nemo:nemo --address=127.0.0.1 -port-5555
    ```
 
 ### 4. web app
 
    ```
-   python3 app.py debug
+   python3 app.py
    ```
 

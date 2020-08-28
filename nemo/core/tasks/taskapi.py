@@ -11,13 +11,13 @@ class TaskAPI():
     def __init__(self):
         # flower  build ip and port
         self.api_host = 'http://{}:{}'.format(
-            ProductionConfig.FLOWER_BIND_ADDR, ProductionConfig.FLWOER_PORT)
+            ProductionConfig.FLOWER_BIND_ADDR, ProductionConfig.FLOWER_PORT)
         # task package
         self.task_package = 'nemo.core.tasks.tasks'
         # request timeout
         self.timeout = 5
         # flower Authenticate
-        self.auth = None  # HTTPBasicAuth('nemo','nemo2020')
+        self.auth =  HTTPBasicAuth(ProductionConfig.FLOWER_AUTH_USER,ProductionConfig.FLOWER_AUTH_PASSWORD)
 
     def __process_result(self, response):
         '''处理返回数据

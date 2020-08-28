@@ -14,10 +14,10 @@
 
 ### **1、rabbitmq**
 
-- 设置监听的IP地址（供worker远程访问），修改/usr/local/Cellar/rabbitmq/{VERSION}/sbin/rabbitmq-env，增加
+- 设置监听的IP地址（供worker远程访问），修改/usr/local/Cellar/rabbitmq/{VERSION}/sbin/rabbitmq-env（ubuntu18：/usr/lib/rabbitmq/bin/rabbitmq-env），增加
 
   ```
-  NODE_IP_ADDRESS= 172.16.80.1 (rabbitmq所在服务器地址，供celery远程连接，如果不需要分布式则不需要该配置)
+  NODE_IP_ADDRESS=172.16.80.1 (rabbitmq所在服务器地址，供celery远程连接，如果不需要分布式则不需要该配置)
   ```
 
 - 增加rabbitmq用户和密码
@@ -87,8 +87,10 @@
 
   ```
   # flower
-   		FLOWER_BIND_ADDR = '127.0.0.1'
-      FLWOER_PORT = 5555
+      FLOWER_BIND_ADDR = '127.0.0.1'
+      FLOWER_PORT = 5555
+      FLOWER_AUTH_USER = 'nemo'
+      FLOWER_AUTH_PASSWORD = 'nemo'
   ```
 
 ### 4、python package
@@ -115,7 +117,7 @@ pip3 install -r requirements.txt
 3. 启动celery flower
 
    ```bash
-   celery flower -A nemo.core.tasks.tasks --address=127.0.0.1 -port-5555
+   celery flower -A nemo.core.tasks.tasks --basic_auth=nemo:nemo --address=127.0.0.1 -port-5555
    ```
 
 4. 启动web app
