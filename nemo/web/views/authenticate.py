@@ -26,29 +26,28 @@ limiter = Limiter(
     default_limits=["5/minute", "30/hour"]
 )
 
-@authenticate.route('/login', methods=['POST', 'GET'])
-@limiter.limit("5/minute;30/hour")
+@authenticate.route('/login', methods=['GET'])
 def login_view():
-    if request.method == 'POST':
-        username = request.form.get('username')
-        password = request.form.get('password')
-        if password == ProductionConfig.WEB_PASSWORD:
-            try:
-                session['login'] = 'A1akPTQJiz9wi9yo4rDz8ubM1b1xqvH'
-                logger.info('[login success] from {}'.format(request.remote_addr))
-                return redirect(url_for('index.view_index'))
-            except Exception as e:
-                logger.error(traceback.format_exc())
+    return render_template('login.html')
 
-                return render_template('login.html', msg='Internal Server Error')
-        else:
-            logger.info('[login fail] from {}'.format(request.remote_addr))
-            return render_template('login.html', msg='Invalid Password')
 
+@authenticate.route('/login', methods=['POST'])
+@limiter.limit("10/minute;30/hour;60/day")
+def login_check_view():
+    password = request.form.get('password')
+    if password == ProductionConfig.WEB_PASSWORD:
+        try:
+            session['login'] = 'A1akPTQJiz9wi9yo4rDz8ubM1b1xqvH'
+            logger.info('[login success] from {}'.format(request.remote_addr))
+            return redirect(url_for('index.view_index'))
+        except Exception as e:
+            logger.error(traceback.format_exc())
+            return redirect(url_for('authenticate.login_view'))
     else:
-        return render_template('login.html')
+        logger.info('[login fail] from {}'.format(request.remote_addr))
+        return redirect(url_for('authenticate.login_view'))
 
-
+    
 @authenticate.route('/logout', methods=['GET'])
 def logout():
     session['login'] = ''

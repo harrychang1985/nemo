@@ -37,68 +37,10 @@
         <!-- <p><a href="/login">Not John ? Login Here.</a></p> -->
       </div>
     </section>
-
-
     <!-- Essential javascripts for application to work-->
     <script src="static/js/jquery/jquery-3.3.1.min.js"></script>
     <script src="static/js/bootstrap/popper.min.js"></script>
     <script src="static/js/bootstrap/bootstrap.min.js"></script>
     <script src="static/js/main.js"></script>
-    <script async src="static/js/gtag/gtag.js?id=UA-120816702-1"></script>
-
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'UA-120816702-1');
-    </script>
-
-    <script>
-      $(function () {
-          $(".login").click(function() {
-              const data = {
-                  "password": $('[name="password"]').val()
-              };
-              $.ajax({
-                type: "POST",
-                url: "/login",
-                data: data,
-                success: function(e){
-                    if (e === "success") {
-                      swal({
-                          title: "Successfully",
-                          text: "",
-                          type: "success",
-                          timer: 700,
-                          confirmButtonText: "OK",
-                          closeOnConfirm: false
-                      },
-                      function(){
-                          location.href = "/index";
-                      });
-                  } else {
-                      swal({
-                          title: e,
-                          text: "",
-                          type: "error",
-                          confirmButtonColor: "#DD6B55",
-                          confirmButtonText: "Cancel",
-                          closeOnConfirm: false
-                      },
-                      function(){
-                          location.href = "/login";
-                      });
-                  }
-                }
-             });
-          });
-      });
-
-  </script>
-    <!-- The javascript plugin to display page loading on top-->
-  <script src="static/js/plugins/pace.min.js"></script>
-  <script src="static/js/sweetalert/sweetalert.min.js"></script>
-
-
   </body>
 </html>

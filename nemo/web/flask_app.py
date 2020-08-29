@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 # coding:utf-8
+import os
 import logging
 from flask import Flask
 from nemo.web.views.authenticate import authenticate
@@ -16,7 +17,6 @@ from nemo.common.utils.loggerutils import web_handler
 
 web_app = Flask(__name__)
 web_app.secret_key = ProductionConfig.SECRET_KEY
-
 # save web access log to file
 web_logger = logging.getLogger('werkzeug')
 web_logger.addHandler(web_handler)
