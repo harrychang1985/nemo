@@ -33,7 +33,8 @@ class IPLocationCustom():
                         location = datas[1].strip()
                         self.ip_location_dict[ip] = location
         except FileNotFoundError:
-            logger.error('iplocation-custom file not found')
+            #logger.error('iplocation-custom file not found')
+            pass
         except:
             logger.error(traceback.format_exc())
 

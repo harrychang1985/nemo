@@ -92,7 +92,8 @@ $(function () {
                         "ip_address": $('#ip_address').val(),
                         "domain_address": $('#domain_address').val(),
                         "color_tag": $('#select_color_tag').val(),
-                        "memo_content": $('#memo_content').val()
+                        "memo_content": $('#memo_content').val(),
+                        "date_delta": $('#date_delta').val()
                     });
                 }
             },
@@ -216,6 +217,7 @@ function get_export_options() {
     url += '&domain_address=' + encodeURI($('#domain_address').val());
     url += '&color_tag=' + encodeURI($('#select_color_tag').val());
     url += '&memo_content=' + encodeURI($('#memo_content').val());
+    url += '&date_delta=' + encodeURI($('#date_delta').val());
 
     return url;
 }

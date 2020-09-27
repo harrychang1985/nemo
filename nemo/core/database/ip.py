@@ -3,6 +3,8 @@
 import traceback
 import ipaddress
 import re
+from datetime import datetime
+from datetime import timedelta
 
 from . import dbutils
 from . import daobase
@@ -60,7 +62,7 @@ class Ip(daobase.DAOBase):
             self.copy_key(data_new, data, 'location')
             return self.add(data_new)
 
-    def __fill_search_where(self, org_id, domain, ip, port, content, iplocation, port_status, color_tag, memo_content):
+    def __fill_search_where(self, org_id, domain, ip, port, content, iplocation, port_status, color_tag, memo_content, date_delta):
         '''根据指定的字段，生成查询SQL语句和参数
         '''
         sql = []
@@ -97,7 +99,7 @@ class Ip(daobase.DAOBase):
                     sql.append(link_word)
                     sql.append(' ip=%s ')
                 link_word = ' and '
-            except Exception as e:
+            except:
                 logger.error(traceback.format_exc())
                 logger.error('ip address wrong:{}'.format(ip))
         if port:
@@ -138,10 +140,22 @@ class Ip(daobase.DAOBase):
                 ' id in (select r_id from ip_memo where content like %s)')
             param.append('%' + memo_content+'%')
             link_word = ' and '
+        if date_delta:
+            try:
+                days_span = int(date_delta)
+                if days_span > 0:
+                    sql.append(link_word)
+                    sql.append(' update_datetime between %s and %s ')
+                    param.append(datetime.now() - timedelta(days=days_span))
+                    param.append(datetime.now())
+                    link_word = ' and '
+            except:
+                logger.error(traceback.format_exc())
+                logger.error('date delta error:{}'.format(date_delta))
 
         return sql, param
 
-    def count_by_search(self, org_id=None, domain=None, ip=None, port=None, content=None, iplocation=None, port_status=None, color_tag=None, memo_content=None):
+    def count_by_search(self, org_id=None, domain=None, ip=None, port=None, content=None, iplocation=None, port_status=None, color_tag=None, memo_content=None,date_delta=None):
         '''统计记录总条数
         org_id:     组织的ID
         domain:     域名
@@ -156,13 +170,13 @@ class Ip(daobase.DAOBase):
         sql.append('select count(id) from {} '.format(self.table_name))
         # 查询条件
         where_sql, where_param = self.__fill_search_where(
-            org_id, domain, ip, port, content, iplocation, port_status, color_tag, memo_content)
+            org_id, domain, ip, port, content, iplocation, port_status, color_tag, memo_content, date_delta)
         sql.extend(where_sql)
         param.extend(where_param)
 
         return dbutils.queryone(''.join(sql), param)
 
-    def gets_by_search(self, org_id=None, domain=None, ip=None, port=None, content=None, iplocation=None, port_status=None, color_tag=None, memo_content=None,
+    def gets_by_search(self, org_id=None, domain=None, ip=None, port=None, content=None, iplocation=None, port_status=None, color_tag=None, memo_content=None,date_delta=None,
                        fields=None, page=1, rows_per_page=None, order_by=None):
         '''根据组织机构、IP地址（包括范围）及端口的综合查询
         org_id:     组织的ID
@@ -184,7 +198,7 @@ class Ip(daobase.DAOBase):
             self.fill_fields(fields), self.table_name))
         # 查询条件
         where_sql, where_param = self.__fill_search_where(
-            org_id, domain, ip, port, content, iplocation, port_status, color_tag, memo_content)
+            org_id, domain, ip, port, content, iplocation, port_status, color_tag, memo_content, date_delta)
         sql.extend(where_sql)
         param.extend(where_param)
         # 排序、分页

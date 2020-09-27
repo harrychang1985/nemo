@@ -56,13 +56,14 @@ def domain_asset_view():
         domain_address = request.form.get('domain_address')
         color_tag = request.form.get('color_tag')
         memo_content = request.form.get('memo_content')
+        date_delta = request.form.get('date_delta')
 
         session['ip_address_domain'] = ip_address
         session['domain_address'] = domain_address
         session['session_org_id'] = org_id
 
         count = 0
-        domains = domain_table.gets_by_search(org_id, domain_address, ip_address, color_tag, memo_content,
+        domains = domain_table.gets_by_search(org_id, domain_address, ip_address, color_tag, memo_content, date_delta,
                                               page=start//length+1, rows_per_page=length)
         if domains:
             for domain_row in domains:
@@ -85,7 +86,7 @@ def domain_asset_view():
                 })
                 index += 1
             count = domain_table.count_by_search(
-                org_id, domain_address, ip_address, color_tag, memo_content)
+                org_id, domain_address, ip_address, color_tag, memo_content, date_delta)
         json_data = {
             'draw': draw,
             'recordsTotal': count,
@@ -141,9 +142,10 @@ def domain_export_view():
     domain_address = request.args.get('domain_address')
     color_tag = request.args.get('color_tag')
     memo_content = request.args.get('memo_content')
+    date_delta = request.args.get('date_delta')
 
     data = export_domains(org_id, domain_address,
-                          ip_address, color_tag, memo_content)
+                          ip_address, color_tag, memo_content, date_delta)
     response = Response(data, content_type='application/octet-stream')
     response.headers["Content-disposition"] = 'attachment; filename={}'.format(
         "domain-export.xlsx")
@@ -164,8 +166,8 @@ def mark_ip_tag_color(r_id):
         return jsonify({'status': 'success'})
     # 标记颜色
     data = {'r_id': r_id, 'color': color}
-    id = color_tag_app.save_and_update(data)
-    ret_status = {'status': 'success' if id else 'fail'}
+    obj_id = color_tag_app.save_and_update(data)
+    ret_status = {'status': 'success' if obj_id else 'fail'}
 
     return jsonify(ret_status)
 
@@ -184,8 +186,8 @@ def ip_memo(r_id):
         return {'status': 'success', 'content': memo_content}
     # 保存更新备忘录信息
     memo = request.form.get('memo')
-    id = memo_app.save_and_update({'r_id': r_id, 'content': memo})
-    ret_status = {'status': 'success' if id else 'fail'}
+    obj_id = memo_app.save_and_update({'r_id': r_id, 'content': memo})
+    ret_status = {'status': 'success' if obj_id else 'fail'}
 
     return jsonify(ret_status)
 
@@ -200,9 +202,10 @@ def domain_memo_export_view():
     domain_address = request.args.get('domain_address')
     color_tag = request.args.get('color_tag')
     memo_content = request.args.get('memo_content')
+    date_delta = request.args.get('date_delta')
 
     memo_list = AssertInfoParser().export_domain_memo(
-        org_id, domain_address, ip_address, color_tag, memo_content)
+        org_id, domain_address, ip_address, color_tag, memo_content, date_delta)
     response = Response(
         '\n'.join(memo_list), content_type='application/octet-stream')
     response.headers["Content-disposition"] = 'attachment; filename={}'.format(

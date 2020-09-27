@@ -137,7 +137,8 @@ $(function () {
                         "iplocation": $('#iplocation').val(),
                         "port_status": $('#port_status').val(),
                         "color_tag": $('#select_color_tag').val(),
-                        "memo_content": $('#memo_content').val()
+                        "memo_content": $('#memo_content').val(),
+                        "date_delta": $('#date_delta').val()
                     });
                 }
             },
@@ -297,6 +298,8 @@ function get_export_options() {
     url += '&port_status=' + encodeURI($('#port_status').val());
     url += '&color_tag=' + encodeURI($('#select_color_tag').val());
     url += '&memo_content=' + encodeURI($('#memo_content').val());
+    url += '&date_delta=' + encodeURI($('#date_delta').val());
+
 
     return url;
 }

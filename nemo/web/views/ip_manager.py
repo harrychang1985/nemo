@@ -62,6 +62,7 @@ def ip_asset_view():
         port_status = request.form.get('port_status')
         color_tag = request.form.get('color_tag')
         memo_content = request.form.get('memo_content')
+        date_delta = request.form.get('date_delta')
 
         session['ip_address_ip'] = ip_address
         session['domain_address'] = domain_address
@@ -70,7 +71,7 @@ def ip_asset_view():
 
         count = 0
         ips = ip_table.gets_by_search(org_id=org_id, domain=domain_address, ip=ip_address, port=port, content=content, iplocation=iplocation,
-                                      port_status=port_status, color_tag=color_tag, memo_content=memo_content, page=(start//length)+1, rows_per_page=length)
+                                      port_status=port_status, color_tag=color_tag, memo_content=memo_content, date_delta=date_delta, page=(start//length)+1, rows_per_page=length)
         if ips:
             for ip_row in ips:
                 # 查询每一个IP的详细属性
@@ -107,7 +108,7 @@ def ip_asset_view():
                 index += 1
             # 查询的记录数量
             count = ip_table.count_by_search(org_id=org_id, domain=domain_address, ip=ip_address, port=port, content=content,
-                                             iplocation=iplocation, port_status=port_status, color_tag=color_tag, memo_content=memo_content)
+                                             iplocation=iplocation, port_status=port_status, color_tag=color_tag, memo_content=memo_content,date_delta=date_delta)
         json_data = {
             'draw': draw,
             'recordsTotal': count,
@@ -177,9 +178,10 @@ def ip_export_view():
     port_status = request.args.get('port_status')
     color_tag = request.args.get('color_tag')
     memo_content = request.args.get('memo_content')
+    data_delta = request.args.get('data_delta')
 
     data = export_ips(org_id, domain_address, ip_address, port, content,
-                      iplocation, port_status, color_tag, memo_content)
+                      iplocation, port_status, color_tag, memo_content,data_delta)
     response = Response(data, content_type='application/octet-stream')
     response.headers["Content-disposition"] = 'attachment; filename={}'.format(
         "ip-export.xlsx")
@@ -201,9 +203,10 @@ def ip_statistics_view():
     port_status = request.args.get('port_status')
     color_tag = request.args.get('color_tag')
     memo_content = request.args.get('memo_content')
+    date_delta =request.args.get('date_delta')
 
     ip_list, ip_c_set, port_set, port_count_dict, ip_port_list = AssertInfoParser().statistics_ip(
-        org_id, domain_address, ip_address, port, content, iplocation, port_status, color_tag, memo_content)
+        org_id, domain_address, ip_address, port, content, iplocation, port_status, color_tag, memo_content,date_delta)
     data = []
     data.append('Port: ({})'.format(len(port_set)))
     data.append(','.join([str(x) for x in sorted(port_set)]))
@@ -243,9 +246,10 @@ def ip_memo_export_view():
     port_status = request.args.get('port_status')
     color_tag = request.args.get('color_tag')
     memo_content = request.args.get('memo_content')
+    date_delta =request.args.get('date_delta')
 
     memo_list = AssertInfoParser().export_ip_memo(
-        org_id, domain_address, ip_address, port, content, iplocation, port_status, color_tag, memo_content)
+        org_id, domain_address, ip_address, port, content, iplocation, port_status, color_tag, memo_content, date_delta)
 
     response = Response(
         '\n'.join(memo_list), content_type='application/octet-stream')
@@ -268,8 +272,8 @@ def mark_ip_tag_color(r_id):
         return jsonify({'status': 'success'})
     # 标记颜色
     data = {'r_id': r_id, 'color': color}
-    id = color_tag_app.save_and_update(data)
-    ret_status = {'status': 'success' if id else 'fail'}
+    obj_id = color_tag_app.save_and_update(data)
+    ret_status = {'status': 'success' if obj_id else 'fail'}
 
     return jsonify(ret_status)
 
@@ -288,7 +292,7 @@ def ip_memo(r_id):
         return {'status': 'success', 'content': memo_content}
     # 保存更新备忘录信息
     memo = request.form.get('memo')
-    id = memo_app.save_and_update({'r_id': r_id, 'content': memo})
-    ret_status = {'status': 'success' if id else 'fail'}
+    obj_id = memo_app.save_and_update({'r_id': r_id, 'content': memo})
+    ret_status = {'status': 'success' if obj_id else 'fail'}
 
     return jsonify(ret_status)

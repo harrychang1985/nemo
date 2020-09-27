@@ -18,7 +18,7 @@ template_file_domain = '{}/domain-export.xlsx'.format(template_path)
 template_file_ip = '{}/ip-export.xlsx'.format(template_path)
 
 
-def _get_domains(org_id, domain_address, ip_address, color_tag, memo_content):
+def _get_domains(org_id, domain_address, ip_address, color_tag, memo_content, date_delta):
     '''获取域名
     '''
     domain_app = Domain()
@@ -28,7 +28,7 @@ def _get_domains(org_id, domain_address, ip_address, color_tag, memo_content):
 
     domain_list = []
     domains = domain_app.gets_by_search(
-        org_id, domain_address, ip_address, color_tag, memo_content, page=1, rows_per_page=100000)
+        org_id, domain_address, ip_address, color_tag, memo_content, date_delta, page=1, rows_per_page=100000)
     if domains:
         for index, domain_row in enumerate(domains):
             ips = domain_attr_app.gets(
@@ -50,15 +50,15 @@ def _get_domains(org_id, domain_address, ip_address, color_tag, memo_content):
     return domain_list
 
 
-def _get_ips(org_id, domain_address, ip_address, port, content, iplocation, port_status, color_tag, memo_content):
+def _get_ips(org_id, domain_address, ip_address, port, content, iplocation, port_status, color_tag, memo_content, date_delta):
     '''获取IP
     '''
     ip_table = Ip()
     aip = AssertInfoParser()
 
     ip_list = []
-    ips = ip_table.gets_by_search(org_id=org_id, domain=domain_address, ip=ip_address, port=port,
-                                  content=content, iplocation=iplocation, port_status=port_status, color_tag=color_tag, memo_content=memo_content,
+    ips = ip_table.gets_by_search(org_id=org_id, domain=domain_address, ip=ip_address, port=port, content=content, iplocation=iplocation, 
+                                  port_status=port_status, color_tag=color_tag, memo_content=memo_content,date_delta=date_delta,
                                   page=1, rows_per_page=100000)
     if ips:
         for i, ip_row in enumerate(ips):
@@ -83,13 +83,13 @@ def _copy_cell_style(ws, src_row, dst_row, col_from, col_to):
             ws.cell(column=i, row=src_row).alignment)
 
 
-def export_domains(org_id=None, domain_address=None, ip_address=None, color_tag=None, memo_content=None):
+def export_domains(org_id=None, domain_address=None, ip_address=None, color_tag=None, memo_content=None, date_delta=None):
     '''导出域名为excel文件
     '''
     wb = load_workbook(template_file_domain)
     ws = wb.active
     domains = _get_domains(org_id, domain_address,
-                           ip_address, color_tag, memo_content)
+                           ip_address, color_tag, memo_content,date_delta)
     row_start = 2
     for domain in domains:
         _copy_cell_style(ws, 2, row_start, 1, 7)
@@ -108,13 +108,13 @@ def export_domains(org_id=None, domain_address=None, ip_address=None, color_tag=
         return data
 
 
-def export_ips(org_id=None, domain_address=None, ip_address=None, port=None, content=None, iplocation=None, port_status=None, color_tag=None, memo_content=None):
+def export_ips(org_id=None, domain_address=None, ip_address=None, port=None, content=None, iplocation=None, port_status=None, color_tag=None, memo_content=None, date_delta=None):
     '''导出IP为excel文件
     '''
     wb = load_workbook(template_file_ip)
     ws = wb.active
     ips = _get_ips(org_id, domain_address, ip_address,
-                   port, content, iplocation, port_status, color_tag, memo_content)
+                   port, content, iplocation, port_status, color_tag, memo_content, date_delta)
     row_start = 2
     for ip in ips:
         merged_row_start = row_start
