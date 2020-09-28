@@ -1,8 +1,8 @@
 requests
 dnspython
 pymysql
-DBUtils
-celery
+DBUtils==1.4
+celery==4.4.7
 flower
 flask
 flask_limiter
