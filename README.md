@@ -35,7 +35,7 @@ docker build  -t nemo/app:v1 .
 docker run -it -d --name nemo_app -p 5000:5000 nemo/app:v1
 ```
 
-### 2、从docker hub拉取image
+### ~~2、从docker hub拉取image（不建议）~~
 
 ```
 docker pull han2008/nemo:v1
