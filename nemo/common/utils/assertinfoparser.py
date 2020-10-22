@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # coding:utf-8
 from collections import defaultdict
+from logging import exception
 from nemo.core.database.attr import DomainAttr, PortAttr
 from nemo.core.database.domain import Domain
 from nemo.core.database.ip import Ip
@@ -177,6 +178,7 @@ class AssertInfoParser():
         ip_port_list = []
         ip_c_set = set()
         port_set = set()
+        location_dict = {}
         # 统计每个端口出现的次数
         port_count_dict = defaultdict(lambda: 0)
         ips = ip_table.gets_by_search(org_id=org_id, domain=domain_address, ip=ip_address, port=port, content=content,
@@ -189,6 +191,15 @@ class AssertInfoParser():
                 ip_c = ip_row['ip'].split('.')[0:3]
                 ip_c.append('0/24')
                 ip_c_set.add('.'.join(ip_c))
+                #location
+                if ip_row['location']:
+                    try:
+                        location = (ip_row['location'].split(',')[0]).split(' ')[0].strip()
+                        if location:
+                            location_count = location_dict.get(location,0)
+                            location_dict[location] = location_count + 1
+                    except:
+                        pass
                 # port
                 ports_obj = port_table.gets(query={'ip_id': ip_row['id']})
                 for port_obj in ports_obj:
@@ -197,7 +208,7 @@ class AssertInfoParser():
                     ip_port_list.append('{}:{}'.format(
                         ip_row['ip'], port_obj['port']))
 
-        return ip_list, ip_c_set, port_set, port_count_dict, ip_port_list
+        return ip_list, ip_c_set, port_set, port_count_dict, ip_port_list, location_dict
 
     def export_ip_memo(self, org_id=None, domain_address=None, ip_address=None, port=None, content=None, iplocation=None, port_status=None, color_tag=None, memo_content=None, date_delta=None):
         '''导出ip相关的备忘录信息

@@ -205,7 +205,7 @@ def ip_statistics_view():
     memo_content = request.args.get('memo_content')
     date_delta =request.args.get('date_delta')
 
-    ip_list, ip_c_set, port_set, port_count_dict, ip_port_list = AssertInfoParser().statistics_ip(
+    ip_list, ip_c_set, port_set, port_count_dict, ip_port_list, location_dict = AssertInfoParser().statistics_ip(
         org_id, domain_address, ip_address, port, content, iplocation, port_status, color_tag, memo_content,date_delta)
     data = []
     data.append('Port: ({})'.format(len(port_set)))
@@ -223,6 +223,11 @@ def ip_statistics_view():
     data.extend(ip_list)
     data.append('\nTarget: ({})'.format(len(ip_port_list)))
     data.extend(ip_port_list)
+    
+    data.append('\nLocation: ({})'.format(len(location_dict)))
+    location_sorted = sorted(location_dict.items(), key=lambda d:d[1], reverse=True)
+    for d in location_sorted:
+        data.append("{} :{}".format(d[0],d[1]))
 
     response = Response(
         '\n'.join(data), content_type='application/octet-stream')
