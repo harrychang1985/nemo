@@ -68,7 +68,7 @@ class WhatWeb(TaskBase):
             tfile_url.write(url)
             tfile_url.seek(0)
             whatweb_bin = [self.whatweb_bin, '-q', '--color=never', '--log-brief', tfile_output.name, '--max-threads', str(self.whatweb_threads),
-                           '--open-timeout', str(5), '--read-timeou', str(10),
+                           '--open-timeout', str(5), '--read-timeout', str(10),
                            '-U=Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/52.0.2743.116 Safari/537.36 Edge/15.15063',
                            '--input-file',   
                            tfile_url.name]

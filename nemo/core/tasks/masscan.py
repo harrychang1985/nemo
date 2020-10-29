@@ -22,6 +22,7 @@ class Masscan(TaskBase):
                 'port':     '1-65535'/'--top-ports 1000',nmap能识别的端口格式
                 'org_id':   id,target关联的组织机构ID
                 'rate':     3000,扫描速率
+                'ping':     True/False，是否PING
             }
     任务结果:
         保存为ip资产格式的列表：
@@ -43,6 +44,7 @@ class Masscan(TaskBase):
         config_datajson = load_config()
         self.port = config_datajson['nmap']['port']
         self.rate = config_datajson['nmap']['rate']
+        self.ping = config_datajson['nmap']['ping']
         self.masscan_bin = config_datajson['nmap']['masscan_bin']
 
     def __parse_masscan_output_file(self, output_results):
@@ -95,6 +97,8 @@ class Masscan(TaskBase):
             tfile_ip.seek(0)
             masscan_bin = [self.masscan_bin, '-oL',
                            tfile_output.name, '--open', '--rate', str(self.rate)]
+            if self.ping:
+                masscan_bin.append('--ping')
             # 两种方式：指定端口（包括全端口）和常用top端口（--top-ports 1000）
             # 如果是--top-ports模式，则调用nmap获取top-ports
             masscan_bin.append('-p')
@@ -121,10 +125,11 @@ class Masscan(TaskBase):
         if not self.port:
             self.port = '--top-ports 1000'
         self.rate = self.get_option('rate', options, self.rate)
+        self.ping = self.get_option('ping', options, self.ping)
         self.org_id = self.get_option('org_id', options, self.org_id)
 
     def execute(self):
-        '''调用nmap执行扫描任务
+        '''调用masscan执行扫描任务
         '''
         ip_ports = []
         try:
