@@ -39,6 +39,20 @@ class IpLocation(TaskBase):
 
         self.iplocation_custom = None
        
+    def __parse_hao7188com_data(self, text):
+        '''解析hao7188com的返回数据信息
+        '''
+        ipinfo = []
+        p1 = u'<span class="wz">(.*?)</span>'
+        p2 = u'<img (.*?)/>'
+        for p in [p1, ]:
+            m = re.findall(p, text)
+            if m:
+                for x in m:
+                    x = re.sub(p2,'',x)
+                    ipinfo.append(x.strip())
+
+        return ipinfo
 
     def __fetch_iplocation_from_7188(self, ip):
         '''调用www.hao7188.com的接口查询指定的IP地址
@@ -63,9 +77,7 @@ class IpLocation(TaskBase):
                             url_new = 'http://www.hao7188.com/{}'.format(
                                 new_href)
                             r3 = session.get(url_new, headers=self.headers)
-                            p = u'<span>(.*?)</span>'
-                            m = re.findall(p, r3.text)
-                            return m
+                            return self.__parse_hao7188com_data(r3.text)
         except:
             logger.error(traceback.format_exc())
             logger.error('fetch ip location from 7188,ip:{}'.format(ip))
