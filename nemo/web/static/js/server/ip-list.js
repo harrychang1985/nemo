@@ -128,6 +128,7 @@ $(function () {
                 "url": "/ip-list",
                 "type": "post",
                 "data": function (d) {
+                    init_dataTables_defaultParam(d);
                     return $.extend({}, d, {
                         "org_id": $('#select_org_id_search').val(),
                         "domain_address": $('#domain_address').val(),
@@ -166,6 +167,7 @@ $(function () {
                     title: "IP地址",
                     width: "10%",
                     render: function (data, type, row, meta) {
+                        var strData;
                         if (row['color_tag']) {
                             strData = '<h5><a href="/ip-info?ip=' + data + '" target="_blank" class="badge ' + row['color_tag'] + '">' + data + '</a></h5>';
                         }
@@ -181,7 +183,7 @@ $(function () {
                     "render": function (data, type, row, meta) {
                         var strData = '<div style="width:100%;white-space:normal;word-wrap:break-word;word-break:break-all;">';
                         var pre_link = "";
-                        for (j = 0, len = data.length; j < len; j++) {
+                        for (var j = 0, len = data.length; j < len; j++) {
                             //提取出端口和状态
                             var port = data[j].replace(/\[.+?\]/g, "");
                             var status = data[j].replace(/^.+?\[/g, "");
@@ -228,10 +230,35 @@ $(function () {
                 }
             ],
             infoCallback: function (settings, start, end, max, total, pre) {
-                var api = this.api();
-                var pageInfo = api.page.info();
                 return "共<b>" + total + "</b>条记录，当前显示" + start + "到" + end + "记录";
             },
+            drawCallback: function (setting) {
+                var _this = $(this);
+                var tableId = _this.attr('id');
+                var pageDiv = $('#' + tableId + '_paginate');
+                pageDiv.append(
+                    '<i class="fa fa-arrow-circle-o-right fa-lg" aria-hidden="true"></i><input id="' + tableId + '_gotoPage" type="text" style="height:20px;line-height:20px;width:40px;"/>' +
+                    '<a class="paginate_button" aria-controls="' + tableId + '" tabindex="0" id="' + tableId + '_goto">Go</a>')
+                $('#' + tableId + '_goto').click(function (obj) {
+                    var page = $('#' + tableId + '_gotoPage').val();
+                    var thisDataTable = $('#' + tableId).DataTable();
+                    var pageInfo = thisDataTable.page.info();
+                    if (isNaN(page)) {
+                        $('#' + tableId + '_gotoPage').val('');
+                        return;
+                    } else {
+                        var maxPage = pageInfo.pages;
+                        var page = Number(page) - 1;
+                        if (page < 0) {
+                            page = 0;
+                        } else if (page >= maxPage) {
+                            page = maxPage - 1;
+                        }
+                        $('#' + tableId + '_gotoPage').val(page + 1);
+                        thisDataTable.page(page).draw('page');
+                    }
+                })
+            }
         }
     );//end datatable
     $(".checkall").click(function () {
@@ -240,6 +267,20 @@ $(function () {
     });
     $('[data-toggle="tooltip"]').tooltip();
 });
+/**
+ * 移除 dataTables默认参数，并设置分页值
+ * @param param
+ */
+function init_dataTables_defaultParam(param) {
+    for (var key in param) {
+        if (key.indexOf("columns") == 0 || key.indexOf("order") == 0 || key.indexOf("search") == 0) { //以columns开头的参数删除
+            delete param[key];
+        }
+    }
+    param.pageSize = param.length;
+    param.pageNum = (param.start / param.length) + 1;
+}
+
 function load_nmap_config() {
     $.post("/adv-config-list", function (data) {
         $('#input_port').val(data['nmap']['port']);
