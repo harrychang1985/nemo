@@ -1,28 +1,34 @@
 # Nemo
 
-<img src="docs/nemo.jpg" alt="nemo" align="left"/>
-
-Nemo（尼莫）是《海底总动员》中的一只可爱的小丑鱼。
-
 Nemo的初衷是用来进行自动化信息收集的一个简单平台，实现对内网及互联网资产信息的自动收集。
 
-## 
 
 
-## 功能
+# 功能
 
 主要实现了以下功能（代码目前在完善和优化中...）
 
 - Nmap/Masscan进行端口扫描（需本地nmap/masscan）
+
 - 第三方接口查询IP归属地（hao7188、ip.cn）
+
 - 子域名收集（Sublist3r）
+
 - 子域名爆破（修改版ESD）
+
 - Fofa的API接口对IP和域名信息收集（需要Fofa的KEY）
+
 - Shodan的API接口对IP信息收集（需要Shodan的KEY）
+
 - WhatWeb收集端口和域名的指纹（需本地whatweb）
+
 - 收集信息的导出、统计、颜色标记、备忘录协作
+
 - Celery实现分布式任务
+
 - Docker部署和运行
+
+  
 
 ## Docker运行
 
