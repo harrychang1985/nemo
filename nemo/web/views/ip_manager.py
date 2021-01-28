@@ -71,7 +71,8 @@ def ip_asset_view():
 
         count = 0
         ips = ip_table.gets_by_search(org_id=org_id, domain=domain_address, ip=ip_address, port=port, content=content, iplocation=iplocation,
-                                      port_status=port_status, color_tag=color_tag, memo_content=memo_content, date_delta=date_delta, page=(start//length)+1, rows_per_page=length)
+                                      port_status=port_status, color_tag=color_tag, memo_content=memo_content, date_delta=date_delta,
+                                      page=(start//length)+1, rows_per_page=length)
         if ips:
             for ip_row in ips:
                 # 查询每一个IP的详细属性

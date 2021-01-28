@@ -8,7 +8,7 @@ from flask import request
 
 from nemo.core.database.domain import Domain
 from nemo.core.database.ip import Ip
-from nemo.core.tasks.taskapi import TaskAPI
+from nemo.core.database.task import Task
 
 from .authenticate import login_check
 
@@ -23,15 +23,9 @@ def view_dashboard():
     if request.method == 'GET':
         return render_template('dashboard.html')
     # 统计信息
-    r = TaskAPI().get_celery_workers()
-    total = 0
-    active = 0
-    if r['status'] == 'success':
-        for k, v in r['result'].items():
-            for tk, tv in v['stats']['total'].items():
-                total += tv
-
-            active += len(v['active'])
+    task_app = Task()
+    active = task_app.count({'state': 'STARTED'})
+    total = task_app.count()
     dashboard_data = {
         'ip_count': Ip().count(),
         'domain_count': Domain().count(),
@@ -46,14 +40,10 @@ def view_dashboard():
 def view_dashboard_task_info():
     '''统计任务
     '''
-    r = TaskAPI().get_celery_workers()
-    total = 0
-    active = 0
-    if r['status'] == 'success':
-        for k, v in r['result'].items():
-            for tk, tv in v['stats']['total'].items():
-                total += tv
+    # 统计信息
+    task_app = Task()
+    active = task_app.count({'state': 'STARTED'})
+    total = task_app.count_by_search(date_delta="7")
+    data = {'task_info': '{}/{}'.format(active, total)}
 
-            active += len(v['active'])
-    data = {'task_info':'{}/{}'.format(active,total)}
     return jsonify(data)

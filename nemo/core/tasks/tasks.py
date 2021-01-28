@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 # coding:utf-8
+import copy
+from datetime import datetime
 from celery import Celery, Task
 
 from instance.config import ProductionConfig
@@ -9,6 +11,7 @@ from .fofa import Fofa
 from .iplocation import IpLocation
 from .portscan import PortScan
 from .shodan_search import Shodan
+from nemo.core.database.task import Task as TaskDatabase
 
 broker = 'amqp://{}:{}@{}:{}/'.format(ProductionConfig.MQ_USERNAME,
                                       ProductionConfig.MQ_PASSWORD, ProductionConfig.MQ_HOST, ProductionConfig.MQ_PORT)
@@ -22,16 +25,52 @@ TASK_ACTION = {
     'domainscan':   DomainScan().run,
 }
 
+
 class UpdateTaskStatus(Task):
     '''在celery的任务异步完成时，显示完成状态和结果
     '''
 
+    def __copy_not_null(self,data_to, data_from, key):
+        if key not in data_from:
+            return
+        if data_from[key] == '' or data_from[key] == None:
+            return
+
+        data_to[key] = copy.copy(data_from[key])
+
+    def __save_and_update_task(self,task_id, task_result):
+        if not task_id:
+            return
+
+        task_app = TaskDatabase()
+        task_data = {'task_id': task_id, 'task_name': task_result['task_name'], 'state': task_result['state']}
+        self.__copy_not_null(task_data, task_result, 'result')
+        self.__copy_not_null(task_data, task_result, 'succeeded')
+        self.__copy_not_null(task_data, task_result, 'failed')
+        self.__copy_not_null(task_data, task_result, 'revoked')
+        self.__copy_not_null(task_data, task_result, 'retried')
+
+        task_app.save_and_update(task_data)
+
     def on_success(self, retval, task_id, args, kwargs):
         print('task {} done: {}'.format(task_id, retval))
+        task_result = {'task_name':self.name,'result':str(retval),'state':'SUCCESS','succeeded':datetime.now()}
+        self.__save_and_update_task(task_id,task_result)
+
         return super(UpdateTaskStatus, self).on_success(retval, task_id, args, kwargs)
 
     def on_failure(self, exc, task_id, args, kwargs, einfo):
         print('task {} fail, reason: {}'.format(task_id, exc))
+        task_result = {'task_name': self.name, 'result': str(exc), 'state': 'FAILURE', 'failed': datetime.now()}
+        self.__save_and_update_task(task_id, task_result)
+
+        return super(UpdateTaskStatus, self).on_failure(exc, task_id, args, kwargs, einfo)
+
+    def on_retry(self, exc, task_id, args, kwargs, einfo):
+        print('task {} retry, reason: {}'.format(task_id, exc))
+        task_result = {'task_name': self.name, 'result': str(exc), 'state': 'RETRY', 'retried': datetime.now()}
+        self.__save_and_update_task(task_id, task_result)
+
         return super(UpdateTaskStatus, self).on_failure(exc, task_id, args, kwargs, einfo)
 
 def new_task(action, options):

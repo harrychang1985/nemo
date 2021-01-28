@@ -21,10 +21,10 @@ $(function () {
             "ajax": {
                 "url": "/task-list",
                 "type": "post",
-                "data": { task_limit: 5 } //只显示最近5条记录
+                "data": { start: 0,length:5 } //只显示最近5条记录
             },
             columns: [
-                { data: 'name', title: '名称', width: '10%' },
+                { data: 'task_name', title: '名称', width: '10%' },
                 { data: 'state', title: '状态', width: '5%' },
                 {
                     data: 'kwargs', title: '参数', width: '30%',
@@ -37,7 +37,12 @@ $(function () {
                 { data: 'received', title: '接收时间', width: '10%' },
                 { data: 'started', title: '启动时间', width: '10%' },
                 { data: 'runtime', title: '执行时长', width: '8%' },
-                { data: 'worker', title: 'worker', width: '8%' }
+                { data: 'worker', title: 'worker', width: '8%' ,
+                 "render": function (data, type, row) {
+                        var data = '<div style="width:100%;white-space:normal;word-wrap:break-word;word-break:break-all;">' + data + '</div>';
+                        return data;
+                    }
+                }
             ]
         }
     );//end datatable
