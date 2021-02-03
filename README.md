@@ -31,7 +31,7 @@ Nemo是用来进行自动化信息收集的一个简单平台，实现对内网�
 # Docker
 
 ```shell
-git clone https://github.com/hanc00l/nemo
+git clone --recursive https://github.com/hanc00l/nemo
 cd nemo
 docker build  -t nemo/app:v1 .
 docker run -it -d --name nemo_app -p 5000:5000 nemo/app:v1
@@ -52,7 +52,7 @@ docker run -it -d --name nemo_app -p 5000:5000 nemo/app:v1
 
 # 版本更新
 
-- **0.1：**2021-2-3，重构任务管理功能，集成Pocsuite3与XRay进行验洞验证；
+- 0.1：2021-2-3，重构任务管理功能，集成Pocsuite3与XRay进行验洞验证；
 
 
 

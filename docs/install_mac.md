@@ -3,7 +3,7 @@
 ### **0、git clone**
 
   ```
-git clone https://github.com/hanc00l/nemo
+git clone --recursive https://github.com/hanc00l/nemo
   ```
 
 ### **1、rabbitmq**
