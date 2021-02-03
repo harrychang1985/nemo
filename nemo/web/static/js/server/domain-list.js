@@ -27,37 +27,79 @@ $(function () {
             swal('Warning', '请至少输入一个Target', 'error');
             return;
         }
-        $.post("/task-start-domainscan",
-            {
-                "target": target,
-                'org_id': $('#select_org_id_task').val(),
-                'subdomain': $('#checkbox_subdomain').is(":checked"),
-                'subdomainbrute': $('#checkbox_subdomainbrute').is(":checked"),
-                'webtitle': $('#checkbox_webtitle').is(":checked"),
-                'whatweb': $('#checkbox_whatweb').is(":checked"),
-                'fld_domain': $('#checkbox_fld_domain').is(":checked"),
-                'portscan': $('#checkbox_portscan').is(":checked"),
-                'fofasearch': $('#checkbox_fofasearch').is(":checked"),
-                'networkscan': $('#checkbox_networkscan').is(":checked"),
-                'subtask': $('#checkbox_subtask').is(":checked")
-            }, function (data, e) {
-                if (e === "success" && data['status'] == 'success') {
-                    swal({
-                        title: "新建任务成功！",
-                        text: "TaskId:" + data['result']['task-id'],
-                        type: "success",
-                        confirmButtonText: "确定",
-                        confirmButtonColor: "#41b883",
-                        closeOnConfirm: true,
-                    },
-                        function () {
-                            $('#newTask').modal('hide');
-                        });
-                } else {
-                    swal('Warning', "添加任务失败!", 'error');
+        if (getCurrentTabIndex() == 0) {
+            $.post("/task-start-domainscan",
+                {
+                    "target": target,
+                    'org_id': $('#select_org_id_task').val(),
+                    'subdomain': $('#checkbox_subdomain').is(":checked"),
+                    'subdomainbrute': $('#checkbox_subdomainbrute').is(":checked"),
+                    'webtitle': $('#checkbox_webtitle').is(":checked"),
+                    'whatweb': $('#checkbox_whatweb').is(":checked"),
+                    'fld_domain': $('#checkbox_fld_domain').is(":checked"),
+                    'portscan': $('#checkbox_portscan').is(":checked"),
+                    'fofasearch': $('#checkbox_fofasearch').is(":checked"),
+                    'networkscan': $('#checkbox_networkscan').is(":checked"),
+                    'subtask': $('#checkbox_subtask').is(":checked")
+                }, function (data, e) {
+                    if (e === "success" && data['status'] == 'success') {
+                        swal({
+                                title: "新建任务成功！",
+                                text: "TaskId:" + data['result']['task-id'],
+                                type: "success",
+                                confirmButtonText: "确定",
+                                confirmButtonColor: "#41b883",
+                                closeOnConfirm: true,
+                            },
+                            function () {
+                                $('#newTask').modal('hide');
+                            });
+                    } else {
+                        swal('Warning', "添加任务失败! " + data['msg'], 'error');
+                    }
+                });
+        } else {
+            if ($('#checkbox_pocsuite3').is(":checked") == false && $('#checkbox_xray').is(":checked") == false) {
+                swal('Warning', '请选择要使用的验证工具！', 'error');
+                return;
+            }
+            if ($('#checkbox_pocsuite3').is(":checked")) {
+                if ($('#input_pocsuite3_poc_file').val() == '') {
+                    swal('Warning', '请选择poc file', 'error');
+                    return;
                 }
-            });
-
+            }
+            if ($('#checkbox_xray').is(":checked")) {
+                if ($('#input_xray_poc_file').val() == '') {
+                    swal('Warning', '请选择poc file', 'error');
+                    return;
+                }
+            }
+            $.post("/task-start-vulnerability",
+                {
+                    "target": target,
+                    'pocsuite3verify': $('#checkbox_pocsuite3').is(":checked"),
+                    'pocsuite3_poc_file': $('#input_pocsuite3_poc_file').val(),
+                    'xrayverify': $('#checkbox_xray').is(":checked"),
+                    'xray_poc_file': $('#input_xray_poc_file').val()
+                }, function (data, e) {
+                    if (e === "success" && data['status'] == 'success') {
+                        swal({
+                                title: "新建任务成功！",
+                                text: "TaskId:" + data['result']['task-id'],
+                                type: "success",
+                                confirmButtonText: "确定",
+                                confirmButtonColor: "#41b883",
+                                closeOnConfirm: true,
+                            },
+                            function () {
+                                $('#newTask').modal('hide');
+                            });
+                    } else {
+                        swal('Warning', "添加任务失败! " + data['msg'], 'error');
+                    }
+                });
+        }
     });
 
     $("#export_excel").click(function () {
@@ -112,7 +154,7 @@ $(function () {
                         return strData;
                     }
                 },
-                { data: "index", title: "序号", width: "5%" },
+                {data: "index", title: "序号", width: "5%"},
                 {
                     data: "domain",
                     title: "域名",
@@ -121,14 +163,16 @@ $(function () {
                         var strData;
                         if (row['color_tag']) {
                             strData = '<h5><a href="/domain-info?domain=' + data + '" target="_blank" class="badge ' + row['color_tag'] + '">' + data + '</a></h5>';
-                        }
-                        else {
+                        } else {
                             strData = '<a href="/domain-info?domain=' + data + '" target="_blank">' + data + '</a>';
+                        }
+                        if (row['vulnerability']) {
+                            strData += '&nbsp;<span class="badge badge-danger" data-toggle="tooltip" data-html="true" title="' + html2Escape(row['vulnerability']) + '"><i class="fa fa-bolt"></span>';
                         }
                         return strData;
                     }
                 },
-                { data: "ip", title: "IP地址", width: "20%" },
+                {data: "ip", title: "IP地址", width: "20%"},
                 {
                     data: "title", title: "标题", width: "25%",
                     "render": function (data, type, row, meta) {
@@ -196,6 +240,7 @@ $(function () {
         alert("功能尚未完成...");
     });
 });
+
 /**
  * 移除 dataTables默认参数，并设置分页值
  * @param param
@@ -212,15 +257,15 @@ function init_dataTables_defaultParam(param) {
 
 function delete_domain(id) {
     swal({
-        title: "确定要删除?",
-        text: "该操作会删除这个域名的所有信息！",
-        type: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#DD6B55",
-        confirmButtonText: "确认删除",
-        cancelButtonText: "取消",
-        closeOnConfirm: true
-    },
+            title: "确定要删除?",
+            text: "该操作会删除这个域名的所有信息！",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#DD6B55",
+            confirmButtonText: "确认删除",
+            cancelButtonText: "取消",
+            closeOnConfirm: true
+        },
         function () {
             $.ajax({
                 type: 'post',
@@ -260,4 +305,23 @@ function get_export_options() {
     url += '&date_delta=' + encodeURI($('#date_delta').val());
 
     return url;
+}
+
+/**
+ * 获取选中的Tab索引号
+ * 0: portscan
+ * 1: vulverify
+ */
+function getCurrentTabIndex() {
+    var $tabs = $('#nav_tabs').children('li');
+    var i = 0;
+    $tabs.each(function () {
+        var $tab = $(this);
+        if ($tab.children('a').hasClass('active')) {
+            return false;
+        } else {
+            i++;
+        }
+    });
+    return i;
 }

@@ -2,14 +2,14 @@
 # coding:utf-8
 
 from flask import Blueprint
-from flask import render_template
 from flask import jsonify
+from flask import render_template
 from flask import request
 
 from nemo.core.database.domain import Domain
 from nemo.core.database.ip import Ip
 from nemo.core.database.task import Task
-
+from nemo.core.database.vulnerability import Vulnerability
 from .authenticate import login_check
 
 dashboard = Blueprint('dashboard', __name__)
@@ -23,14 +23,11 @@ def view_dashboard():
     if request.method == 'GET':
         return render_template('dashboard.html')
     # 统计信息
-    task_app = Task()
-    active = task_app.count({'state': 'STARTED'})
-    total = task_app.count()
     dashboard_data = {
         'ip_count': Ip().count(),
         'domain_count': Domain().count(),
-        'task_total': total,
-        'task_active': active
+        'vulnerability_count': Vulnerability().count(),
+        'task_active': Task().count({'state': 'STARTED'})
     }
     return jsonify(dashboard_data)
 

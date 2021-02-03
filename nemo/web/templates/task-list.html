@@ -11,7 +11,14 @@
                 <div class="tile">
                     <div class="tile-body">
                         <form class="row">
-
+                            <div class="form-group col-md-2">
+                                <label class="control-label" for="task_name">名称</label>
+                                <input class="form-control" type="text" id="task_name" placeholder="任务名称">
+                            </div>
+                            <div class="form-group col-md-2">
+                                <label class="control-label" for="task_args">参数</label>
+                                <input class="form-control" type="text" id="task_args" placeholder="任务参数">
+                            </div>
                             <div class="form-group col-md-2">
                                 <label class="control-label" for="task_state">状态</label>
                                 <select class="form-control" title="任务状态" id="task_state">
@@ -24,14 +31,6 @@
                                     <option value="REVOKED">REVOKED</option>
                                     <option value="RETRY">RETRY</option>
                                 </select>
-                            </div>
-                            <div class="form-group col-md-2">
-                                <label class="control-label" for="task_name">名称</label>
-                                <input class="form-control" type="text" id="task_name" placeholder="任务名称">
-                            </div>
-                            <div class="form-group col-md-2">
-                                <label class="control-label" for="task_args">参数</label>
-                                <input class="form-control" type="text" id="task_args" placeholder="任务参数">
                             </div>
                             <div class="form-group col-md-2">
                                 <label class="control-label" for="date_delta">更新时间</label>

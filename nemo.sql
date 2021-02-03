@@ -3,15 +3,15 @@
 
  Source Server         : localhost
  Source Server Type    : MySQL
- Source Server Version : 50731
+ Source Server Version : 50732
  Source Host           : localhost:3306
  Source Schema         : nemo
 
  Target Server Type    : MySQL
- Target Server Version : 50731
+ Target Server Version : 50732
  File Encoding         : 65001
 
- Date: 20/08/2020 18:15:22
+ Date: 03/02/2021 09:07:28
 */
 
 SET NAMES utf8mb4;
@@ -31,7 +31,7 @@ CREATE TABLE `domain` (
   UNIQUE KEY `index_domain_domain` (`domain`) USING BTREE,
   KEY `fk_domain_org_id` (`org_id`),
   CONSTRAINT `fk_domain_org_id` FOREIGN KEY (`org_id`) REFERENCES `organization` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=1738 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=1796 DEFAULT CHARSET=utf8mb4;
 
 -- ----------------------------
 -- Table structure for domain_attr
@@ -50,7 +50,7 @@ CREATE TABLE `domain_attr` (
   UNIQUE KEY `index_domain_attr_hash` (`hash`) USING BTREE,
   KEY `index_domain_attr_ip_id` (`r_id`),
   CONSTRAINT `domain_attr_ibfk_1` FOREIGN KEY (`r_id`) REFERENCES `domain` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=3200 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=3272 DEFAULT CHARSET=utf8mb4;
 
 -- ----------------------------
 -- Table structure for domain_color_tag
@@ -101,7 +101,7 @@ CREATE TABLE `ip` (
   UNIQUE KEY `index_ip_ip_int` (`ip_int`) USING BTREE,
   KEY `index_ip_org_id` (`org_id`),
   CONSTRAINT `fk_ip_org_id` FOREIGN KEY (`org_id`) REFERENCES `organization` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=532 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=635 DEFAULT CHARSET=utf8mb4;
 
 -- ----------------------------
 -- Table structure for ip_attr
@@ -136,7 +136,7 @@ CREATE TABLE `ip_color_tag` (
   UNIQUE KEY `fk_ip_color_tag_rid_unique` (`r_id`),
   KEY `fk_ip_color_tag_rid` (`r_id`),
   CONSTRAINT `ip_color_tag_ibfk_1` FOREIGN KEY (`r_id`) REFERENCES `ip` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4;
 
 -- ----------------------------
 -- Table structure for ip_memo
@@ -181,7 +181,7 @@ CREATE TABLE `port` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `index_port_ip_port` (`ip_id`,`port`),
   CONSTRAINT `fk_port_ip` FOREIGN KEY (`ip_id`) REFERENCES `ip` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=1194 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=1385 DEFAULT CHARSET=utf8mb4;
 
 -- ----------------------------
 -- Table structure for port_attr
@@ -200,6 +200,48 @@ CREATE TABLE `port_attr` (
   UNIQUE KEY `index_port_attr_hash` (`hash`),
   KEY `fk_port_attr_r_id` (`r_id`),
   CONSTRAINT `fk_port_attr_r_id` FOREIGN KEY (`r_id`) REFERENCES `port` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=2106 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=2597 DEFAULT CHARSET=utf8mb4;
+
+-- ----------------------------
+-- Table structure for task
+-- ----------------------------
+DROP TABLE IF EXISTS `task`;
+CREATE TABLE `task` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `task_id` char(36) NOT NULL,
+  `task_name` varchar(100) NOT NULL,
+  `args` varchar(2000) DEFAULT NULL,
+  `kwargs` varchar(4000) DEFAULT NULL,
+  `worker` varchar(100) DEFAULT NULL,
+  `state` varchar(40) NOT NULL,
+  `result` varchar(4000) DEFAULT NULL,
+  `received` datetime DEFAULT NULL,
+  `retried` datetime DEFAULT NULL,
+  `revoked` datetime DEFAULT NULL,
+  `started` datetime DEFAULT NULL,
+  `succeeded` datetime DEFAULT NULL,
+  `failed` datetime DEFAULT NULL,
+  `progress_message` varchar(100) DEFAULT NULL,
+  `create_datetime` datetime NOT NULL,
+  `update_datetime` datetime NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=89 DEFAULT CHARSET=utf8mb4;
+
+-- ----------------------------
+-- Table structure for vulnerability
+-- ----------------------------
+DROP TABLE IF EXISTS `vulnerability`;
+CREATE TABLE `vulnerability` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `target` varchar(100) NOT NULL,
+  `url` varchar(200) NOT NULL,
+  `poc_file` varchar(200) NOT NULL,
+  `source` varchar(40) NOT NULL,
+  `extra` varchar(4000) DEFAULT NULL,
+  `hash` char(32) NOT NULL,
+  `create_datetime` datetime NOT NULL,
+  `update_datetime` datetime NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4;
 
 SET FOREIGN_KEY_CHECKS = 1;

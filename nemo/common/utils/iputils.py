@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # coding: utf-8
-import re
 import ipaddress
+import re
 
 
 def parse_ip(ip_or_ips):
@@ -31,7 +31,7 @@ def parse_ip(ip_or_ips):
         try:
             ip_start, ip_end = ip_or_ips.split('-')
             ips = []
-            for i in range(int(ipaddress.ip_address(ip_start)), int(ipaddress.ip_address(ip_end))+1):
+            for i in range(int(ipaddress.ip_address(ip_start)), int(ipaddress.ip_address(ip_end)) + 1):
                 ips.append(str(ipaddress.ip_address(i)))
             return ips
         except:

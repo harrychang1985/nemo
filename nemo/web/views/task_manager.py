@@ -4,17 +4,18 @@ import traceback
 from copy import deepcopy
 from datetime import datetime
 
-from flask import request
-from flask import render_template
 from flask import Blueprint
 from flask import jsonify
+from flask import render_template
+from flask import request
 from tld import get_fld
 
 from nemo.common.utils.config import load_config
 from nemo.common.utils.loggerutils import logger
-from nemo.core.tasks.taskapi import TaskAPI
 from nemo.core.database.task import Task
-
+from nemo.core.tasks.pocsuite3 import Pocsuite3
+from nemo.core.tasks.taskapi import TaskAPI
+from nemo.core.tasks.xray import XRay
 from .authenticate import login_check
 
 task_manager = Blueprint("task_manager", __name__)
@@ -52,6 +53,7 @@ def _format_runtime(seconds):
 
     return ''.join(result)
 
+
 def _copy_task_info_datetime(data_to, data_from, key):
     if key not in data_from:
         return
@@ -79,7 +81,6 @@ def _update_and_save_task(task_id):
         _copy_task_info_datetime(task_data, task_info_result['result'], 'failed')
 
         task_app.save_and_update(task_data)
-
 
 
 @task_manager.route('/task-start-portscan', methods=['POST'])
@@ -256,7 +257,7 @@ def task_list_view():
                                                page=(start // length) + 1, rows_per_page=length)
         for row in task_results:
             # update  the task status
-            if row['state'] not in ['SUCCESS','FAILURE','REVOKED']:
+            if row['state'] not in ['SUCCESS', 'FAILURE', 'REVOKED']:
                 _update_and_save_task(row['task_id'])
                 row = task_app.get(row['id'])
 
@@ -384,3 +385,49 @@ def task_delete_view():
         return jsonify({'status': 'success'})
 
     return jsonify({'status': 'fail'})
+
+
+@task_manager.route('/task-start-vulnerability', methods=['POST'])
+@login_check
+def task_start_vulnerability_view():
+    '''启动漏洞验证任务
+     '''
+    taskapi = TaskAPI()
+    try:
+        # 获取参数
+        target = request.form.get('target', default='')
+        pocsuite3verify = request.form.get('pocsuite3verify')
+        pocsuite3_poc_file = request.form.get('pocsuite3_poc_file')
+        xrayverify = request.form.get('xrayverify')
+        xray_poc_file = request.form.get('xray_poc_file')
+
+        if not target:
+            return jsonify({'status': 'fail', 'msg': 'no target'})
+        result = {'status': 'success', 'result': {'task-id': 0}}
+        # 格式化tatget
+        target = list(set([x.strip() for x in target.split('\n')]))
+        # Pocsuite3任务
+        if _str2bool(pocsuite3verify) and pocsuite3_poc_file:
+            if not Pocsuite3().check_poc_exist(pocsuite3_poc_file):
+                raise Exception("poc file {} not exist".format(pocsuite3_poc_file))
+            options = {'target': deepcopy(target), 'poc_file': pocsuite3_poc_file}
+            result = taskapi.start_task(
+                'pocsuite3', kwargs={'options': options})
+            if result['status'] == 'success' and result['result']['task-id']:
+                _update_and_save_task(result['result']['task-id'])
+        # XRay任务
+        if _str2bool(xrayverify) and xray_poc_file:
+            if not XRay().check_poc_exist(xray_poc_file):
+                raise Exception("poc file {} not exist".format(xray_poc_file))
+            options = {'target': deepcopy(target), 'poc_file': xray_poc_file}
+            result = taskapi.start_task(
+                'xray', kwargs={'options': options})
+            if result['status'] == 'success' and result['result']['task-id']:
+                _update_and_save_task(result['result']['task-id'])
+
+        return jsonify(result)
+
+    except Exception as e:
+        logger.error(traceback.format_exc())
+        print(e)
+        return jsonify({'status': 'fail', 'msg': str(e)})

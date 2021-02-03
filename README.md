@@ -1,12 +1,10 @@
 # Nemo
 
-Nemo的初衷是用来进行自动化信息收集的一个简单平台，实现对内网及互联网资产信息的自动收集。
+Nemo是用来进行自动化信息收集的一个简单平台，实现对内网及互联网资产信息的自动收集，提高隐患排查和渗透测试的工作效率。
 
 
 
 # 功能
-
-主要实现了以下功能（代码目前在完善和优化中...）
 
 - Nmap/Masscan进行端口扫描（需本地nmap/masscan）
 
@@ -22,17 +20,21 @@ Nemo的初衷是用来进行自动化信息收集的一个简单平台，实现�
 
 - WhatWeb收集端口和域名的指纹（需本地whatweb）
 
-- 收集信息的导出、统计、颜色标记、备忘录协作
+- Pocsuite3与XRay进行漏洞验证
+
+- 信息资产的导出、统计、颜色标记与备忘录协作
 
 - Celery实现分布式任务
 
 - Docker部署和运行
 
-  
+## 安装
 
-## Docker运行
+[开发环境配置](docs/config.md)
 
-### 1、本地构建（推荐）
+[MacOS安装配置](docs/install_mac.md)
+
+## Docker
 
 ```shell
 git clone https://github.com/hanc00l/nemo
@@ -41,35 +43,13 @@ docker build  -t nemo/app:v1 .
 docker run -it -d --name nemo_app -p 5000:5000 nemo/app:v1
 ```
 
-### ~~2、从docker hub拉取image（不建议）~~
-
-```
-docker pull han2008/nemo:v1
-docker run -it -d --name nemo_app -p 5000:5000 nemo/app:v1
-docker exec  -it nemo_app /bin/bash
-git pull
-ps aux|grep celery|awk '{print $2}'|xargs kill
-ps aux|grep "app.py"|awk '{print $2}'|xargs kill
-./docker_start.sh
-```
-
+## 使用
 浏览器输入 [http://localhost:5000](http://localhost:5000)，默认用户名密码：**nemo/nemo**
 
 
 <img src="docs/login.jpg" alt="login" />
 
 <img src="docs/dashbord.jpg" alt="dashbord"  />
-
-
-
-[开发环境配置](docs/config.md)
-
-[MacOS安装配置](docs/install_mac.md)
-
-
-## 目标
-
-最终做成像FOFA一样的信息收集平台。
 
 
 

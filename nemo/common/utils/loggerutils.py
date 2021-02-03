@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 # coding: utf-8
 
-import logging
 import logging.handlers
 
 '''
@@ -22,6 +21,3 @@ _web_log_file = 'instance/nemo.web.log'
 _web_log_fmt = '%(asctime)s - %(levelname)s - %(name)s - %(message)s'
 web_handler = logging.handlers.RotatingFileHandler(_web_log_file, maxBytes=1024 * 1024, backupCount=5)
 web_handler.setFormatter(logging.Formatter(_web_log_fmt))
-
-
-

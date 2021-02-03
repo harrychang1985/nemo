@@ -2,23 +2,26 @@
 # coding:utf-8
 import re
 import traceback
-from flask import render_template
+
 from flask import Blueprint
-from flask import request
-from flask import jsonify
-from flask import session
 from flask import Response
+from flask import jsonify
+from flask import render_template
+from flask import request
+from flask import session
 
 from nemo.common.utils.assertexport import export_ips
 from nemo.common.utils.assertinfoparser import AssertInfoParser
 from nemo.common.utils.loggerutils import logger
 from nemo.core.database.attr import PortAttr
-from nemo.core.database.ip import Ip
-from nemo.core.database.organization import Organization
 from nemo.core.database.colortag import IpColorTag
+from nemo.core.database.ip import Ip
 from nemo.core.database.memo import IpMemo
-
+from nemo.core.database.organization import Organization
+from nemo.core.tasks.pocsuite3 import Pocsuite3
+from nemo.core.tasks.xray import XRay
 from .authenticate import login_check
+from ...core.database.vulnerability import Vulnerability
 
 ip_manager = Blueprint('ip_manager', __name__)
 
@@ -35,8 +38,10 @@ def ip_asset_view():
             org_list = []
         org_list.insert(0, {'id': '', 'org_name': '--全部--'})
 
-        data = {'org_list': org_list, 'ip_address_ip': session.get('ip_address_ip', default=''), 'domain_address': session.get('domain_address', default=''),
-                'port': session.get('port', default=''), 'session_org_id': session.get('session_org_id', default='')}
+        data = {'org_list': org_list, 'ip_address_ip': session.get('ip_address_ip', default=''),
+                'domain_address': session.get('domain_address', default=''), 'port': session.get('port', default=''),
+                'session_org_id': session.get('session_org_id', default=''),
+                'pocsuite3_poc_files': Pocsuite3().load_poc_files(), 'xray_poc_files': XRay().load_poc_files()}
 
         return render_template('ip-list.html', data=data)
 
@@ -90,12 +95,19 @@ def ip_asset_view():
                 color_tag_obj = ip_color_tag_table.get(ip_row['id'])
                 # 获取备忘录信息
                 memo_obj = ip_memo_table.get(ip_row['id'])
+                # 获取IP关联的漏洞信息：
+                vul_info = []
+                vul_results = Vulnerability().gets({'target':ip_row['ip']})
+                if vul_results and len(vul_results)>0:
+                    for v in vul_results:
+                        vul_info.append('{}/{}'.format(v['poc_file'], v['source']))
                 # 显示的数据
                 ip_list.append({
                     'id': ip_row['id'],
                     "index": index+start,
                     'color_tag': color_tag_obj['color'] if color_tag_obj else '',
                     'memo_content': memo_obj['content'] if memo_obj else '',
+                    'vulnerability': '\r\n'.join(vul_info),
                     "org_name": org_table.get(int(ip_row['org_id']))['org_name'] if ip_row['org_id'] else '',
                     "ip": ip_row['ip'],
                     "status": ip_row['status'],
@@ -109,7 +121,8 @@ def ip_asset_view():
                 index += 1
             # 查询的记录数量
             count = ip_table.count_by_search(org_id=org_id, domain=domain_address, ip=ip_address, port=port, content=content,
-                                             iplocation=iplocation, port_status=port_status, color_tag=color_tag, memo_content=memo_content,date_delta=date_delta)
+                                             iplocation=iplocation, port_status=port_status, color_tag=color_tag,
+                                             memo_content=memo_content,date_delta=date_delta)
         json_data = {
             'draw': draw,
             'recordsTotal': count,
@@ -208,9 +221,7 @@ def ip_statistics_view():
 
     ip_list, ip_c_set, port_set, port_count_dict, ip_port_list, location_dict = AssertInfoParser().statistics_ip(
         org_id, domain_address, ip_address, port, content, iplocation, port_status, color_tag, memo_content,date_delta)
-    data = []
-    data.append('Port: ({})'.format(len(port_set)))
-    data.append(','.join([str(x) for x in sorted(port_set)]))
+    data = ['Port: ({})'.format(len(port_set)), ','.join([str(x) for x in sorted(port_set)])]
 
     port_count_list = sorted(port_count_dict.items(),
                              key=lambda x: x[1], reverse=True)
@@ -255,7 +266,8 @@ def ip_memo_export_view():
     date_delta =request.args.get('date_delta')
 
     memo_list = AssertInfoParser().export_ip_memo(
-        org_id, domain_address, ip_address, port, content, iplocation, port_status, color_tag, memo_content, date_delta)
+        org_id, domain_address, ip_address, port, content, iplocation, port_status, color_tag,
+        memo_content, date_delta)
 
     response = Response(
         '\n'.join(memo_list), content_type='application/octet-stream')

@@ -21,3 +21,4 @@ backoff
 pysocks 
 tldextract
 colorama
+pocsuite3

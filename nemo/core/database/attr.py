@@ -13,12 +13,7 @@ class AttrBase(daobase.DAOBase):
     def attr_hash(self, data):
         '''根据属性值计算hash
         '''
-        hash_format = []
-        hash_format.append(str(data['r_id']))
-        hash_format.append(data['source'])
-        hash_format.append(data['tag'])
-        hash_format.append(data['content'])
-
+        hash_format = [str(data['r_id']), data['source'], data['tag'], data['content']]
         md5 = hashlib.new('md5', (''.join(hash_format)
                                   ).encode('utf-8')).hexdigest()
         return md5

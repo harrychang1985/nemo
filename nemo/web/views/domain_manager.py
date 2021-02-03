@@ -1,23 +1,26 @@
 #!/usr/bin/env python3
 # coding:utf-8
 import traceback
-from flask import render_template
+
 from flask import Blueprint
-from flask import request
-from flask import jsonify
-from flask import session
 from flask import Response
+from flask import jsonify
+from flask import render_template
+from flask import request
+from flask import session
 
 from nemo.common.utils.assertexport import export_domains
 from nemo.common.utils.assertinfoparser import AssertInfoParser
 from nemo.common.utils.loggerutils import logger
 from nemo.core.database.attr import DomainAttr
-from nemo.core.database.domain import Domain
-from nemo.core.database.organization import Organization
 from nemo.core.database.colortag import DomainColorTag
+from nemo.core.database.domain import Domain
 from nemo.core.database.memo import DomainMemo
-
+from nemo.core.database.organization import Organization
 from .authenticate import login_check
+from ...core.database.vulnerability import Vulnerability
+from ...core.tasks.pocsuite3 import Pocsuite3
+from ...core.tasks.xray import XRay
 
 domain_manager = Blueprint('domain_manager', __name__)
 
@@ -34,8 +37,11 @@ def domain_asset_view():
             org_list = []
         org_list.insert(0, {'id': '', 'org_name': '--全部--'})
 
-        data = {'org_list': org_list, 'domain_address': session.get(
-            'domain_address', default=''), 'ip_address_domain': session.get('ip_address_domain', default=''), 'session_org_id': session.get('session_org_id', default='')}
+        data = {'org_list': org_list, 'domain_address': session.get('domain_address', default=''),
+                'ip_address_domain': session.get('ip_address_domain', default=''),
+                'session_org_id': session.get('session_org_id', default=''),
+                'pocsuite3_poc_files': Pocsuite3().load_poc_files(), 'xray_poc_files': XRay().load_poc_files()
+                }
 
         return render_template('domain-list.html', data=data)
 
@@ -64,25 +70,34 @@ def domain_asset_view():
 
         count = 0
         domains = domain_table.gets_by_search(org_id, domain_address, ip_address, color_tag, memo_content, date_delta,
-                                              page=start//length+1, rows_per_page=length)
+                                              page=start // length + 1, rows_per_page=length)
         if domains:
             for domain_row in domains:
                 ips = domain_attr_table.gets(
                     query={'tag': 'A', 'r_id': domain_row['id']})
                 domain_info = api.get_domain_info(domain_row['id'])
+                # 获取关联的漏洞信息：
+                vul_info = []
+                vul_results = Vulnerability().gets({'target': domain_row['domain']})
+                if vul_results and len(vul_results) > 0:
+                    for v in vul_results:
+                        vul_info.append('{}/{}'.format(v['poc_file'], v['source']))
                 domain_list.append({
                     "id": domain_row['id'],
-                    "index": index+start,
+                    "index": index + start,
                     "color_tag": domain_info['color_tag'],
                     "memo_content": domain_info['memo'],
                     "domain": domain_row['domain'],
-                    "ip": ', '.join(set(['<a href="/ip-info?ip={0}" target="_blank">{0}</a>'.format(ip_row['content']) for ip_row in ips])),
+                    "ip": ', '.join(set(
+                        ['<a href="/ip-info?ip={0}" target="_blank">{0}</a>'.format(ip_row['content']) for ip_row in
+                         ips])),
                     "org_name": org_table.get(int(domain_row['org_id']))['org_name'] if domain_row['org_id'] else '',
                     "create_time": str(domain_row['create_datetime']),
                     "update_time": str(domain_row['update_datetime']),
                     'port': domain_info['port'],
                     'title': ', '.join(domain_info['title']),
-                    'banner': ', '.join(domain_info['banner'])
+                    'banner': ', '.join(domain_info['banner']),
+                    'vulnerability': '\r\n'.join(vul_info)
                 })
                 index += 1
             count = domain_table.count_by_search(

@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # coding:utf-8
 import traceback
+
 from nemo.common.utils.loggerutils import logger
 
 
@@ -21,7 +22,6 @@ class ParsePortService():
         self.custom_port_service = {}
 
         self.__load_services()
-        
 
     def __load_services(self):
         '''读取映射关系:nmap-services

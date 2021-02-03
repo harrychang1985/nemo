@@ -4,96 +4,97 @@
 {% endblock %}
 
 {% block content %}
-<main class="app-content">
-    <div class="row">
-        <div class="col-md-12">
-            <div class="bs-component">
-                <div class="card">
-                    <h2 class="card-header">
-                        <div class="form-check-inline">
-                           {{ task_info['task_id'] }}
-                        </div>
-                    </h2>
-                    <div class="card-body">
-                        <b><span class="btn btn-info">任务名称</span></b>
-                        <span class="btn btn-warning text-left">
+    <main class="app-content">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="bs-component">
+                    <div class="card">
+                        <h2 class="card-header">
+                            <div class="form-check-inline">
+                                {{ task_info['task_id'] }}
+                            </div>
+                        </h2>
+                        <div class="card-body">
+                            <b><span class="btn btn-info">任务名称</span></b>
+                            <span class="btn btn-warning text-left">
                             {{  task_info['task_name'] }}
                         </span>
-                        <br><br>
-                        <b><span class="btn btn-info">任务状态</span></b>
-                        <span class="btn btn-warning  text-left">{{ task_info['state'] }}</span>
-                        {% if task_info['received'] %}
-                        <b><span class="btn btn-info">接收任务时间</span></b>
-                        <span class="btn border-success text-left">
+                            <br><br>
+                            <b><span class="btn btn-info">任务状态</span></b>
+                            <span class="btn btn-warning  text-left">{{ task_info['state'] }}</span>
+                            {% if task_info['received'] %}
+                                <b><span class="btn btn-info">接收任务时间</span></b>
+                                <span class="btn border-success text-left">
                            {{ task_info['received'] }}</span>
-                        {% endif %}
-                        {% if task_info['started'] %}
-                        <b><span class="btn btn-info">开始任务时间</span></b>
-                        <span class="btn border-success text-left">
+                            {% endif %}
+                            {% if task_info['started'] %}
+                                <b><span class="btn btn-info">开始任务时间</span></b>
+                                <span class="btn border-success text-left">
                            {{ task_info['started'] }}</span>
-                        {% endif %}
-                        <br><br>
-                        <b><span class="btn btn-info">任务worker</span></b>
-                        <span class="btn border-secondary text-left">
+                            {% endif %}
+                            <br><br>
+                            <b><span class="btn btn-info">任务worker</span></b>
+                            <span class="btn border-secondary text-left">
                            {{ task_info['worker'] }}</span>
-                        {% if task_info['kwargs'] %}
-                        <b><span class="btn btn-info">任务参数</span></b>
-                            <br><br>
-                        <span class="btn border-secondary text-left">
+                            {% if task_info['kwargs'] %}
+                                <b><span class="btn btn-info">任务参数</span></b>
+                                <br><br>
+                                <span class="btn border-secondary text-left">
                             {{ task_info['kwargs'] }}</span>
-                            <br><br>
-                        {% endif %}
-                        {% if task_info['result'] %}
-                        <b><span class="btn btn-info">任务结果</span></b>
-                        <span class="btn border-secondary text-left">
+                                 <br><br>
+                            {% endif %}
+                            {% if task_info['result'] %}
+                                <b><span class="btn btn-info">任务结果</span></b>
+                                <span class="btn border-secondary text-left">
                             {{ task_info['result'] }}</span>
-                            <br><br>
-                        {% endif %}
-                        {% if task_info['succeeded'] %}
-                        <b><span class="btn btn-info">任务成功时间</span></b>
-                        <span class="btn border-success text-left">
+                                <br><br>
+                            {% endif %}
+                            {% if task_info['succeeded'] %}
+                                <b><span class="btn btn-info">任务成功时间</span></b>
+                                <span class="btn border-success text-left">
                            {{ task_info['succeeded'] }}</span>
-                        {% endif %}
-                        {% if task_info['failed'] %}
-                        <b><span class="btn btn-info">任务失败</span></b>
-                        <span class="btn border-success text-left">
+                            {% endif %}
+                            {% if task_info['failed'] %}
+                                <b><span class="btn btn-info">任务失败</span></b>
+                                <span class="btn border-success text-left">
                            {{ task_info['failed'] }}</span>
-                        {% endif %}
-                        {% if task_info['retried'] %}
-                        <b><span class="btn btn-info">任务重试时间</span></b>
-                        <span class="btn border-success text-left">
+                            {% endif %}
+                            {% if task_info['retried'] %}
+                                <b><span class="btn btn-info">任务重试时间</span></b>
+                                <span class="btn border-success text-left">
                            {{ task_info['retried'] }}</span>
-                        {% endif %}
-                        {% if task_info['revoked'] %}
-                        <b><span class="btn btn-info">任务中止时间</span></b>
-                        <span class="btn border-success text-left">
+                            {% endif %}
+                            {% if task_info['revoked'] %}
+                                <b><span class="btn btn-info">任务中止时间</span></b>
+                                <span class="btn border-success text-left">
                            {{ task_info['revoked'] }}</span>
-                        {% endif %}
-                        <br><br>
-                        {% if task_info['runtime'] %}
-                        <b><span class="btn btn-info">任务执行时长</span></b>
-                        <span class="btn border-success text-left">
+                                <br><br>
+                            {% endif %}
+
+                            {% if task_info['runtime'] %}
+                                <b><span class="btn btn-info">任务执行时长</span></b>
+                                <span class="btn border-success text-left">
                            {{ task_info['runtime'] }}</span>
-                        {% endif %}
-                        <br><br>
-                        <b><span class="btn btn-info">创建时间</span></b>
-                        <span class="btn border-success">{{ task_info['create_datetime'] }}</span>
-                        <b><span class="btn btn-info">更新时间</span></b>
-                        <span class="btn border-success">{{ task_info['update_datetime'] }}</span>
+                            {% endif %}
+                            <br><br>
+                            <b><span class="btn btn-info">创建时间</span></b>
+                            <span class="btn border-success">{{ task_info['create_datetime'] }}</span>
+                            <b><span class="btn btn-info">更新时间</span></b>
+                            <span class="btn border-success">{{ task_info['update_datetime'] }}</span>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-    <!--row-->
-</main>
+        <!--row-->
+    </main>
 {% endblock %}
 
 {% block js %}
-<script>
-    $(function () {
-        $("title").html(" {{ task_info['task_id'] }}-taskinfo");
-        $('#btnsiderbar').click();
-});
-</script>
+    <script>
+        $(function () {
+            $("title").html(" {{ task_info['task_id'] }}-taskinfo");
+            $('#btnsiderbar').click();
+        });
+    </script>
 {% endblock %}

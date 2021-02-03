@@ -25,48 +25,90 @@ $(function () {
     //执行新建任务Button
     $("#start_task").click(function () {
         const target = $('#text_target').val();
-        var port = $('#input_port').val();
-        var rate = $('#input_rate').val();
         if (!target) {
             swal('Warning', '请至少输入一个Target', 'error');
             return;
         }
-        if (!port) port = "--top-ports 1000";
-        if (!rate) rate = 5000;
-        $.post("/task-start-portscan",
-            {
-                "target": target,
-                "port": port,
-                'rate': rate,
-                'portscan': $('#checkbox_portscan').is(":checked"),
-                'nmap_tech': $('#select_tech').val(),
-                'bin': $('#select_bin').val(),
-                'org_id': $('#select_org_id_task').val(),
-                'iplocation': $('#checkbox_iplocation').is(":checked"),
-                'webtitle': $('#checkbox_webtitle').is(":checked"),
-                'whatweb': $('#checkbox_whatweb').is(":checked"),
-                'ping': $('#checkbox_ping').is(":checked"),
-                'fofasearch': $('#checkbox_fofasearch').is(":checked"),
-                'shodansearch': $('#checkbox_shodansearch').is(":checked"),
-                'subtask': $('#checkbox_subtask').is(":checked")
-            }, function (data, e) {
-                if (e === "success" && data['status'] == 'success') {
-                    swal({
-                        title: "新建任务成功！",
-                        text: "TaskId:" + data['result']['task-id'],
-                        type: "success",
-                        confirmButtonText: "确定",
-                        confirmButtonColor: "#41b883",
-                        closeOnConfirm: true,
-                    },
-                        function () {
-                            $('#newTask').modal('hide');
-                        });
-                } else {
-                    swal('Warning', "添加任务失败!", 'error');
+        if (getCurrentTabIndex() == 0) {
+            var port = $('#input_port').val();
+            var rate = $('#input_rate').val();
+            if (!port) port = "--top-ports 1000";
+            if (!rate) rate = 5000;
+            $.post("/task-start-portscan",
+                {
+                    "target": target,
+                    "port": port,
+                    'rate': rate,
+                    'portscan': $('#checkbox_portscan').is(":checked"),
+                    'nmap_tech': $('#select_tech').val(),
+                    'bin': $('#select_bin').val(),
+                    'org_id': $('#select_org_id_task').val(),
+                    'iplocation': $('#checkbox_iplocation').is(":checked"),
+                    'webtitle': $('#checkbox_webtitle').is(":checked"),
+                    'whatweb': $('#checkbox_whatweb').is(":checked"),
+                    'ping': $('#checkbox_ping').is(":checked"),
+                    'fofasearch': $('#checkbox_fofasearch').is(":checked"),
+                    'shodansearch': $('#checkbox_shodansearch').is(":checked"),
+                    'subtask': $('#checkbox_subtask').is(":checked")
+                }, function (data, e) {
+                    if (e === "success" && data['status'] == 'success') {
+                        swal({
+                                title: "新建任务成功！",
+                                text: "TaskId:" + data['result']['task-id'],
+                                type: "success",
+                                confirmButtonText: "确定",
+                                confirmButtonColor: "#41b883",
+                                closeOnConfirm: true,
+                            },
+                            function () {
+                                $('#newTask').modal('hide');
+                            });
+                    } else {
+                        swal('Warning', "添加任务失败! " + data['msg'], 'error');
+                    }
+                });
+        } else {
+            if ($('#checkbox_pocsuite3').is(":checked") == false && $('#checkbox_xray').is(":checked") == false) {
+                swal('Warning', '请选择要使用的验证工具！', 'error');
+                return;
+            }
+            if ($('#checkbox_pocsuite3').is(":checked")) {
+                if ($('#input_pocsuite3_poc_file').val() == '') {
+                    swal('Warning', '请选择poc file', 'error');
+                    return;
                 }
-            });
-
+            }
+            if ($('#checkbox_xray').is(":checked")) {
+                if ($('#input_xray_poc_file').val() == '') {
+                    swal('Warning', '请选择poc file', 'error');
+                    return;
+                }
+            }
+            $.post("/task-start-vulnerability",
+                {
+                    "target": target,
+                    'pocsuite3verify': $('#checkbox_pocsuite3').is(":checked"),
+                    'pocsuite3_poc_file': $('#input_pocsuite3_poc_file').val(),
+                    'xrayverify': $('#checkbox_xray').is(":checked"),
+                    'xray_poc_file': $('#input_xray_poc_file').val()
+                }, function (data, e) {
+                    if (e === "success" && data['status'] == 'success') {
+                        swal({
+                                title: "新建任务成功！",
+                                text: "TaskId:" + data['result']['task-id'],
+                                type: "success",
+                                confirmButtonText: "确定",
+                                confirmButtonColor: "#41b883",
+                                closeOnConfirm: true,
+                            },
+                            function () {
+                                $('#newTask').modal('hide');
+                            });
+                    } else {
+                        swal('Warning', "添加任务失败! " + data['msg'], 'error');
+                    }
+                });
+        }
     });
     //列表全选
     $(".checkall").click(function () {
@@ -167,17 +209,19 @@ $(function () {
                     title: "IP地址",
                     width: "10%",
                     render: function (data, type, row, meta) {
-                        var strData;
+                        var strData = "";
                         if (row['color_tag']) {
-                            strData = '<h5><a href="/ip-info?ip=' + data + '" target="_blank" class="badge ' + row['color_tag'] + '">' + data + '</a></h5>';
+                            strData += '<h5><a href="/ip-info?ip=' + data + '" target="_blank" class="badge ' + row['color_tag'] + '">' + data + '</a></h5>';
+                        } else {
+                            strData += '<a href="/ip-info?ip=' + data + '" target="_blank">' + data + '</a>';
                         }
-                        else {
-                            strData = '<a href="/ip-info?ip=' + data + '" target="_blank">' + data + '</a>';
+                        if (row['vulnerability']) {
+                            strData += '&nbsp;<span class="badge badge-danger" data-toggle="tooltip" data-html="true" title="' + html2Escape(row['vulnerability']) + '"><i class="fa fa-bolt"></span>';
                         }
                         return strData;
                     }
                 },
-                { data: "location", title: "归属地", width: "12%" },
+                {data: "location", title: "归属地", width: "12%"},
                 {
                     data: "port", title: "开放端口", width: "15%",
                     "render": function (data, type, row, meta) {
@@ -267,6 +311,7 @@ $(function () {
     });
     $('[data-toggle="tooltip"]').tooltip();
 });
+
 /**
  * 移除 dataTables默认参数，并设置分页值
  * @param param
@@ -289,18 +334,19 @@ function load_nmap_config() {
         $('#checkbox_ping').prop("checked", data['nmap']['ping']);
     });
 }
+
 //删除一个IP
 function delete_ip(id) {
     swal({
-        title: "确定要删除?",
-        text: "该操作会删除这个IP的所有信息！",
-        type: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#DD6B55",
-        confirmButtonText: "确认删除",
-        cancelButtonText: "取消",
-        closeOnConfirm: true
-    },
+            title: "确定要删除?",
+            text: "该操作会删除这个IP的所有信息！",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#DD6B55",
+            confirmButtonText: "确认删除",
+            cancelButtonText: "取消",
+            closeOnConfirm: true
+        },
         function () {
             $.ajax({
                 type: 'post',
@@ -313,6 +359,7 @@ function delete_ip(id) {
             });
         });
 }
+
 function get_task_status() {
     $.post("/dashboard-task-info", function (data) {
         $("#span_show_task").html(data['task_info']);
@@ -343,4 +390,23 @@ function get_export_options() {
 
 
     return url;
+}
+
+/**
+ * 获取选中的Tab索引号
+ * 0: portscan
+ * 1: vulverify
+ */
+function getCurrentTabIndex() {
+    var $tabs = $('#nav_tabs').children('li');
+    var i = 0;
+    $tabs.each(function () {
+        var $tab = $(this);
+        if ($tab.children('a').hasClass('active')) {
+            return false;
+        } else {
+            i++;
+        }
+    });
+    return i;
 }

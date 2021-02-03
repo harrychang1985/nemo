@@ -4,100 +4,144 @@
 {% endblock %}
 
 {% block content %}
-<main class="app-content">
-    <div class="row">
-        <div class="col-md-12">
-            <div class="bs-component">
-                <div class="card">
-                    <h2 class="card-header">
-                        <div class="form-check-inline">
-                            <button type="button" id="btn_editDomainMemo" class="btn btn-secondary"><i class="fa fa-pencil-square-o"></i>编辑备忘录</button>&nbsp;
-                            <div class="dropdown">
-                                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton"
-                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-tags"></i>
-                                    标记颜色
-                                </button>
-                                &nbsp;
-                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                    <a class="dropdown-item bg-danger"
-                                        href="javascript:mark_domain_color_tag({{ domain_info['id'] }},'badge-danger')">RED</a>
-                                    <a class="dropdown-item bg-warning"
-                                        href="javascript:mark_domain_color_tag({{ domain_info['id'] }},'badge-warning')">YELLOW</a>
-                                    <a class="dropdown-item bg-info"
-                                        href="javascript:mark_domain_color_tag({{ domain_info['id'] }},'badge-info')">BLUE</a>
-                                    <a class="dropdown-item bg-success"
-                                        href="javascript:mark_domain_color_tag({{ domain_info['id'] }},'badge-success')">GREEN</a>   
-                                    <a class="dropdown-item bg-secondary"
-                                        href="javascript:mark_domain_color_tag({{ domain_info['id'] }},'badge-secondary')">GRAY</a>
-                                    <a class="dropdown-item bg-dark"
-                                        href="javascript:mark_domain_color_tag({{ domain_info['id'] }},'badge-dark')">BLANK</a>
-                                    <a class="dropdown-item  bg-white"
-                                        href="javascript:mark_domain_color_tag({{ domain_info['id'] }},'DELETE')">清除标记</a>
+    <main class="app-content">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="bs-component">
+                    <div class="card">
+                        <h2 class="card-header">
+                            <div class="form-check-inline">
+                                <button type="button" id="btn_editDomainMemo" class="btn btn-secondary"><i
+                                        class="fa fa-pencil-square-o"></i>编辑备忘录
+                                </button>&nbsp;
+                                <div class="dropdown">
+                                    <button class="btn btn-secondary dropdown-toggle" type="button"
+                                            id="dropdownMenuButton"
+                                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i
+                                            class="fa fa-tags"></i>
+                                        标记颜色
+                                    </button>
+                                    &nbsp;
+                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                        <a class="dropdown-item bg-danger"
+                                           href="javascript:mark_domain_color_tag({{ domain_info['id'] }},'badge-danger')">RED</a>
+                                        <a class="dropdown-item bg-warning"
+                                           href="javascript:mark_domain_color_tag({{ domain_info['id'] }},'badge-warning')">YELLOW</a>
+                                        <a class="dropdown-item bg-info"
+                                           href="javascript:mark_domain_color_tag({{ domain_info['id'] }},'badge-info')">BLUE</a>
+                                        <a class="dropdown-item bg-success"
+                                           href="javascript:mark_domain_color_tag({{ domain_info['id'] }},'badge-success')">GREEN</a>
+                                        <a class="dropdown-item bg-secondary"
+                                           href="javascript:mark_domain_color_tag({{ domain_info['id'] }},'badge-secondary')">GRAY</a>
+                                        <a class="dropdown-item bg-dark"
+                                           href="javascript:mark_domain_color_tag({{ domain_info['id'] }},'badge-dark')">BLANK</a>
+                                        <a class="dropdown-item  bg-white"
+                                           href="javascript:mark_domain_color_tag({{ domain_info['id'] }},'DELETE')">清除标记</a>
+                                    </div>
                                 </div>
+                                {% if domain_info['color_tag'] %}
+                                    <a href="http://{{ domain_info['domain'] }}"
+                                       class="badge {{ domain_info['color_tag'] }}"
+                                       target="_blank">{{ domain_info['domain'] }}</a>
+                                {% else %}
+                                    <a href="http://{{ domain_info['domain'] }}"
+                                       target="_blank">{{ domain_info['domain'] }}</a>
+                                {% endif %}
                             </div>
-                            {%  if domain_info['color_tag'] %}
-                            <a href="http://{{ domain_info['domain'] }}" class="badge {{ domain_info['color_tag'] }}"
-                                target="_blank">{{ domain_info['domain'] }}</a>
-                            {% else %}
-                            <a href="http://{{ domain_info['domain'] }}" target="_blank">{{ domain_info['domain'] }}</a>
-                            {% endif %}
-                        </div>
-                    </h2>
+                        </h2>
 
-                  
 
-                    <div class="card-body">
-                        <span class="btn btn-info">关联IP</span></b>
-                        <span class="btn btn-warning text-left">
+                        <div class="card-body">
+                            <span class="btn btn-info">关联IP</span></b>
+                            <span class="btn btn-warning text-left">
                             {% for d in domain_info['ip'] %}
-                            <a href="ip-info?ip={{ d }}" target="_blank">{{ d }}</a>&nbsp;
+                                <a href="ip-info?ip={{ d }}" target="_blank">{{ d }}</a>&nbsp;
                             {% endfor %}
                         </span>
-                        <span class="btn btn-info">端口信息</span></b>
-                        <span class="btn btn-warning  text-left">{{ domain_info['port'] }}</span>
-                        {% if domain_info['title'] %}
-                        <br><br>
-                        <span class="btn btn-info">站点标题</span></b>
-                        <span class="btn border-secondary text-left">{{ domain_info['title'] }}</span>
-                        {% endif %}
-                        <br><br>
-                        {% if domain_info['organization'] %}
-                        <span class="btn btn-info">所属组织</span></b>
-                        <span class="btn border-success">{{ domain_info['organization'] }}</span>
-                        {% endif %}
-                        <span class="btn btn-info">创建时间</span></b>
-                        <span class="btn border-success">{{ domain_info['create_datetime'] }}</span>
-                        <span class="btn btn-info">更新时间</span></b>
-                        <span class="btn border-success">{{ domain_info['update_datetime'] }}</span>
-                        {% if domain_info['whatweb'] %}
-                        <br><br>
-                        <span class="btn border-secondary text-left">WhatWeb：{{ domain_info['whatweb'] }}</span>
-                        {% endif %}
-                        <p></p>
-                        <p>
-                            <button class="btn btn-info" type="button" data-toggle="collapse"
-                                data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
-                                备忘录信息
-                            </button>
-                        </p>
-                        <div class="collapse.show" id="collapseExample">
-                            <div id="memo_content" class="card card-body">
-                                <pre>{{ domain_info['memo'] }}</pre>
-                            </div>
+                            <span class="btn btn-info">端口信息</span></b>
+                            <span class="btn btn-warning  text-left">{{ domain_info['port'] }}</span>
+                            {% if domain_info['title'] %}
+                                <br><br>
+                                <span class="btn btn-info">站点标题</span></b>
+                                <span class="btn border-secondary text-left">{{ domain_info['title'] }}</span>
+                            {% endif %}
+                            <br><br>
+                            {% if domain_info['organization'] %}
+                                <span class="btn btn-info">所属组织</span></b>
+                                <span class="btn border-success">{{ domain_info['organization'] }}</span>
+                            {% endif %}
+                            <span class="btn btn-info">创建时间</span></b>
+                            <span class="btn border-success">{{ domain_info['create_datetime'] }}</span>
+                            <span class="btn btn-info">更新时间</span></b>
+                            <span class="btn border-success">{{ domain_info['update_datetime'] }}</span>
+                            {% if domain_info['whatweb'] %}
+                                <br><br>
+                                <span class="btn border-secondary text-left">WhatWeb：{{ domain_info['whatweb'] }}</span>
+                            {% endif %}
+                            {% if domain_info['memo'] %}
+                                 <p></p>
+                                <p>
+                                    <button class="btn btn-info" type="button" data-toggle="collapse"
+                                            data-target="#collapseExample" aria-expanded="false"
+                                            aria-controls="collapseExample">
+                                        备忘录信息
+                                    </button>
+                                </p>
+                                <div class="collapse.show" id="collapseExample">
+                                    <div id="memo_content" class="card card-body">
+                                        <pre>{{ domain_info['memo'] }}</pre>
+                                    </div>
+                                </div>
+                            {% endif %}
+                            {% if domain_info['vulnerability'] %}
+                                <p></p>
+                                <p>
+                                    <button class="btn btn-danger" type="button" data-toggle="collapse"
+                                            data-target="#collapseExample2" aria-expanded="false"
+                                            aria-controls="collapseExample2">
+                                        漏洞信息
+                                    </button>
+                                </p>
+                                <div class="collapse.show" id="collapseExample2">
+                                    <table class="table table-bordered">
+                                        <thead>
+                                        <tr class="alert-dark">
+                                            <th width="10%">Target</th>
+                                            <th width="25%">URL</th>
+                                            <th width="35%">Poc File</th>
+                                            <th width="10%">Source</th>
+                                            <th width="15%">更新时间</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for row in domain_info['vulnerability'] %}
+                                            <tr>
+                                            <td>{{ row['target'] }}</td>
+                                            <td>{{ row['url'] }}</td>
+                                            <td>
+                                                <a href="vulnerability-info?id={{ row['id'] }}"
+                                                   target="_blank">{{ row['poc_file'] }}</a>
+                                            </td>
+                                            <td>{{ row['source'] }}</td>
+                                            <td>{{ row['update_datetime'] }}</td>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            {% endif %}
                         </div>
-                    </div>
-                    <div class="card-footer text-muted">
-                        <h5>IP与端口信息</h5>
+                        <div class="card-footer text-muted">
+                            <h5>IP与端口信息</h5>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-    <div class="row">
-        <div class="col-md-12">
-            <div class="tile">
-                <table class="table table-bordered">
-                    <thead>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="tile">
+                    <table class="table table-bordered">
+                        <thead>
                         <tr>
                             <th width="10%">IP地址</th>
                             <th width="5%">端口</th>
@@ -107,90 +151,94 @@
                             <th width="10%">更新时间</th>
                             <th width="5%">操作</th>
                         </tr>
-                    </thead>
-                    <tbody>
+                        </thead>
+                        <tbody>
                         {% for row in domain_info['port_attr'] %}
-                        {% if row['table_backgroud_set'] %}
-                        <tr class="alert-dark">
-                            {% else %}
-                        <tr>
-                            {% endif %}
-                            <td>
-                                {% if row['ip'] and row['port']%}
-                                    {% if row['port']==443  or row['port']==8443 %}
-                                    <a href="https://{{ row['ip'] }}:{{ row['port'] }}" target="_blank">{{ row['ip'] }}</a>
+                            {% if row['table_backgroud_set'] %}
+                                <tr class="alert-dark">
                                     {% else %}
-                                    <a href="http://{{ row['ip'] }}:{{ row['port'] }}" target="_blank">{{ row['ip'] }}</a>
-                                    {% endif %}
-                                {% endif %}
-                            </td>
-                            <td>{{ row['port'] }}</td>
-                            <td>
-                                {% if row['source']=='portscan' %}
-                                <span class="badge badge-warning"> {{ row['source'] }}</span>
-                                {% elif row['source'] == 'fofa' %}
-                                <span class="badge badge-success"> {{ row['source'] }}</span>
+                                <tr>
+                            {% endif %}
+                        <td>
+                            {% if row['ip'] and row['port'] %}
+                                {% if row['port']==443  or row['port']==8443 %}
+                                    <a href="https://{{ row['ip'] }}:{{ row['port'] }}"
+                                       target="_blank">{{ row['ip'] }}</a>
                                 {% else %}
-                                <span class="badge badge-secondary"> {{ row['source'] }}</span>
+                                    <a href="http://{{ row['ip'] }}:{{ row['port'] }}"
+                                       target="_blank">{{ row['ip'] }}</a>
                                 {% endif %}
-                            </td>
-                            <td>{{ row['tag'] }}</td>
-                            <td>
-                                <div style="width:100%;white-space:normal;word-wrap:break-word;word-break:break-all;">
-                                    {{ row['content'] }}
-                                </div>
-                            </td>
-                            <td>{{ row['update_datetime'] }}</td>
-                            
-                            <td><a class="btn btn-sm btn-danger" href="javascript:delete_port_attr({{ row['id'] }})" role="button" title="Delete"><i
-                                        class="fa fa-trash-o"></i></a>
-                            </td>
+                            {% endif %}
+                        </td>
+                        <td>{{ row['port'] }}</td>
+                        <td>
+                            {% if row['source']=='portscan' %}
+                                <span class="badge badge-warning"> {{ row['source'] }}</span>
+                            {% elif row['source'] == 'fofa' %}
+                                <span class="badge badge-success"> {{ row['source'] }}</span>
+                            {% else %}
+                                <span class="badge badge-secondary"> {{ row['source'] }}</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ row['tag'] }}</td>
+                        <td>
+                            <div style="width:100%;white-space:normal;word-wrap:break-word;word-break:break-all;">
+                                {{ row['content'] }}
+                            </div>
+                        </td>
+                        <td>{{ row['update_datetime'] }}</td>
+
+                        <td><a class="btn btn-sm btn-danger" href="javascript:delete_port_attr({{ row['id'] }})"
+                               role="button" title="Delete"><i
+                                class="fa fa-trash-o"></i></a>
+                        </td>
                         </tr>
                         {% endfor %}
-                    </tbody>
-                </table>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
-    </div>
-    <!--row-->
-</main>
-<!-- 模态对话框：编辑备忘录-->
-<div class="modal fade" id="editMemo" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header card-header bg-primary">
-                <h4 class="modal-title" id="myModalLabel">
-                    编辑备忘录
-                </h4>
-            </div>
-            <div class="modal-body ">
-                <form class="form-horizontal" role="form">
-                    <div class="form-group">
-                        <textarea class="form-control" id="text_content" rows="15" placeholder="输入备忘录信息..."></textarea>
-                    </div>
-                    <input type="hidden" id="r_id" value="{{ domain_info['id'] }}"/>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal" aria-hidden="true">取消
-                </button>
-                <button class="btn btn-primary org-update" type="button" id="btn_saveDomainMemo">
-                    保存
-                </button>
-            </div>
-        </div><!-- /.modal-content -->
-    </div><!-- /.modal-dialog -->
-</div> <!-- table responsive-->
+        <!--row-->
+    </main>
+    <!-- 模态对话框：编辑备忘录-->
+    <div class="modal fade" id="editMemo" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header card-header bg-primary">
+                    <h4 class="modal-title" id="myModalLabel">
+                        编辑备忘录
+                    </h4>
+                </div>
+                <div class="modal-body ">
+                    <form class="form-horizontal" role="form">
+                        <div class="form-group">
+                            <textarea class="form-control" id="text_content" rows="15"
+                                      placeholder="输入备忘录信息..."></textarea>
+                        </div>
+                        <input type="hidden" id="r_id" value="{{ domain_info['id'] }}"/>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal" aria-hidden="true">取消
+                    </button>
+                    <button class="btn btn-primary org-update" type="button" id="btn_saveDomainMemo">
+                        保存
+                    </button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div> <!-- table responsive-->
 {% endblock %}
 
 {% block js %}
-<!-- Data table plugin-->
-<script src="static/js/plugins/jquery.dataTables.min.js"></script>
-<script src="static/js/plugins/dataTables.bootstrap.min.js"></script>
-<script src="static/js/sweetalert/sweetalert.min.js"></script>
-<script src="static/js/jquery/jquery.bootstrap-duallistbox.js"></script>
-<script src="static/js/server/asset-info.js"></script>
-<script>
-    $("title").html(" {{ domain_info['domain'] }}-domaininfo");
-</script>
+    <!-- Data table plugin-->
+    <script src="static/js/plugins/jquery.dataTables.min.js"></script>
+    <script src="static/js/plugins/dataTables.bootstrap.min.js"></script>
+    <script src="static/js/sweetalert/sweetalert.min.js"></script>
+    <script src="static/js/jquery/jquery.bootstrap-duallistbox.js"></script>
+    <script src="static/js/server/asset-info.js"></script>
+    <script>
+        $("title").html(" {{ domain_info['domain'] }}-domaininfo");
+    </script>
 {% endblock %}

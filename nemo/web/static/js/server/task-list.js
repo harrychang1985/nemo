@@ -40,7 +40,7 @@ $(function () {
                 },
                 {
                     data: "task_name",
-                    title: "任务名称/状态",
+                    title: "任务名称",
                     width: "10%",
                     render: function (data, type, row, meta) {
                         var strData;
@@ -170,7 +170,7 @@ function stop_task(task_id) {
 }
 
 /**
- * 中止一个任务
+ * 删除一个任务
  * @param task_id
  */
 function delete_task(task_id) {

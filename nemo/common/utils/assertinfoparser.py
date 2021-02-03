@@ -1,14 +1,15 @@
 #!/usr/bin/env python3
 # coding:utf-8
 from collections import defaultdict
-from logging import exception
+
 from nemo.core.database.attr import DomainAttr, PortAttr
+from nemo.core.database.colortag import IpColorTag, DomainColorTag
 from nemo.core.database.domain import Domain
 from nemo.core.database.ip import Ip
+from nemo.core.database.memo import IpMemo, DomainMemo
 from nemo.core.database.organization import Organization
 from nemo.core.database.port import Port
-from nemo.core.database.colortag import IpColorTag, DomainColorTag
-from nemo.core.database.memo import IpMemo, DomainMemo
+from nemo.core.database.vulnerability import Vulnerability
 
 
 class AssertInfoParser():
@@ -33,11 +34,11 @@ class AssertInfoParser():
     def get_ip_port_info(self, ip, ip_id):
         '''获取IP端口属性，并生成port、title、banner聚合信息
         '''
-        port_list = []          # 端口列表
-        port_status_dict = {}   # 端口对应的状态字典
-        title_set = set()       # 标题聚合
-        banner_set = set()      # banner聚合
-        ports_attr_info = []    # 每一个端口的详细属性
+        port_list = []  # 端口列表
+        port_status_dict = {}  # 端口对应的状态字典
+        title_set = set()  # 标题聚合
+        banner_set = set()  # banner聚合
+        ports_attr_info = []  # 每一个端口的详细属性
 
         ports_obj = Port().gets(query={'ip_id': ip_id})
         for port_obj in ports_obj:
@@ -56,7 +57,8 @@ class AssertInfoParser():
                     FIRST_ROW = False
                 else:
                     pai.update(ip='', port='')
-                pai.update(id=port_attr_obj['id'], tag=port_attr_obj['tag'], content=port_attr_obj['content'], source=port_attr_obj['source'],
+                pai.update(id=port_attr_obj['id'], tag=port_attr_obj['tag'], content=port_attr_obj['content'],
+                           source=port_attr_obj['source'],
                            update_datetime=port_attr_obj['update_datetime'].strftime('%Y-%m-%d %H:%M'))
                 # 更新集合
                 if port_attr_obj['tag'] == 'title':
@@ -77,8 +79,9 @@ class AssertInfoParser():
         ip_obj = Ip().get(Id)
         if not ip_obj:
             return None
-        ip_info.update(id=ip_obj['id'], ip=ip_obj['ip'], location=ip_obj['location'], status=ip_obj['status'], create_datetime=ip_obj['create_datetime'].strftime(
-            '%Y-%m-%d %H:%M'), update_datetime=ip_obj['update_datetime'].strftime('%Y-%m-%d %H:%M'))
+        ip_info.update(id=ip_obj['id'], ip=ip_obj['ip'], location=ip_obj['location'], status=ip_obj['status'],
+                       create_datetime=ip_obj['create_datetime'].strftime(
+                           '%Y-%m-%d %H:%M'), update_datetime=ip_obj['update_datetime'].strftime('%Y-%m-%d %H:%M'))
         # 获取组织名称
         if ip_obj['org_id']:
             organziation__obj = Organization().get(ip_obj['org_id'])
@@ -103,6 +106,18 @@ class AssertInfoParser():
         # 获取备忘录信息：
         memo_obj = IpMemo().get(ip_obj['id'])
         ip_info.update(memo=memo_obj['content'] if memo_obj else '')
+        # 获取IP关联的漏洞信息：
+        vul_results = Vulnerability().gets({'target': ip_obj['ip']})
+        if vul_results and len(vul_results) > 0:
+            vul_info = []
+            for v in vul_results:
+                vul_info.append(
+                    {'id': v['id'], 'target': v['target'], 'url': v['url'], 'poc_file': v['poc_file'],
+                     'source': v['source'],
+                     'update_datetime': v['update_datetime'].strftime('%Y-%m-%d %H:%M')})
+            ip_info.update(vulnerability=vul_info)
+        else:
+            ip_info.update(vulnerability=None)
 
         return ip_info
 
@@ -115,7 +130,9 @@ class AssertInfoParser():
         if not domain_obj:
             return None
         domain_info.update(id=domain_obj['id'],
-                           domain=domain_obj['domain'], create_datetime=domain_obj['create_datetime'].strftime('%Y-%m-%d %H:%M'), update_datetime=domain_obj['update_datetime'].strftime('%Y-%m-%d %H:%M'))
+                           domain=domain_obj['domain'],
+                           create_datetime=domain_obj['create_datetime'].strftime('%Y-%m-%d %H:%M'),
+                           update_datetime=domain_obj['update_datetime'].strftime('%Y-%m-%d %H:%M'))
         # 获取组织名称
         if domain_obj['org_id']:
             organziation__obj = Organization().get(domain_obj['org_id'])
@@ -145,7 +162,7 @@ class AssertInfoParser():
         for domain_ip in ip_set:
             ip_obj = Ip().gets(query={'ip': domain_ip})
             if ip_obj and len(ip_obj) > 0:
-                #port_list, title_set, banner_set, ports_attr_info
+                # port_list, title_set, banner_set, ports_attr_info
                 p, t, b, pai, ps = self.get_ip_port_info(
                     ip_obj[0]['ip'], ip_obj[0]['id'])
                 port_set.update(p)
@@ -165,10 +182,23 @@ class AssertInfoParser():
         # 获取备忘录信息：
         memo_obj = DomainMemo().get(domain_obj['id'])
         domain_info.update(memo=memo_obj['content'] if memo_obj else '')
+        # 获取关联的漏洞信息：
+        vul_results = Vulnerability().gets({'target': domain_obj['domain']})
+        if vul_results and len(vul_results) > 0:
+            vul_info = []
+            for v in vul_results:
+                vul_info.append(
+                    {'id': v['id'], 'target': v['target'], 'url': v['url'], 'poc_file': v['poc_file'],
+                     'source': v['source'],
+                     'update_datetime': v['update_datetime'].strftime('%Y-%m-%d %H:%M')})
+            domain_info.update(vulnerability=vul_info)
+        else:
+            domain_info.update(vulnerability=None)
 
         return domain_info
 
-    def statistics_ip(self, org_id=None, domain_address=None, ip_address=None, port=None, content=None, iplocation=None, port_status=None, color_tag=None, memo_content=None, date_delta=None):
+    def statistics_ip(self, org_id=None, domain_address=None, ip_address=None, port=None, content=None, iplocation=None,
+                      port_status=None, color_tag=None, memo_content=None, date_delta=None):
         '''根据查询条件，统计IP、IP的C段地址和相关的所有端口
         '''
         ip_table = Ip()
@@ -182,7 +212,8 @@ class AssertInfoParser():
         # 统计每个端口出现的次数
         port_count_dict = defaultdict(lambda: 0)
         ips = ip_table.gets_by_search(org_id=org_id, domain=domain_address, ip=ip_address, port=port, content=content,
-                                      iplocation=iplocation, port_status=port_status, color_tag=color_tag, memo_content=memo_content, date_delta=date_delta, page=1, rows_per_page=100000)
+                                      iplocation=iplocation, port_status=port_status, color_tag=color_tag,
+                                      memo_content=memo_content, date_delta=date_delta, page=1, rows_per_page=100000)
         if ips:
             for ip_row in ips:
                 # ip
@@ -191,12 +222,12 @@ class AssertInfoParser():
                 ip_c = ip_row['ip'].split('.')[0:3]
                 ip_c.append('0/24')
                 ip_c_set.add('.'.join(ip_c))
-                #location
+                # location
                 if ip_row['location']:
                     try:
                         location = (ip_row['location'].split(',')[0]).split(' ')[0].strip()
                         if location:
-                            location_count = location_dict.get(location,0)
+                            location_count = location_dict.get(location, 0)
                             location_dict[location] = location_count + 1
                     except:
                         pass
@@ -210,7 +241,8 @@ class AssertInfoParser():
 
         return ip_list, ip_c_set, port_set, port_count_dict, ip_port_list, location_dict
 
-    def export_ip_memo(self, org_id=None, domain_address=None, ip_address=None, port=None, content=None, iplocation=None, port_status=None, color_tag=None, memo_content=None, date_delta=None):
+    def export_ip_memo(self, org_id=None, domain_address=None, ip_address=None, port=None, content=None,
+                       iplocation=None, port_status=None, color_tag=None, memo_content=None, date_delta=None):
         '''导出ip相关的备忘录信息
         '''
         ip_table = Ip()
@@ -218,7 +250,8 @@ class AssertInfoParser():
 
         memo_list = []
         ips = ip_table.gets_by_search(org_id=org_id, domain=domain_address, ip=ip_address, port=port, content=content,
-                                      iplocation=iplocation, port_status=port_status, color_tag=color_tag, memo_content=memo_content, date_delta=date_delta, page=1, rows_per_page=100000)
+                                      iplocation=iplocation, port_status=port_status, color_tag=color_tag,
+                                      memo_content=memo_content, date_delta=date_delta, page=1, rows_per_page=100000)
         if ips:
             for ip_row in ips:
                 memo_obj = memo_table.get(ip_row['id'])
@@ -229,7 +262,8 @@ class AssertInfoParser():
 
         return memo_list
 
-    def export_domain_memo(self, org_id=None, domain_address=None, ip_address=None, color_tag=None, memo_content=None, date_delta=None):
+    def export_domain_memo(self, org_id=None, domain_address=None, ip_address=None, color_tag=None, memo_content=None,
+                           date_delta=None):
         '''导出Domain相关的备忘录信息
         '''
         domain_table = Domain()

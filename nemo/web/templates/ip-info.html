@@ -80,6 +80,7 @@
                         <span class="btn border-success">{{ ip_info['create_datetime'] }}</span>
                         <span class="btn btn-info">更新时间</span></b>
                         <span class="btn border-success">{{ ip_info['update_datetime'] }}</span>
+                    {% if ip_info['memo'] %}
                         <p></p>
                         <p>
                             <button class="btn btn-info" type="button" data-toggle="collapse"
@@ -92,6 +93,41 @@
                                 <pre>{{ ip_info['memo'] }}</pre>
                             </div>
                         </div>
+                    {% endif %}
+                    {% if ip_info['vulnerability'] %}
+                         <p></p>
+                        <p>
+                            <button class="btn btn-danger" type="button" data-toggle="collapse"
+                                data-target="#collapseExample2" aria-expanded="false" aria-controls="collapseExample2">
+                                漏洞信息
+                            </button>
+                        </p>
+                        <div class="collapse.show" id="collapseExample2">
+                            <table class="table table-bordered">
+                                <thead>
+                                <tr class="alert-dark">
+                                    <th width="10%">Target</th>
+                                    <th width="25%">URL</th>
+                                    <th width="35%">Poc File</th>
+                                    <th width="10%">Source</th>
+                                    <th width="15%">更新时间</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for row in ip_info['vulnerability'] %}
+                                    <tr>
+                                    <td>{{ row['target'] }}</td>
+                                    <td>{{ row['url'] }}</td>
+                                    <td>
+                                          <a href="vulnerability-info?id={{ row['id'] }}" target="_blank">{{ row['poc_file'] }}</a>
+                                    </td>
+                                    <td>{{ row['source'] }}</td>
+                                    <td>{{ row['update_datetime'] }}</td>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% endif %}
                     </div>
                     <div class="card-footer text-muted">
                         <h5>端口信息</h5>

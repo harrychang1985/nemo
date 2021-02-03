@@ -1,0 +1,6 @@
+[submodule "nemo/common/thirdparty/some_pocsuite"]
+	path = nemo/common/thirdparty/some_pocsuite
+	url = https://github.com/hanc00l/some_pocsuite
+[submodule "nemo/common/thirdparty/xray/xray"]
+	path = nemo/common/thirdparty/xray/xray
+	url = https://github.com/chaitin/xray

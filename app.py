@@ -7,11 +7,9 @@ from gevent.pywsgi import WSGIServer
 from instance.config import ProductionConfig
 from nemo.web.flask_app import web_app
 
-
 '''
 系统入口，启动web server
 '''
-
 
 host = ProductionConfig.WEB_HOST
 port = ProductionConfig.WEB_PORT

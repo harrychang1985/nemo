@@ -11,6 +11,9 @@ from .fofa import Fofa
 from .iplocation import IpLocation
 from .portscan import PortScan
 from .shodan_search import Shodan
+from .pocsuite3 import Pocsuite3
+from .xray import XRay
+from .taskapi import TaskAPI
 from nemo.core.database.task import Task as TaskDatabase
 
 broker = 'amqp://{}:{}@{}:{}/'.format(ProductionConfig.MQ_USERNAME,
@@ -23,12 +26,22 @@ TASK_ACTION = {
     'fofasearch':   Fofa().run,
     'shodansearch':   Shodan().run,
     'domainscan':   DomainScan().run,
+    'pocsuite3':  Pocsuite3().run,
+    'xray':   XRay().run,
 }
 
 
 class UpdateTaskStatus(Task):
     '''在celery的任务异步完成时，显示完成状态和结果
     '''
+
+    def __format_datetime(self,timestamp):
+        '''将timestamp时间戳格式化
+        '''
+        if not timestamp:
+            return ''
+        dt = datetime.fromtimestamp(timestamp)
+        return dt.strftime("%Y-%m-%d %H:%M:%S")
 
     def __copy_not_null(self,data_to, data_from, key):
         if key not in data_from:
@@ -42,14 +55,21 @@ class UpdateTaskStatus(Task):
         if not task_id:
             return
 
-        task_app = TaskDatabase()
         task_data = {'task_id': task_id, 'task_name': task_result['task_name'], 'state': task_result['state']}
+
+        task_api = TaskAPI()
+        task_result_now = task_api.get_task_info(task_id)
+        if task_result_now['status'] == 'success':
+            task_data['started'] = self.__format_datetime(task_result_now['result']['started'])
+            task_data['received'] = self.__format_datetime(task_result_now['result']['received'])
+
         self.__copy_not_null(task_data, task_result, 'result')
         self.__copy_not_null(task_data, task_result, 'succeeded')
         self.__copy_not_null(task_data, task_result, 'failed')
         self.__copy_not_null(task_data, task_result, 'revoked')
         self.__copy_not_null(task_data, task_result, 'retried')
 
+        task_app = TaskDatabase()
         task_app.save_and_update(task_data)
 
     def on_success(self, retval, task_id, args, kwargs):
@@ -144,3 +164,15 @@ def domainscan_with_portscan(options):
     result.update(portscan.run(options_portscan))
 
     return result
+
+@celery_app.task(base=UpdateTaskStatus)
+def pocsuite3(options):
+    '''pocsuite3漏洞验证
+    '''
+    return new_task('pocsuite3', options)
+
+@celery_app.task(base=UpdateTaskStatus)
+def xray(options):
+    '''xray
+    '''
+    return new_task('xray', options)
