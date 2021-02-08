@@ -146,6 +146,7 @@ class AssertInfoParser():
         banner_set = set()
         ip_set = set()
         whatweb_set = set()
+        httpx_set = set()
         for domain_attr_obj in domain_attrs_obj:
             if domain_attr_obj['tag'] == 'title':
                 title_set.add(domain_attr_obj['content'])
@@ -155,6 +156,8 @@ class AssertInfoParser():
                 whatweb_set.add(domain_attr_obj['content'])
             elif domain_attr_obj['tag'] == 'server':
                 banner_set.add(domain_attr_obj['content'])
+            elif domain_attr_obj['tag'] == 'httpx':
+                httpx_set.add(domain_attr_obj['content'])
         # 获取域名关联的IP端口详情：
         port_set = set()
 
@@ -173,6 +176,7 @@ class AssertInfoParser():
         domain_info.update(port=list(port_set))
         domain_info.update(title=list(title_set))
         domain_info.update(whatweb=list(whatweb_set))
+        domain_info.update(httpx=list(httpx_set))
         domain_info.update(banner=list(banner_set))
         domain_info.update(port_attr=ip_port_list)
         # 获取标记颜色：

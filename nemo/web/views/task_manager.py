@@ -13,9 +13,9 @@ from tld import get_fld
 from nemo.common.utils.config import load_config
 from nemo.common.utils.loggerutils import logger
 from nemo.core.database.task import Task
-from nemo.core.tasks.pocsuite3 import Pocsuite3
+from nemo.core.tasks.poc.pocsuite3 import Pocsuite3
 from nemo.core.tasks.taskapi import TaskAPI
-from nemo.core.tasks.xray import XRay
+from nemo.core.tasks.poc.xray import XRay
 from .authenticate import login_check
 
 task_manager = Blueprint("task_manager", __name__)
@@ -109,6 +109,7 @@ def task_start_portscan_view():
         shodansearch = request.form.get('shodansearch')
         subtask = request.form.get('subtask')
         portscan_bin = request.form.get('bin')
+        httpx = request.form.get('httpx')
 
         if not target:
             return jsonify({'status': 'fail', 'msg': 'no target or port'})
@@ -125,7 +126,7 @@ def task_start_portscan_view():
             options = {'target': t, 'port': port, 'bin': portscan_bin,
                        'org_id': org_id, 'rate': rate, 'ping': _str2bool(ping), 'tech': nmap_tech,
                        'iplocation': _str2bool(iplocation), 'webtitle': _str2bool(webtitle),
-                       'whatweb': _str2bool(whatweb)
+                       'whatweb': _str2bool(whatweb),'httpx': _str2bool(httpx),
                        }
             # 启动portscan任务
             if _str2bool(portscan):
@@ -178,6 +179,9 @@ def task_start_domainscan_view():
         networkscan = request.form.get('networkscan')
         fld_domain = request.form.get('fld_domain')
         subtask = request.form.get('subtask')
+        subfinder = request.form.get('subfinder')
+        jsfinder = request.form.get('jsfinder')
+        httpx = request.form.get('httpx')
 
         if not target:
             return jsonify({'status': 'fail', 'msg': 'no target'})
@@ -202,9 +206,10 @@ def task_start_domainscan_view():
             # 任务选项options
             options = {'target': t,
                        'org_id': org_id, 'subdomain': _str2bool(subdomain), 'subdomainbrute': _str2bool(subdomainbrute),
-                       'webtitle': _str2bool(webtitle),
+                       'webtitle': _str2bool(webtitle),'whatweb': _str2bool(whatweb),'httpx':_str2bool(httpx),
+                       'subfinder': _str2bool(subfinder), 'jsfinder': _str2bool(jsfinder),
                        'portscan': _str2bool(portscan), 'networkscan': _str2bool(networkscan),
-                       'whatweb': _str2bool(whatweb)}
+                       }
             # 是否有portscan任务
             if _str2bool(portscan) or _str2bool(networkscan):
                 result = taskapi.start_task(

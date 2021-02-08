@@ -40,7 +40,10 @@ $(function () {
                     'portscan': $('#checkbox_portscan').is(":checked"),
                     'fofasearch': $('#checkbox_fofasearch').is(":checked"),
                     'networkscan': $('#checkbox_networkscan').is(":checked"),
-                    'subtask': $('#checkbox_subtask').is(":checked")
+                    'subtask': $('#checkbox_subtask').is(":checked"),
+                    'subfinder': $('#checkbox_subfinder').is(":checked"),
+                    'jsfinder': $('#checkbox_jsfinder').is(":checked"),
+                    'httpx': $('#checkbox_httpx').is(":checked")
                 }, function (data, e) {
                     if (e === "success" && data['status'] == 'success') {
                         swal({

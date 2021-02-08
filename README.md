@@ -6,15 +6,36 @@ Nemo是用来进行自动化信息收集的一个简单平台，实现对内网�
 
 # 功能
 
-- Nmap/Masscan进行端口扫描（需本地nmap/masscan）
-- 第三方接口查询IP归属地（hao7188、ip.cn）
-- 子域名收集（Sublist3r）
-- 子域名爆破（修改版ESD）
-- Fofa的API接口对IP和域名信息收集（需要Fofa的KEY）
-- Shodan的API接口对IP信息收集（需要Shodan的KEY）
-- WhatWeb收集端口和域名的指纹（需本地whatweb）
-- Pocsuite3与XRay进行漏洞验证
-- 信息资产的导出、统计、颜色标记与备忘录协作
+## IP收集
+
+- Nmap、Masscan端口扫描
+- 第三方接口查询IP归属地（hao7188、ip.cn）、自定义IP归属地
+
+## 域名收集
+
+- [Sublist3r](https://github.com/aboul3la/Sublist3r)
+- [Subfinder](https://github.com/projectdiscovery/subfinder)
+- 子域名爆破（修改版[ESD](https://github.com/FeeiCN/ESD)）
+- [JSFinder](https://github.com/Threezh1/JSFinder)
+
+## 标题指纹
+
+- [WhatWeb](https://github.com/urbanadventurer/WhatWeb)
+- [HTTPX](https://github.com/projectdiscovery/httpx)
+
+## API接口
+
+- [Fofa](https://fofa.so/)
+- [Shodan](https://www.shodan.io/)
+
+## Poc验证
+
+- [Pocsuite3](https://github.com/knownsec/pocsuite3)（[some_pocsuite](https://github.com/hanc00l/some_pocsuite)）
+- [XRay](https://github.com/chaitin/xray)
+
+## 其它
+
+- 资产的导出、统计、颜色标记与备忘录协作
 - Celery实现分布式任务
 - Docker部署和运行
 
@@ -52,6 +73,7 @@ docker run -it -d --name nemo_app -p 5000:5000 nemo/app:v1
 
 # 版本更新
 
+- 0.2：2021-2-8，增加子域名收集Subfinder、JSFinder，增加标题指纹HTTPX；重构任务相关代码；
 - 0.1：2021-2-3，重构任务管理功能，集成Pocsuite3与XRay进行验洞验证；
 
 

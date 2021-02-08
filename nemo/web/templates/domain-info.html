@@ -78,6 +78,10 @@
                                 <br><br>
                                 <span class="btn border-secondary text-left">WhatWeb：{{ domain_info['whatweb'] }}</span>
                             {% endif %}
+                            {% if domain_info['httpx'] %}
+                                <br><br>
+                                <span class="btn border-secondary text-left">HTTPX：{{ domain_info['httpx'] }}</span>
+                            {% endif %}
                             {% if domain_info['memo'] %}
                                  <p></p>
                                 <p>

@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
 # coding:utf-8
 import traceback
+
 import requests
 from requests.auth import HTTPBasicAuth
 
 from instance.config import ProductionConfig
 from nemo.common.utils.loggerutils import logger
+
 
 class TaskAPI():
     def __init__(self):
@@ -17,7 +19,7 @@ class TaskAPI():
         # request timeout
         self.timeout = 5
         # flower Authenticate
-        self.auth =  HTTPBasicAuth(ProductionConfig.FLOWER_AUTH_USER,ProductionConfig.FLOWER_AUTH_PASSWORD)
+        self.auth = HTTPBasicAuth(ProductionConfig.FLOWER_AUTH_USER, ProductionConfig.FLOWER_AUTH_PASSWORD)
 
     def __process_result(self, response):
         '''处理返回数据
@@ -129,7 +131,7 @@ class TaskAPI():
         '''
         api = 'api/task/revoke/{}?terminate={}'.format(
             task_id, 'true' if terminate else 'false')
-        url = '{}/{}'.format(self.api_host,  api)
+        url = '{}/{}'.format(self.api_host, api)
         result = {}
         try:
             r = requests.post(url, auth=self.auth, timeout=self.timeout)
@@ -145,7 +147,7 @@ class TaskAPI():
         '''得到worker的统计信息
         '''
         api = 'api/workers?refresh=1'
-        url = '{}/{}'.format(self.api_host,  api)
+        url = '{}/{}'.format(self.api_host, api)
         result = {}
         try:
             r = requests.get(url, auth=self.auth, timeout=self.timeout)

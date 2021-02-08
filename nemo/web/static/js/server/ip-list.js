@@ -49,7 +49,8 @@ $(function () {
                     'ping': $('#checkbox_ping').is(":checked"),
                     'fofasearch': $('#checkbox_fofasearch').is(":checked"),
                     'shodansearch': $('#checkbox_shodansearch').is(":checked"),
-                    'subtask': $('#checkbox_subtask').is(":checked")
+                    'subtask': $('#checkbox_subtask').is(":checked"),
+                    'httpx': $('#checkbox_httpx').is(":checked"),
                 }, function (data, e) {
                     if (e === "success" && data['status'] == 'success') {
                         swal({
@@ -123,6 +124,7 @@ $(function () {
             $("#input_rate").prop("disabled", false);
             $("#checkbox_webtitle").prop("disabled", false);
             $("#checkbox_whatweb").prop("disabled", false);
+            $("#checkbox_httpx").prop("disabled", false);
             $("#checkbox_ping").prop("disabled", false);
         } else {
             $("#input_port").prop("disabled", true);
@@ -131,6 +133,7 @@ $(function () {
             $("#input_rate").prop("disabled", true);
             $("#checkbox_webtitle").prop("disabled", true);
             $("#checkbox_whatweb").prop("disabled", true);
+            $("#checkbox_httpx").prop("disabled", true);
             $("#checkbox_ping").prop("disabled", true);
         }
     })

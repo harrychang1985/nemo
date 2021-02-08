@@ -18,10 +18,10 @@ from nemo.core.database.colortag import IpColorTag
 from nemo.core.database.ip import Ip
 from nemo.core.database.memo import IpMemo
 from nemo.core.database.organization import Organization
-from nemo.core.tasks.pocsuite3 import Pocsuite3
-from nemo.core.tasks.xray import XRay
+from nemo.core.database.vulnerability import Vulnerability
+from nemo.core.tasks.poc.pocsuite3 import Pocsuite3
+from nemo.core.tasks.poc.xray import XRay
 from .authenticate import login_check
-from ...core.database.vulnerability import Vulnerability
 
 ip_manager = Blueprint('ip_manager', __name__)
 
