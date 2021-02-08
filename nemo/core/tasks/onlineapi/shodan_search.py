@@ -13,14 +13,14 @@ from nemo.core.tasks.taskbase import TaskBase
 class Shodan(TaskBase):
     '''调用Shodan API接口进行资产收集
     支持ip与域名两种方式
-    参数:options  
-            {   
-                'target':   [port/domain,port/domain...]
+    参数:options
+            {
+                'target':   [ip/domain,ip/domain...]
                 'org_id':   id,target关联的组织机构ID
             }
     任务结果:
         保存为ip或domain资产格式的列表：
-        {'port': '61.133.196.53', 'status': 'N/A', 'port': [{'port': '80', 'status': 'N/A', 'title': 'xxx', 'server': 'nginx/1.16.0'}]}
+        {'ip': '61.133.196.53', 'status': 'N/A', 'port': [{'port': '80', 'status': 'N/A', 'title': 'xxx', 'server': 'nginx/1.16.0'}]}
         {'domain': 'www.csg.cn', 'A': ['218.19.148.193']}
     '''
 
@@ -63,7 +63,7 @@ class Shodan(TaskBase):
                 p['os'] = item['os'].strip()
             port_result.append(p)
 
-        return {'port': host['ip_str'], 'port': port_result, 'status': 'N/A'}
+        return {'ip': host['ip_str'], 'port': port_result, 'status': 'N/A'}
 
     def prepare(self, options):
         '''解析参数

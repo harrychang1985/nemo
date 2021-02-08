@@ -78,8 +78,10 @@ class Httpx(PortFingerBase):
                     result.update(server=json_data['webserver'])
                 if 'status-code' in json_data and json_data['status-code']:
                     result.update(status=json_data['status-code'])
-
-                result.update(httpx=str(content))
+                # 去除一些无谓的参数：
+                json_data.pop('response-time')
+                json_data.pop('vhost')
+                result.update(httpx=str(json_data))
             except Exception as e:
                 logger.error(traceback.format_exc())
                 logger.error('{} content:{}'.format(self.source, content))

@@ -35,7 +35,7 @@ class XRay(PocBase):
         self.BIN_PATH = 'nemo/common/thirdparty/xray'
         self.POC_PATH = 'nemo/common/thirdparty/xray/xray/pocs'
         self.BIN_FILE = 'xray_darwin_amd64'
-        if platform.system == 'Linux':
+        if platform.system() == 'Linux':
             self.BIN_FILE = 'xray_linux_amd64'
 
     def __parse_xray_json_file(self, json_data):

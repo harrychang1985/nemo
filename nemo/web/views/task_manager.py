@@ -29,7 +29,7 @@ def _format_datetime(timestamp):
     '''将timestamp时间戳格式化
     '''
     if not timestamp:
-        return ''
+        return None
     dt = datetime.fromtimestamp(timestamp)
     return dt.strftime("%Y-%m-%d %H:%M:%S")
 
@@ -57,7 +57,7 @@ def _format_runtime(seconds):
 def _copy_task_info_datetime(data_to, data_from, key):
     if key not in data_from:
         return
-    if data_from[key] == '' or data_from[key] == None:
+    if data_from[key] == '' or data_from[key] is None:
         return
 
     data_to[key] = datetime.fromtimestamp(data_from[key])
@@ -271,8 +271,8 @@ def task_list_view():
                     'state': row['state'], 'result': row['result']}
             row_args = ''
             if row['kwargs']:
-                if len(row['kwargs']) > 150:
-                    row_args = row['kwargs'][:150] + '...'
+                if len(row['kwargs']) > 200:
+                    row_args = row['kwargs'][:200] + '...'
                 else:
                     row_args = row['kwargs']
             task['kwargs'] = row_args

@@ -39,14 +39,14 @@ class UpdateTaskStatus(Task):
         '''将timestamp时间戳格式化
         '''
         if not timestamp:
-            return ''
+            return None
         dt = datetime.fromtimestamp(timestamp)
         return dt.strftime("%Y-%m-%d %H:%M:%S")
 
     def __copy_not_null(self, data_to, data_from, key):
         if key not in data_from:
             return
-        if data_from[key] == '' or data_from[key] == None:
+        if data_from[key] == '' or data_from[key] is None:
             return
 
         data_to[key] = copy.copy(data_from[key])

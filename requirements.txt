@@ -22,3 +22,5 @@ pysocks
 tldextract
 colorama
 pocsuite3
+#JSFinder
+bs4

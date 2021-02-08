@@ -31,7 +31,7 @@ class Subfinder(DomainBase):
         #
         self.BIN_PATH = 'nemo/common/thirdparty/subfinder'
         self.BIN_FILE = 'subfinder_darwin_amd64'
-        if platform.system == 'Linux':
+        if platform.system() == 'Linux':
             self.BIN_FILE = 'subfinder_linux_amd64'
         self.CONFIG_FILE = 'config.yaml'
 

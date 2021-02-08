@@ -13,14 +13,14 @@ from nemo.core.tasks.taskbase import TaskBase
 class Fofa(TaskBase):
     '''调用fofa API接口进行资产收集
     支持ip与域名两种方式（注意：fofa里domain的话只能查询根域名，如baidu.com；IP只能是单个IP）
-    参数:options  
-            {   
-                'target':   [port/domain,port/domain...]
+    参数:options
+            {
+                'target':   [ip/domain,ip/domain...]
                 'org_id':   id,target关联的组织机构ID
             }
     任务结果:
         保存为ip或domain资产格式的列表：
-        {'port': '61.133.196.53', 'status': 'N/A', 'port': [{'port': '80', 'status': 'N/A', 'title': 'xxx', 'server': 'nginx/1.16.0'}]}
+        {'ip': '61.133.196.53', 'status': 'N/A', 'port': [{'port': '80', 'status': 'N/A', 'title': 'xxx', 'server': 'nginx/1.16.0'}]}
         {'domain': 'www.csg.cn', 'A': ['218.19.148.193']}
     '''
 
@@ -54,7 +54,7 @@ class Fofa(TaskBase):
 
             return error_msg
 
-    def __get_data(self, query_str='', page=1, fields='host,port,port'):
+    def __get_data(self, query_str='', page=1, fields='host,ip,port'):
         '''查询FOFA API，获取数据
         普通用户最多只能查询前100条记录；默认每页的size是100
         '''
@@ -70,14 +70,14 @@ class Fofa(TaskBase):
             error_msg = {"error": True, "errmsg": "Connect error"}
             logger.error(traceback.format_exc())
             logger.error(error_msg)
-            
+
             return None
 
     def __fofa_search(self, query_str):
         '''查询FOFA
         '''
         datas = self.__get_data(
-            query_str, 1, 'host,port,port,title,server,province,city,country_name')
+            query_str, 1, 'host,ip,port,title,server,province,city,country_name')
         if datas:
             return datas['results']
         else:
@@ -95,12 +95,12 @@ class Fofa(TaskBase):
         title = line[3]
         server = line[4]
         location = ' '.join([line[5], line[6], line[7]])
-        p = {'port': port, 'status': 'N/A'}
+        p = {'port': port}#, 'status': 'N/A'}
         if title:
             p['title'] = title
         if server:
             p['server'] = server
-        ip_port = {'port': ip, 'status': 'N/A', 'port': [p, ]}
+        ip_port = {'ip': ip, 'port': [p, ]}#'status': 'N/A', }
         # if len(location) > 2:
         #     ip_port['location'] = location
 
@@ -150,7 +150,7 @@ class Fofa(TaskBase):
         for t in target:
             # 查询FOFA
             if check_ip_or_domain(t):
-                query_str = 'port="{0}" || host="{0}" '.format(t)
+                query_str = 'ip="{0}" || host="{0}" '.format(t)
             else:
                 query_str = 'domain="{0}" || host="{0}" || cert="{0}"'.format(t)
             result = self.__fofa_search(query_str)

@@ -108,9 +108,6 @@ class PortFingerBase(TaskBase):
             content = self.fetch_title('{}'.format(target['domain']))
             if content:
                 result = self.parse_result(content)
-                if self.source not in target:
-                    target[self.source] = []
-                target[self.source].append(content)
                 if 'title' in result:
                     if 'title' not in target:
                         target['title'] = []
@@ -119,6 +116,9 @@ class PortFingerBase(TaskBase):
                     if 'server' not in target:
                         target['server'] = []
                     target['server'].append(result['server'])
+                if self.source in result:
+                    target[self.source] = []
+                    target[self.source].append(result[self.source])
 
     def parse_result(self, content):
         '''从返回中提取title和banner
