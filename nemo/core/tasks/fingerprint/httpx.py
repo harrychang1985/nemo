@@ -38,7 +38,7 @@ class Httpx(PortFingerBase):
         # 默认的参数
         self.BIN_PATH = 'nemo/common/thirdparty/httpx'
         self.BIN_FILE = 'httpx_darwin_amd64'
-        if platform.system == 'Linux':
+        if platform.system() == 'Linux':
             self.BIN_FILE = 'httpx_linux_amd64'
 
     def fetch_title(self, url):
