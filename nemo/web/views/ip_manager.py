@@ -75,9 +75,11 @@ def ip_asset_view():
         session['session_org_id'] = org_id
 
         count = 0
-        ips = ip_table.gets_by_search(org_id=org_id, domain=domain_address, ip=ip_address, port=port, content=content, iplocation=iplocation,
-                                      port_status=port_status, color_tag=color_tag, memo_content=memo_content, date_delta=date_delta,
-                                      page=(start//length)+1, rows_per_page=length)
+        ips = ip_table.gets_by_search(org_id=org_id, domain=domain_address, ip=ip_address, port=port, content=content,
+                                      iplocation=iplocation,
+                                      port_status=port_status, color_tag=color_tag, memo_content=memo_content,
+                                      date_delta=date_delta,
+                                      page=(start // length) + 1, rows_per_page=length)
         if ips:
             for ip_row in ips:
                 # 查询每一个IP的详细属性
@@ -97,14 +99,14 @@ def ip_asset_view():
                 memo_obj = ip_memo_table.get(ip_row['id'])
                 # 获取IP关联的漏洞信息：
                 vul_info = []
-                vul_results = Vulnerability().gets({'target':ip_row['ip']})
-                if vul_results and len(vul_results)>0:
+                vul_results = Vulnerability().gets({'target': ip_row['ip']})
+                if vul_results and len(vul_results) > 0:
                     for v in vul_results:
                         vul_info.append('{}/{}'.format(v['poc_file'], v['source']))
                 # 显示的数据
                 ip_list.append({
                     'id': ip_row['id'],
-                    "index": index+start,
+                    "index": index + start,
                     'color_tag': color_tag_obj['color'] if color_tag_obj else '',
                     'memo_content': memo_obj['content'] if memo_obj else '',
                     'vulnerability': '\r\n'.join(vul_info),
@@ -120,9 +122,10 @@ def ip_asset_view():
                 })
                 index += 1
             # 查询的记录数量
-            count = ip_table.count_by_search(org_id=org_id, domain=domain_address, ip=ip_address, port=port, content=content,
+            count = ip_table.count_by_search(org_id=org_id, domain=domain_address, ip=ip_address, port=port,
+                                             content=content,
                                              iplocation=iplocation, port_status=port_status, color_tag=color_tag,
-                                             memo_content=memo_content,date_delta=date_delta)
+                                             memo_content=memo_content, date_delta=date_delta)
         json_data = {
             'draw': draw,
             'recordsTotal': count,
@@ -195,7 +198,7 @@ def ip_export_view():
     data_delta = request.args.get('data_delta')
 
     data = export_ips(org_id, domain_address, ip_address, port, content,
-                      iplocation, port_status, color_tag, memo_content,data_delta)
+                      iplocation, port_status, color_tag, memo_content, data_delta)
     response = Response(data, content_type='application/octet-stream')
     response.headers["Content-disposition"] = 'attachment; filename={}'.format(
         "ip-export.xlsx")
@@ -217,10 +220,10 @@ def ip_statistics_view():
     port_status = request.args.get('port_status')
     color_tag = request.args.get('color_tag')
     memo_content = request.args.get('memo_content')
-    date_delta =request.args.get('date_delta')
+    date_delta = request.args.get('date_delta')
 
     ip_list, ip_c_set, port_set, port_count_dict, ip_port_list, location_dict = AssertInfoParser().statistics_ip(
-        org_id, domain_address, ip_address, port, content, iplocation, port_status, color_tag, memo_content,date_delta)
+        org_id, domain_address, ip_address, port, content, iplocation, port_status, color_tag, memo_content, date_delta)
     data = ['Port: ({})'.format(len(port_set)), ','.join([str(x) for x in sorted(port_set)])]
 
     port_count_list = sorted(port_count_dict.items(),
@@ -235,11 +238,11 @@ def ip_statistics_view():
     data.extend(ip_list)
     data.append('\nTarget: ({})'.format(len(ip_port_list)))
     data.extend(ip_port_list)
-    
+
     data.append('\nLocation: ({})'.format(len(location_dict)))
-    location_sorted = sorted(location_dict.items(), key=lambda d:d[1], reverse=True)
+    location_sorted = sorted(location_dict.items(), key=lambda d: d[1], reverse=True)
     for d in location_sorted:
-        data.append("{} :{}".format(d[0],d[1]))
+        data.append("{} :{}".format(d[0], d[1]))
 
     response = Response(
         '\n'.join(data), content_type='application/octet-stream')
@@ -263,7 +266,7 @@ def ip_memo_export_view():
     port_status = request.args.get('port_status')
     color_tag = request.args.get('color_tag')
     memo_content = request.args.get('memo_content')
-    date_delta =request.args.get('date_delta')
+    date_delta = request.args.get('date_delta')
 
     memo_list = AssertInfoParser().export_ip_memo(
         org_id, domain_address, ip_address, port, content, iplocation, port_status, color_tag,

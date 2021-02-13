@@ -2,7 +2,6 @@
 # coding:utf-8
 import traceback
 from copy import deepcopy
-from datetime import datetime
 
 from flask import Blueprint
 from flask import jsonify
@@ -14,8 +13,8 @@ from nemo.common.utils.config import load_config
 from nemo.common.utils.loggerutils import logger
 from nemo.core.database.task import Task
 from nemo.core.tasks.poc.pocsuite3 import Pocsuite3
-from nemo.core.tasks.taskapi import TaskAPI
 from nemo.core.tasks.poc.xray import XRay
+from nemo.core.tasks.taskapi_v2 import TaskAPI
 from .authenticate import login_check
 
 task_manager = Blueprint("task_manager", __name__)
@@ -23,15 +22,6 @@ task_manager = Blueprint("task_manager", __name__)
 
 def _str2bool(v):
     return str(v).lower() in ('true', 'success', 'yes', '1')
-
-
-def _format_datetime(timestamp):
-    '''将timestamp时间戳格式化
-    '''
-    if not timestamp:
-        return None
-    dt = datetime.fromtimestamp(timestamp)
-    return dt.strftime("%Y-%m-%d %H:%M:%S")
 
 
 def _format_runtime(seconds):
@@ -52,35 +42,6 @@ def _format_runtime(seconds):
         result.append('<1秒')
 
     return ''.join(result)
-
-
-def _copy_task_info_datetime(data_to, data_from, key):
-    if key not in data_from:
-        return
-    if data_from[key] == '' or data_from[key] is None:
-        return
-
-    data_to[key] = datetime.fromtimestamp(data_from[key])
-
-
-def _update_and_save_task(task_id):
-    task_info_result = TaskAPI().get_task_info(task_id)
-    if task_info_result['status'] == 'success':
-        task_app = Task()
-        task_data = {'task_id': task_id, 'task_name': task_info_result['result']['name']}
-        task_app.copy_key(task_data, task_info_result['result'], 'args')
-        task_app.copy_key(task_data, task_info_result['result'], 'kwargs')
-        task_app.copy_key(task_data, task_info_result['result'], 'worker')
-        task_app.copy_key(task_data, task_info_result['result'], 'state')
-        task_app.copy_key(task_data, task_info_result['result'], 'result')
-        _copy_task_info_datetime(task_data, task_info_result['result'], 'received')
-        _copy_task_info_datetime(task_data, task_info_result['result'], 'retried')
-        _copy_task_info_datetime(task_data, task_info_result['result'], 'revoked')
-        _copy_task_info_datetime(task_data, task_info_result['result'], 'started')
-        _copy_task_info_datetime(task_data, task_info_result['result'], 'succeeded')
-        _copy_task_info_datetime(task_data, task_info_result['result'], 'failed')
-
-        task_app.save_and_update(task_data)
 
 
 @task_manager.route('/task-start-portscan', methods=['POST'])
@@ -126,32 +87,24 @@ def task_start_portscan_view():
             options = {'target': t, 'port': port, 'bin': portscan_bin,
                        'org_id': org_id, 'rate': rate, 'ping': _str2bool(ping), 'tech': nmap_tech,
                        'iplocation': _str2bool(iplocation), 'webtitle': _str2bool(webtitle),
-                       'whatweb': _str2bool(whatweb),'httpx': _str2bool(httpx),
+                       'whatweb': _str2bool(whatweb), 'httpx': _str2bool(httpx),
                        }
             # 启动portscan任务
             if _str2bool(portscan):
                 result = taskapi.start_task(
                     'portscan', kwargs={'options': deepcopy(options)})
-                if result['status'] == 'success' and result['result']['task-id']:
-                    _update_and_save_task(result['result']['task-id'])
             # IP归属地：如果有portscan任务，则在portscan启动，否则单独启动任务
             if _str2bool(iplocation) and not _str2bool(portscan):
                 result = taskapi.start_task(
                     'iplocation', kwargs={'options': deepcopy(options)})
-                if result['status'] == 'success' and result['result']['task-id']:
-                    _update_and_save_task(result['result']['task-id'])
             # 启动FOFA搜索任务
             if _str2bool(fofasearch):
                 result = taskapi.start_task(
                     'fofasearch', kwargs={'options': deepcopy(options)})
-                if result['status'] == 'success' and result['result']['task-id']:
-                    _update_and_save_task(result['result']['task-id'])
             # 启动Shodan搜索任务
             if _str2bool(shodansearch):
                 result = taskapi.start_task('shodansearch', kwargs={
                     'options': deepcopy(options)})
-                if result['status'] == 'success' and result['result']['task-id']:
-                    _update_and_save_task(result['result']['task-id'])
 
         return jsonify(result)
     except Exception as e:
@@ -206,7 +159,7 @@ def task_start_domainscan_view():
             # 任务选项options
             options = {'target': t,
                        'org_id': org_id, 'subdomain': _str2bool(subdomain), 'subdomainbrute': _str2bool(subdomainbrute),
-                       'webtitle': _str2bool(webtitle),'whatweb': _str2bool(whatweb),'httpx':_str2bool(httpx),
+                       'webtitle': _str2bool(webtitle), 'whatweb': _str2bool(whatweb), 'httpx': _str2bool(httpx),
                        'subfinder': _str2bool(subfinder), 'jsfinder': _str2bool(jsfinder),
                        'portscan': _str2bool(portscan), 'networkscan': _str2bool(networkscan),
                        }
@@ -214,19 +167,13 @@ def task_start_domainscan_view():
             if _str2bool(portscan) or _str2bool(networkscan):
                 result = taskapi.start_task(
                     'domainscan_with_portscan', kwargs={'options': deepcopy(options)})
-                if result['status'] == 'success' and result['result']['task-id']:
-                    _update_and_save_task(result['result']['task-id'])
             else:
                 result = taskapi.start_task(
                     'domainscan', kwargs={'options': deepcopy(options)})
-                if result['status'] == 'success' and result['result']['task-id']:
-                    _update_and_save_task(result['result']['task-id'])
             # 是否有FOFA搜索
             if _str2bool(fofasearch):
                 result = taskapi.start_task('fofasearch', kwargs={
                     'options': deepcopy(options)})
-                if result['status'] == 'success' and result['result']['task-id']:
-                    _update_and_save_task(result['result']['task-id'])
 
         return jsonify(result)
     except Exception as e:
@@ -261,14 +208,9 @@ def task_list_view():
                                                date_delta=date_delta,
                                                page=(start // length) + 1, rows_per_page=length)
         for row in task_results:
-            # update  the task status
-            if row['state'] not in ['SUCCESS', 'FAILURE', 'REVOKED']:
-                _update_and_save_task(row['task_id'])
-                row = task_app.get(row['id'])
-
-            task = {'index': index + start, 'id': row['id'], 'task_id': row['task_id'], 'worker': row['worker'],
-                    'task_name': row['task_name'].replace('nemo.core.tasks.tasks.', '').replace('_', '-'),
-                    'state': row['state'], 'result': row['result']}
+            task = {'index': index + start, 'id': row['id'], 'task_id': row['task_id'],
+                    'worker': row['worker'] if row['worker'] else '',
+                    'task_name': row['task_name'], 'state': row['state'], 'result': row['result']}
             row_args = ''
             if row['kwargs']:
                 if len(row['kwargs']) > 200:
@@ -323,13 +265,8 @@ def task_info_view():
     ips = task_app.gets(query={'task_id': task_id})
     if ips and len(ips) > 0:
         row = ips[0]
-        # update  the task status
-        if row['state'] not in ['SUCCESS', 'FAILURE', 'REVOKED']:
-            _update_and_save_task(row['task_id'])
-            row = task_app.get(row['id'])
-        task = {'id': row['id'], 'task_id': row['task_id'], 'worker': row['worker'],
-                'task_name': row['task_name'],
-                'state': row['state'], 'result': row['result'], 'kwargs': row['kwargs']}
+        task = {'id': row['id'], 'task_id': row['task_id'], 'worker': row['worker'] if row['worker'] else '',
+                'task_name': row['task_name'], 'state': row['state'], 'result': row['result'], 'kwargs': row['kwargs']}
 
         task.update(received='', started='', succeeded='', failed='', retried='', revoked='')
         if row['received']:
@@ -369,7 +306,6 @@ def task_stop_view():
         return jsonify({'status': 'fail'})
 
     result = TaskAPI().revoke_task(task_id)
-    _update_and_save_task(task_id)
 
     return jsonify(result)
 
@@ -418,8 +354,6 @@ def task_start_vulnerability_view():
             options = {'target': deepcopy(target), 'poc_file': pocsuite3_poc_file}
             result = taskapi.start_task(
                 'pocsuite3', kwargs={'options': options})
-            if result['status'] == 'success' and result['result']['task-id']:
-                _update_and_save_task(result['result']['task-id'])
         # XRay任务
         if _str2bool(xrayverify) and xray_poc_file:
             if not XRay().check_poc_exist(xray_poc_file):
@@ -427,8 +361,6 @@ def task_start_vulnerability_view():
             options = {'target': deepcopy(target), 'poc_file': xray_poc_file}
             result = taskapi.start_task(
                 'xray', kwargs={'options': options})
-            if result['status'] == 'success' and result['result']['task-id']:
-                _update_and_save_task(result['result']['task-id'])
 
         return jsonify(result)
 

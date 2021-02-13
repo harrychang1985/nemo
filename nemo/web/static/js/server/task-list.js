@@ -51,7 +51,7 @@ $(function () {
                 {
                     data: "state", title: "状态", width: "8%",
                     "render": function (data, type, row) {
-                        if (data == 'STARTED' || data == 'RECEIVED') {
+                        if (data == 'STARTED' || data == 'RECEIVED' || data == 'PENDING') {
                             return data + '<button class="btn btn-sm btn-danger" type="button" onclick="stop_task(\'' + row['task_id'] + '\')" >&nbsp;中止&nbsp;</button>';
                         } else return data;
                     }

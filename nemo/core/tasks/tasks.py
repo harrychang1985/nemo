@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # coding:utf-8
-import copy
+import time
 from datetime import datetime
 
 from celery import Celery, Task
@@ -14,136 +14,133 @@ from nemo.core.tasks.onlineapi.iplocation import IpLocation
 from nemo.core.tasks.onlineapi.shodan_search import Shodan
 from nemo.core.tasks.poc.pocsuite3 import Pocsuite3
 from nemo.core.tasks.poc.xray import XRay
-from .taskapi import TaskAPI
 
 broker = 'amqp://{}:{}@{}:{}/'.format(ProductionConfig.MQ_USERNAME,
                                       ProductionConfig.MQ_PASSWORD, ProductionConfig.MQ_HOST, ProductionConfig.MQ_PORT)
 celery_app = Celery('nemo', broker=broker, backend='rpc://')
 
-TASK_ACTION = {
-    'portscan': PortScan().run,
-    'iplocation': IpLocation().run,
-    'fofasearch': Fofa().run,
-    'shodansearch': Shodan().run,
-    'domainscan': DomainScan().run,
-    'pocsuite3': Pocsuite3().run,
-    'xray': XRay().run,
-}
+
+def save_task(task_id, task_name, kwargs, state):
+    '''
+    保存新的任务信息
+    '''
+    task_app = TaskDatabase()
+    task_data = {'task_id': task_id, 'task_name': task_name, 'state': state, 'result': '',
+                 'args': '()', 'kwargs': str(kwargs), 'received': datetime.now()}
+
+    task_app.save_and_update(task_data)
+
+
+def update_task(task_id, state, result=None, succeeded=None, failed=None, started=None, retried=None,
+                received=None, revoked=None, worker=None):
+    '''
+    更新任务状态及相关信息
+    '''
+    task_data = {'task_id': task_id, 'state': state}
+    if result:
+        task_data['result'] = str(result)
+    if succeeded:
+        task_data['succeeded'] = succeeded
+    if failed:
+        task_data['failed'] = failed
+    if started:
+        task_data['started'] = started
+    if retried:
+        task_data['retried'] = retried
+    if received:
+        task_data['received'] = received
+    if revoked:
+        task_data['revoked'] = revoked
+    if worker:
+        task_data['worker'] = worker
+
+    task_app = TaskDatabase()
+    task_app.save_and_update(task_data)
 
 
 class UpdateTaskStatus(Task):
     '''在celery的任务异步完成时，显示完成状态和结果
     '''
 
-    def __format_datetime(self, timestamp):
-        '''将timestamp时间戳格式化
-        '''
-        if not timestamp:
-            return None
-        dt = datetime.fromtimestamp(timestamp)
-        return dt.strftime("%Y-%m-%d %H:%M:%S")
+    def __init__(self):
+        self.task_track_started = True
+        self.task_ignore_result = True
 
-    def __copy_not_null(self, data_to, data_from, key):
-        if key not in data_from:
-            return
-        if data_from[key] == '' or data_from[key] is None:
-            return
-
-        data_to[key] = copy.copy(data_from[key])
-
-    def __save_and_update_task(self, task_id, task_result):
-        if not task_id:
-            return
-
-        task_data = {'task_id': task_id, 'task_name': task_result['task_name'], 'state': task_result['state']}
-
-        task_api = TaskAPI()
-        task_result_now = task_api.get_task_info(task_id)
-        if task_result_now['status'] == 'success':
-            task_data['started'] = self.__format_datetime(task_result_now['result']['started'])
-            task_data['received'] = self.__format_datetime(task_result_now['result']['received'])
-
-        self.__copy_not_null(task_data, task_result, 'result')
-        self.__copy_not_null(task_data, task_result, 'succeeded')
-        self.__copy_not_null(task_data, task_result, 'failed')
-        self.__copy_not_null(task_data, task_result, 'revoked')
-        self.__copy_not_null(task_data, task_result, 'retried')
-
-        task_app = TaskDatabase()
-        task_app.save_and_update(task_data)
+        super(UpdateTaskStatus, self).__init__()
 
     def on_success(self, retval, task_id, args, kwargs):
+        time.sleep(1)
         print('task {} done: {}'.format(task_id, retval))
-        task_result = {'task_name': self.name, 'result': str(retval), 'state': 'SUCCESS', 'succeeded': datetime.now()}
-        self.__save_and_update_task(task_id, task_result)
-
+        update_task(task_id, 'SUCCESS', result=retval, succeeded=datetime.now())
         return super(UpdateTaskStatus, self).on_success(retval, task_id, args, kwargs)
 
     def on_failure(self, exc, task_id, args, kwargs, einfo):
+        time.sleep(1)
         print('task {} fail, reason: {}'.format(task_id, exc))
-        task_result = {'task_name': self.name, 'result': str(exc), 'state': 'FAILURE', 'failed': datetime.now()}
-        self.__save_and_update_task(task_id, task_result)
-
+        update_task(task_id, 'FAILURE', failed=datetime.now())
         return super(UpdateTaskStatus, self).on_failure(exc, task_id, args, kwargs, einfo)
 
     def on_retry(self, exc, task_id, args, kwargs, einfo):
+        time.sleep(1)
         print('task {} retry, reason: {}'.format(task_id, exc))
-        task_result = {'task_name': self.name, 'result': str(exc), 'state': 'RETRY', 'retried': datetime.now()}
-        self.__save_and_update_task(task_id, task_result)
+        update_task(task_id, 'RETRY', retried=datetime.now())
 
         return super(UpdateTaskStatus, self).on_failure(exc, task_id, args, kwargs, einfo)
 
 
-def new_task(action, options):
-    '''开始一个任务
-    '''
-    if action in TASK_ACTION:
-        task_run = TASK_ACTION.get(action)
-        result = task_run(options)
-        return result
-    else:
-        return {'status': 'fail', 'msg': 'no task'}
-
-
-@celery_app.task(base=UpdateTaskStatus)
-def portscan(options):
+@celery_app.task(base=UpdateTaskStatus, bind=True)
+def portscan(self, options):
     '''端口扫描综合任务
     '''
-    return new_task('portscan', options)
+    # 由于对数据库操作的并发未采用“锁”机制，导致写库的时候会出现异常，因此简单采用延时机制“降低”冲突
+    time.sleep(1)
+    update_task(self.request.id, 'STARTED', started=datetime.now(), worker=self.request.hostname)
+    return PortScan().run(options)
 
 
-@celery_app.task(base=UpdateTaskStatus)
-def fofasearch(options):
+@celery_app.task(base=UpdateTaskStatus, bind=True)
+def fofasearch(self, options):
     '''调用fofa API
     '''
-    return new_task('fofasearch', options)
+    time.sleep(1)
+    update_task(self.request.id, 'STARTED', started=datetime.now(), worker=self.request.hostname)
+    return Fofa().run(options)
 
 
-@celery_app.task(base=UpdateTaskStatus)
-def shodansearch(options):
+@celery_app.task(base=UpdateTaskStatus, bind=True)
+def shodansearch(self, options):
     '''调用shodan API
     '''
-    return new_task('shodansearch', options)
+    time.sleep(1)
+    update_task(self.request.id, 'STARTED', started=datetime.now(), worker=self.request.hostname)
+    return Shodan().run(options)
 
 
-@celery_app.task(base=UpdateTaskStatus)
-def domainscan(options):
+@celery_app.task(base=UpdateTaskStatus, bind=True)
+def domainscan(self, options):
     '''域名收集综合信息
     '''
-    return new_task('domainscan', options)
+    time.sleep(1)
+    update_task(self.request.id, 'STARTED', started=datetime.now(), worker=self.request.hostname)
+    return DomainScan().run(options)
 
 
-@celery_app.task(base=UpdateTaskStatus)
-def iplocation(options):
+@celery_app.task(base=UpdateTaskStatus, bind=True)
+def iplocation(self, options):
     '''IP归属地
     '''
-    return new_task('iplocation', options)
+    time.sleep(1)
+    update_task(self.request.id, 'STARTED', started=datetime.now(), worker=self.request.hostname)
+    return IpLocation().run(options)
 
 
-@celery_app.task(base=UpdateTaskStatus)
-def domainscan_with_portscan(options):
+@celery_app.task(base=UpdateTaskStatus, bind=True)
+def domainscan_with_portscan(self, options):
     '''域名收集综合信息
     '''
+    time.sleep(1)
+    update_task(self.request.id, 'STARTED', started=datetime.now(), worker=self.request.hostname)
+
     domainscan = DomainScan()
     portscan = PortScan()
     # 域名任务
@@ -166,19 +163,22 @@ def domainscan_with_portscan(options):
                         'whatweb': options['whatweb'], 'org_id': None if 'org_id' not in options else options['org_id']}
     # 执行portscan任务
     result.update(portscan.run(options_portscan))
-
     return result
 
 
-@celery_app.task(base=UpdateTaskStatus)
-def pocsuite3(options):
+@celery_app.task(base=UpdateTaskStatus, bind=True)
+def pocsuite3(self, options):
     '''pocsuite3漏洞验证
     '''
-    return new_task('pocsuite3', options)
+    time.sleep(1)
+    update_task(self.request.id, 'STARTED', started=datetime.now(), worker=self.request.hostname)
+    return Pocsuite3().run(options)
 
 
-@celery_app.task(base=UpdateTaskStatus)
-def xray(options):
+@celery_app.task(base=UpdateTaskStatus, bind=True)
+def xray(self, options):
     '''xray
     '''
-    return new_task('xray', options)
+    time.sleep(1)
+    update_task(self.request.id, 'STARTED', started=datetime.now(), worker=self.request.hostname)
+    return XRay().run(options)

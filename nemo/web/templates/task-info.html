@@ -17,7 +17,7 @@
                         <div class="card-body">
                             <b><span class="btn btn-info">任务名称</span></b>
                             <span class="btn btn-warning text-left">
-                            {{  task_info['task_name'] }}
+                            {{ task_info['task_name'] }}
                         </span>
                             <br><br>
                             <b><span class="btn btn-info">任务状态</span></b>
@@ -33,15 +33,17 @@
                            {{ task_info['started'] }}</span>
                             {% endif %}
                             <br><br>
+                            {% if task_info['worker'] %}
                             <b><span class="btn btn-info">任务worker</span></b>
                             <span class="btn border-secondary text-left">
                            {{ task_info['worker'] }}</span>
+                            {% endif %}
                             {% if task_info['kwargs'] %}
                                 <b><span class="btn btn-info">任务参数</span></b>
                                 <br><br>
                                 <span class="btn border-secondary text-left">
                             {{ task_info['kwargs'] }}</span>
-                                 <br><br>
+                                <br><br>
                             {% endif %}
                             {% if task_info['result'] %}
                                 <b><span class="btn btn-info">任务结果</span></b>

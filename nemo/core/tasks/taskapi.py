@@ -10,6 +10,11 @@ from nemo.common.utils.loggerutils import logger
 
 
 class TaskAPI():
+    '''
+       任务接口API，用于创建、查询和取消应用
+       采用Flower的API接口
+    '''
+
     def __init__(self):
         # flower  build ip and port
         self.api_host = 'http://{}:{}'.format(

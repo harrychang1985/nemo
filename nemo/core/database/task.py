@@ -26,6 +26,7 @@ class Task(daobase.DAOBase):
         # 如果已存在，则更新记录
         if obj and len(obj) > 0:
             data_update = {}
+            self.copy_exist(data_update, data, 'worker')
             self.copy_exist(data_update, data, 'state')
             self.copy_exist(data_update, data, 'result')
             self.copy_exist(data_update, data, 'received')
