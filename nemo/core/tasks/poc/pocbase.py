@@ -37,8 +37,6 @@ class PocBase(TaskBase):
         self.target = []
         self.poc_file = ''
 
-
-
     def __parse_xray_json_file(self, json_data):
         if not json_data:
             return []
@@ -46,7 +44,7 @@ class PocBase(TaskBase):
         vul_results = []
         for data in json.loads(json_data):
             vul = {'poc_file': self.poc_file,
-                 'source': 'xray', 'url': data['target']['url']}
+                   'source': 'xray', 'url': data['target']['url']}
             pr = urlparse(vul['url'])
             vul.update(target=pr.hostname)
             if 'detail' in data and 'snapshot' in data['detail']:
@@ -63,7 +61,6 @@ class PocBase(TaskBase):
         '''调用验证漏洞
         由继承子类实现
         '''
-
 
     def prepare(self, options):
         '''解析参数
@@ -103,13 +100,13 @@ class PocBase(TaskBase):
         return vul_results
 
     def run(self, options):
-        '''执行POC验辛任务
+        '''执行POC验证任务
         '''
         try:
             self.prepare(options)
             vul_results = self.execute()
 
-            result ={'status':'success','vulnerability':0}
+            result = {'status': 'success', 'vulnerability': 0}
             vul_app = Vulnerability()
             for v in vul_results:
                 if vul_app.save_and_update(v):

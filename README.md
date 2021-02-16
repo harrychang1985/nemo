@@ -1,10 +1,10 @@
 # Nemo
 
-Nemo是用来进行自动化信息收集的一个简单平台，实现对内网及互联网资产信息的自动收集，提高隐患排查和渗透测试的工作效率。
+Nemo是用来进行自动化信息收集的一个简单平台，通过集成常用的信息收集工具和技术，实现对内网及互联网资产信息的自动收集，提高隐患排查和渗透测试的工作效率。
 
 
 
-# 功能
+# 主要功能
 
 ## IP收集
 
@@ -30,14 +30,15 @@ Nemo是用来进行自动化信息收集的一个简单平台，实现对内网�
 
 ## Poc验证
 
-- [Pocsuite3](https://github.com/knownsec/pocsuite3)（[some_pocsuite](https://github.com/hanc00l/some_pocsuite)）
+- [Pocsuite3](https://github.com/knownsec/pocsuite3)  && [some_pocsuite](https://github.com/hanc00l/some_pocsuite)
 - [XRay](https://github.com/chaitin/xray)
 
 ## 其它
 
 - 资产的导出、统计、颜色标记与备忘录协作
-- Celery实现分布式任务
-- Docker部署和运行
+- RabbitMQ + Celery分布式任务
+- Docker安装
+- 环境：Python3.7、MySQL5.7、Flask、信息收集工具（Nmap、masscan、whatweb等）
 
 
 
@@ -62,8 +63,7 @@ docker run -it -d --name nemo_app -p 5000:5000 nemo/app:v1
 
 # 使用
 
-浏览器输入 [http://localhost:5000](http://localhost:5000)，默认用户名密码：**nemo/nemo**
-
+浏览器输入 [http://localhost:5000](http://localhost:5000)，默认密码：**nemo**
 
 <img src="docs/login.jpg" alt="login" />
 
@@ -73,6 +73,7 @@ docker run -it -d --name nemo_app -p 5000:5000 nemo/app:v1
 
 # 版本更新
 
+- 0.2.5：2021-2-16，不再打包Xray二进制文件（文件更新快、体积太大）；如果需要使用xray需手工将mac或linux下的xray二进制文件复制到nemo/common/thirdparty/xray目录下；
 - 0.2：2021-2-8，增加子域名收集Subfinder、JSFinder，增加标题指纹HTTPX；重构任务相关代码；
 - 0.1：2021-2-3，重构任务管理功能，集成Pocsuite3与XRay进行验洞验证；
 

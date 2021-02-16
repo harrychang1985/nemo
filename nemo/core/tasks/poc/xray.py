@@ -85,3 +85,22 @@ class XRay(PocBase):
                 json_output_data = ''
             # 解析xray扫描结果
             return self.__parse_xray_json_file(json_output_data)
+
+    def __check_xray_binfile_exist(self):
+        '''检查XRAY文件存在
+        '''
+        full_path_bin_file = os.path.join(self.BIN_PATH, self.BIN_FILE)
+        if os.path.exists(full_path_bin_file) and os.path.isfile(full_path_bin_file):
+            return True
+
+        return False
+
+    def run(self, options):
+        '''执行POC验证任务
+        xray二进制文件更新较快并且文件太大git clone太慢，因此nemo默认不包括xray的二进制文件
+        如果需要使用poc验证，需单独将xray二进制文件复制到nemo/common/thirdparty/xray目录
+        '''
+        if not self.__check_xray_binfile_exist():
+            return {'status': 'fail', 'msg': '{}/{} not exist'.format(self.BIN_PATH,self.BIN_FILE)}
+
+        return super().run(options)
