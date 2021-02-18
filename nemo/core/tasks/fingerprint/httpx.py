@@ -81,6 +81,7 @@ class Httpx(PortFingerBase):
                 # 去除一些无谓的参数：
                 json_data.pop('response-time')
                 json_data.pop('vhost')
+                json_data.pop('http2')
                 result.update(httpx=str(json_data))
             except Exception as e:
                 logger.error(traceback.format_exc())

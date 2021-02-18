@@ -8,6 +8,7 @@ from requests.packages import urllib3
 from urllib.parse import urlparse
 from bs4 import BeautifulSoup
 from tld import get_fld
+from multiprocessing.dummy import Pool
 
 def parse_args():
     parser = argparse.ArgumentParser(epilog='\tExample: \r\npython ' + sys.argv[0] + " -u http://www.baidu.com")
@@ -166,6 +167,7 @@ def find_subdomain(urls, mainurl):
 		subdomain = suburl.netloc
 		#print(subdomain)
 		if subdomain.strip() == "": continue
+		subdomain = subdomain.strip().strip('\\/').split(':')[0]
 		if miandomain in subdomain:
 			if subdomain not in subdomains:
 				subdomains.append(subdomain)
@@ -188,15 +190,25 @@ def find_by_url_deep(url):
 	if links == []: return None
 	print("ALL Find " + str(len(links)) + " links")
 	urls = []
-	i = len(links)
-	for link in links:
-		temp_urls = find_by_url(link)
-		if temp_urls == None: continue
-		print("Remaining " + str(i) + " | Find " + str(len(temp_urls)) + " URL in " + link)
+	pool = Pool(10)
+	url_results = pool.map(find_by_url, links)
+	pool.close()
+	pool.join()
+	for temp_urls in url_results:
+		if temp_urls is None:
+			continue
 		for temp_url in temp_urls:
 			if temp_url not in urls:
 				urls.append(temp_url)
-		i -= 1
+	# i = len(links)
+	# for link in links:
+	# 	temp_urls = find_by_url(link)
+	# 	if temp_urls == None: continue
+	# 	print("Remaining " + str(i) + " | Find " + str(len(temp_urls)) + " URL in " + link)
+	# 	for temp_url in temp_urls:
+	# 		if temp_url not in urls:
+	# 			urls.append(temp_url)
+	# 	i -= 1
 	return urls
 
 	
