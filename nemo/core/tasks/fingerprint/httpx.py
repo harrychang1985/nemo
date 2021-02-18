@@ -50,7 +50,7 @@ class Httpx(PortFingerBase):
             tfile_url.seek(0)
             httpx_bin = [os.path.join(self.BIN_PATH, self.BIN_FILE), '-l', tfile_url.name,
                          '-H', '\'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/52.0.2743.116 Safari/537.36 Edge/15.15063\'',
-                         '-status-code', '-title', '-web-server','-follow-redirects', '-no-color', '-content-length',
+                         '-status-code', '-title', '-web-server','-follow-redirects', '-no-color',
                          '-content-type', '-silent', '-json', '-o', tfile_output.name]
             # 调用httpx进行扫描
             try:
@@ -79,9 +79,14 @@ class Httpx(PortFingerBase):
                 if 'status-code' in json_data and json_data['status-code']:
                     result.update(status=json_data['status-code'])
                 # 去除一些无谓的参数：
-                json_data.pop('response-time')
-                json_data.pop('vhost')
-                json_data.pop('http2')
+                try:
+                    json_data.pop('response-time')
+                    json_data.pop('vhost')
+                    json_data.pop('http2')
+                    json_data.pop('content-length')
+                    json_data.pop('method')
+                except:
+                    pass
                 result.update(httpx=str(json_data))
             except Exception as e:
                 logger.error(traceback.format_exc())
