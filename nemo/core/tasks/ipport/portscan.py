@@ -43,7 +43,7 @@ class PortScan(TaskBase):
         self.whatweb = False
         self.iplocation = False
         self.httpx = False
-        self.bin = 'nmap'
+        self.bin = 'masscan'
 
     def prepare(self, options):
         '''解析参数
