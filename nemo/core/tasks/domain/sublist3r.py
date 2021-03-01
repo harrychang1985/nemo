@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 # coding:utf-8
 
-from nemo.common.thirdparty.Sublist3r import sublist3r
+#from nemo.common.thirdparty.Sublist3r import sublist3r
+import sublist3r
 from .domainbase import DomainBase
 
 

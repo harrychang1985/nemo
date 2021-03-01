@@ -22,7 +22,6 @@ class DomainScan(TaskBase):
             'org_id':   id,target关联的组织机构ID
             'subdomain':True/False，是否扫描子域名(Sublist3r）
             'subdomainbrute': True/False，是否进行子域名爆破
-            'webtitle': True/False，是否读取网站标题
             'fofasearch':   True/False，是否调用fofa
             'portscan': True/False，对域名扫描结果是否生成portscan任务
             'networkscan':True/False, 对域名结果的IP是否生成portscan任务
@@ -46,19 +45,17 @@ class DomainScan(TaskBase):
         self.task_description = '域名扫描综合任务'
         # 默认参数
         self.source = 'domainscan'
-        self.subdomain = True
-        self.webtitle = True
+        self.subdomain = False
         self.whatweb = False
         self.httpx = False
-        self.subdomainbrute = True
+        self.subdomainbrute = False
         self.jsfinder = False
-        self.subfinder = True
+        self.subfinder = False
 
     def prepare(self, options):
         '''解析参数
         '''
         self.org_id = self.get_option('org_id', options, self.org_id)
-        self.webtitle = self.get_option('webtitle', options, self.webtitle)
         self.subdomain = self.get_option('subdomain', options, self.subdomain)
         self.subdomainbrute = self.get_option('subdomainbrute', options, self.subdomainbrute)
         self.whatweb = self.get_option('whatweb', options, self.whatweb)
@@ -103,15 +100,11 @@ class DomainScan(TaskBase):
         # 获取域名的IP
         ipdomain = IpDomain()
         ipdomain.execute(domain_result_list)
-        # 去做无法解析到IP的域名
+        # 去除无法解析到IP的域名
         domain_result_valid_list = []
         for domain_resovled in domain_result_list:
             if domain_resovled['A'] or domain_resovled['CNAME']:
                 domain_result_valid_list.append(domain_resovled)
-        # 获取域名的title
-        if self.webtitle:
-            webtitle = WebTitle()
-            webtitle.execute_domain(domain_result_valid_list)
         # whatweb
         if self.whatweb:
             whatweb = WhatWeb()

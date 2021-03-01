@@ -18,6 +18,7 @@ class IPPortBase(TaskBase):
                 'rate':     1000,扫描速率
                 'ping':     True/False，是否PING
                 'tech':     '-sT'/'-sS'/'-sV'，扫描技术
+                'exclude':  'host1,host2'，要排除的ip地址
             }
     任务结果:
         保存为ip资产格式的列表：
@@ -42,6 +43,7 @@ class IPPortBase(TaskBase):
         self.ping = config_datajson['nmap']['ping']
         self.nmap_bin = config_datajson['nmap']['nmap_bin']
         self.masscan_bin = config_datajson['nmap']['masscan_bin']
+        self.exclude = None
 
     def execute_scan(self, target, port):
         '''对指定IP和端口进行扫描
@@ -59,6 +61,7 @@ class IPPortBase(TaskBase):
         self.tech = self.get_option('tech', options, self.tech)
         self.ping = self.get_option('ping', options, self.ping)
         self.org_id = self.get_option('org_id', options, self.org_id)
+        self.exclude = self.get_option('exclude', options, self.exclude)
 
     def execute(self):
         '''调用执行扫描任务

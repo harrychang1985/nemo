@@ -110,6 +110,7 @@
                                         <option value="90">三个月内</option>
                                         <option value="30">一个月内</option>
                                         <option value="7">一周内</option>
+                                        <option value="1">一天内</option>
                                     </select>
                                 </div>
                                 <div class="form-group col-md-2">
@@ -167,6 +168,13 @@
                                                                                 value="80,22,443,10022,23,111,8000,8080,554,5900,21,9100,5357,13389,5000,18080,3306,11521,17001,8443,53,5003,6000,9999,18089,8009,1025,17002,1433,2049,8888,13306,17003,5800,18081,25,10000,8081,5060,12345,17004,6001,20021,88,8008,17005,18082,19200,1720,3000,18088,19000,5432,19103,18083,19100,17006,1521,19104,18085,19001,15432,15901,81,2121,5989,15900,9080,5666,18087,13314,17007,19102,19002,17010,1688,18086,18084,8300,2383,7070,2869,7001,9010,19003,6667,17008,17009,19202,19101,5001,2000,3800,20020,13307,19007,19008,13312,19004,13310">
                                                                             --custom-top-ports 100</option>
                                                                     </datalist>
+                                                                    <div class="form-check form-check-inline">
+                                                                        <label class="form-check-label" for="checkbox_exclude">
+                                                                            <input class="form-check-input" id="checkbox_exclude" type="checkbox" ><b>排除的IP</b>
+                                                                        </label>
+                                                                    </div>
+                                                                    <input class="form-control" id="input_exclude" type="text"
+                                                                           placeholder="nmap/masscan --exclude 参数" values="">
                                                                     <div class="form-row">
                                                                         <div class="form-group col-md-4">
                                                                             <label for="select_bin">扫描方法</label>
@@ -187,11 +195,6 @@
                                                                             <label for="input_rate">扫描速度</label>
                                                                             <input class="form-control" id="input_rate" type="text" placeholder="1000（默认）">
                                                                         </div>
-                                                                    </div>
-                                                                    <div class="form-check form-check-inline " style="display: none;">
-                                                                        <label class="form-check-label" for="checkbox_webtitle">
-                                                                            <input class="form-check-input" id="checkbox_webtitle" type="checkbox">网站标题
-                                                                        </label>
                                                                     </div>
                                                                     <div class="form-check form-check-inline">
                                                                         <label class="form-check-label" for="checkbox_whatweb">

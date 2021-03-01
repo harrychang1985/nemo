@@ -64,13 +64,13 @@ def task_start_portscan_view():
             'nmap_tech', type=str, default=config_datajson['nmap']['tech'])
         iplocation = request.form.get('iplocation')
         ping = request.form.get('ping')
-        webtitle = request.form.get('webtitle')
         whatweb = request.form.get('whatweb')
         fofasearch = request.form.get('fofasearch')
         shodansearch = request.form.get('shodansearch')
         subtask = request.form.get('subtask')
         portscan_bin = request.form.get('bin')
         httpx = request.form.get('httpx')
+        exclude = request.form.get('exclude')
 
         if not target:
             return jsonify({'status': 'fail', 'msg': 'no target or port'})
@@ -86,7 +86,7 @@ def task_start_portscan_view():
             # 任务选项options
             options = {'target': t, 'port': port, 'bin': portscan_bin,
                        'org_id': org_id, 'rate': rate, 'ping': _str2bool(ping), 'tech': nmap_tech,
-                       'iplocation': _str2bool(iplocation), 'webtitle': _str2bool(webtitle),
+                       'iplocation': _str2bool(iplocation), 'exclude': exclude,
                        'whatweb': _str2bool(whatweb), 'httpx': _str2bool(httpx),
                        }
             # 启动portscan任务
@@ -125,7 +125,6 @@ def task_start_domainscan_view():
         org_id = request.form.get('org_id', type=int, default=None)
         subdomain = request.form.get('subdomain')
         subdomainbrute = request.form.get('subdomainbrute')
-        webtitle = request.form.get('webtitle')
         whatweb = request.form.get('whatweb')
         fofasearch = request.form.get('fofasearch')
         portscan = request.form.get('portscan')
@@ -159,17 +158,48 @@ def task_start_domainscan_view():
             # 任务选项options
             options = {'target': t,
                        'org_id': org_id, 'subdomain': _str2bool(subdomain), 'subdomainbrute': _str2bool(subdomainbrute),
-                       'webtitle': _str2bool(webtitle), 'whatweb': _str2bool(whatweb), 'httpx': _str2bool(httpx),
+                       'whatweb': _str2bool(whatweb), 'httpx': _str2bool(httpx),
                        'subfinder': _str2bool(subfinder), 'jsfinder': _str2bool(jsfinder),
                        'portscan': _str2bool(portscan), 'networkscan': _str2bool(networkscan),
                        }
-            # 是否有portscan任务
+            # 是否有portscan任务，则所有获取子域名的任务在一个任务里完成
             if _str2bool(portscan) or _str2bool(networkscan):
                 result = taskapi.start_task(
                     'domainscan_with_portscan', kwargs={'options': deepcopy(options)})
             else:
-                result = taskapi.start_task(
-                    'domainscan', kwargs={'options': deepcopy(options)})
+                # 每个获取子域名采用独立任务，以提高速度
+                subdomain_task_startd = False
+                if _str2bool(subdomain):
+                    options_subdomain = {'target': t, 'org_id': org_id, 'whatweb': _str2bool(whatweb),
+                                          'httpx': _str2bool(httpx), 'subdomain': True}
+                    result = taskapi.start_task(
+                        'domainscan', kwargs={'options': deepcopy(options_subdomain)})
+                    subdomain_task_startd
+                if _str2bool(subdomainbrute):
+                    options_subdomainbrute = {'target': t, 'org_id': org_id, 'whatweb': _str2bool(whatweb),
+                                          'httpx': _str2bool(httpx), 'subdomainbrute': True}
+                    result = taskapi.start_task(
+                        'domainscan', kwargs={'options': deepcopy(options_subdomainbrute)})
+                    subdomain_task_startd = True
+                if _str2bool(subfinder):
+                    options_subfinder = {'target': t, 'org_id': org_id, 'whatweb': _str2bool(whatweb),
+                                          'httpx': _str2bool(httpx), 'subfinder': True}
+                    result = taskapi.start_task(
+                        'domainscan', kwargs={'options': deepcopy(options_subfinder)})
+                    subdomain_task_startd = True
+                if _str2bool(jsfinder):
+                    options_jsfinder = {'target': t, 'org_id': org_id, 'whatweb': _str2bool(whatweb),
+                                          'httpx': _str2bool(httpx), 'jsfinder': True}
+                    result = taskapi.start_task(
+                        'domainscan', kwargs={'options': deepcopy(options_jsfinder)})
+                    subdomain_task_startd = True
+                # 如果没有子域名任务，执行其它剩下的任务
+                if not subdomain_task_startd:
+                    options = {'target': t, 'org_id': org_id, 'whatweb': _str2bool(whatweb),
+                                         'httpx': _str2bool(httpx)}
+                    result = taskapi.start_task(
+                        'domainscan', kwargs={'options': deepcopy(options)})
+
             # 是否有FOFA搜索
             if _str2bool(fofasearch):
                 result = taskapi.start_task('fofasearch', kwargs={

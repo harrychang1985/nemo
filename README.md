@@ -73,6 +73,7 @@ docker run -it -d --name nemo_app -p 5000:5000 nemo/app:v1
 
 # 版本更新
 
+- 0.3.0：2021-3-1，更新域名的任务控制功能；Sublist3r更换为pip安装；端口扫描中增加扫描中排除的IP；
 - 0.2.5：2021-2-16，不再打包Xray二进制文件（文件更新快、体积太大）；如果需要使用xray需手工将mac或linux下的xray二进制文件复制到nemo/common/thirdparty/xray目录下；
 - 0.2：2021-2-8，增加子域名收集Subfinder、JSFinder，增加标题指纹HTTPX；重构任务相关代码；
 - 0.1：2021-2-3，重构任务管理功能，集成Pocsuite3与XRay进行验洞验证；

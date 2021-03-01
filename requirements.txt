@@ -24,3 +24,4 @@ colorama
 pocsuite3
 #JSFinder
 bs4
+sublist3r

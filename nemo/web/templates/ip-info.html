@@ -159,15 +159,19 @@
                         <tr>
                             {% endif %}
                             <td>
+                                {{ row['ip'] }}
+                            </td>
+                            <td>
                                 {% if row['ip'] and row['port']%}
-                                {% if row['port']==443  or row['port']==8443 %}
-                                <a href="https://{{ row['ip'] }}:{{ row['port'] }}" target="_blank">{{ row['ip'] }}</a>
+                                    {% if row['port']==443  or row['port']==8443 %}
+                                    <a href="https://{{ row['ip'] }}:{{ row['port'] }}" target="_blank">{{ row['port'] }}</a>
+                                    {% else %}
+                                    <a href="http://{{ row['ip'] }}:{{ row['port'] }}" target="_blank">{{ row['port'] }}</a>
+                                    {% endif %}
                                 {% else %}
-                                <a href="http://{{ row['ip'] }}:{{ row['port'] }}" target="_blank">{{ row['ip'] }}</a>
-                                {% endif %}
+                                     {{ row['port'] }}
                                 {% endif %}
                             </td>
-                            <td>{{ row['port'] }}</td>
                             <td>
                                 {% if row['source']=='portscan' %}
                                 <span class="badge badge-warning"> {{ row['source'] }}</span>

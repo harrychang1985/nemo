@@ -22,8 +22,6 @@ class PortScan(TaskBase):
             'rate':     1000,扫描速率
             'ping':     True/False，是否PING
             'tech':     '-sT'/'-sS'/'-sV'，扫描技术
-            'webtitle': True/False，是否读取网站IP地址
-            'whatweb':      True/False,是否调用whatweb
             'httpx':    True/False,是否调用httpx
             'iplocation':   True/False，是否调用iplocation
             'bin':      nmap/masscan，扫描方法
@@ -39,7 +37,6 @@ class PortScan(TaskBase):
         # 默认参数：
         self.source = 'portscan'
         self.result_attr_keys = ('service', 'banner', 'title', 'whatweb', 'server', 'httpx')
-        self.webtitle = False
         self.whatweb = False
         self.iplocation = False
         self.httpx = False
@@ -49,7 +46,6 @@ class PortScan(TaskBase):
         '''解析参数
         '''
         self.org_id = self.get_option('org_id', options, self.org_id)
-        self.webtitle = self.get_option('webtitle', options, self.webtitle)
         self.whatweb = self.get_option('whatweb', options, self.whatweb)
         self.httpx = self.get_option('httpx', options, self.httpx)
         self.iplocation = self.get_option('iplocation', options, self.iplocation)
@@ -87,10 +83,6 @@ class PortScan(TaskBase):
         if self.iplocation:
             iplocation_app = IpLocation()
             iplocation_app.execute(ip_ports)
-        # 端口的title
-        if self.webtitle:
-            webtitle_app = WebTitle()
-            webtitle_app.execute_ip(ip_ports)
         # 是否调用whatweb
         if self.whatweb:
             whatweb_app = WhatWeb()

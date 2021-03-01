@@ -54,7 +54,7 @@ class Masscan(IPPortBase):
                     ip = data[3].strip()
                     port = data[2].strip()
                     results.append({'ip': ip, 'status': 'alive', 'port': [
-                        {'port': port, 'status': 'open', 'service': port_service.get_service(port)}]})
+                        {'port': port, 'service': port_service.get_service(port)}]})
         except Exception as e:
             logger.error(traceback.format_exc())
 
@@ -100,6 +100,9 @@ class Masscan(IPPortBase):
                 masscan_bin.append(port)
             masscan_bin.append('-iL')
             masscan_bin.append(tfile_ip.name)
+            if self.exclude:
+                masscan_bin.append('--exclude')
+                masscan_bin.append(self.exclude)
             # 调用masscan进行扫描
             child = subprocess.Popen(masscan_bin, stdout=subprocess.PIPE)
             child.wait()

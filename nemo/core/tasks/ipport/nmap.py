@@ -64,7 +64,7 @@ class Nmap(IPPortBase):
                         if service_custom and service_custom != 'unknown':
                             service = service_custom
                         ports.append(
-                            {'port': port, 'service': service, 'banner': banner, 'status': status})
+                            {'port': port, 'service': service, 'banner': banner})
                 results.append({'ip': ip, 'status': 'alive', 'port': ports})
 
         return results
@@ -89,6 +89,9 @@ class Nmap(IPPortBase):
                 nmap_bin.append(port)
             nmap_bin.append('-iL')
             nmap_bin.append(tfile_ip.name)
+            if self.exclude:
+                nmap_bin.append('--exclude')
+                nmap_bin.append(self.exclude)
             # 调用nmap进行扫描
             child = subprocess.Popen(nmap_bin, stdout=subprocess.PIPE)
             child.wait()

@@ -159,7 +159,7 @@ def domainscan_with_portscan(self, options):
                 else:
                     ip_set.update(domain['A'])
     # 生成portscan的默认参数
-    options_portscan = {'target': list(ip_set), 'iplocation': True, 'webtitle': options['webtitle'],
+    options_portscan = {'target': list(ip_set), 'iplocation': True,
                         'whatweb': options['whatweb'], 'httpx': options['httpx'], 'org_id': None if 'org_id' not in options else options['org_id']}
     # 执行portscan任务
     result.update(portscan.run(options_portscan))

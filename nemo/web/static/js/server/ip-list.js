@@ -34,6 +34,10 @@ $(function () {
             var rate = $('#input_rate').val();
             if (!port) port = "--top-ports 1000";
             if (!rate) rate = 5000;
+            var exclude_ip = "";
+            if($('#checkbox_exclude').is(":checked")){
+                exclude_ip = $('#input_exclude').val();
+            }
             $.post("/task-start-portscan",
                 {
                     "target": target,
@@ -44,13 +48,13 @@ $(function () {
                     'bin': $('#select_bin').val(),
                     'org_id': $('#select_org_id_task').val(),
                     'iplocation': $('#checkbox_iplocation').is(":checked"),
-                    'webtitle': $('#checkbox_webtitle').is(":checked"),
                     'whatweb': $('#checkbox_whatweb').is(":checked"),
                     'ping': $('#checkbox_ping').is(":checked"),
                     'fofasearch': $('#checkbox_fofasearch').is(":checked"),
                     'shodansearch': $('#checkbox_shodansearch').is(":checked"),
                     'subtask': $('#checkbox_subtask').is(":checked"),
                     'httpx': $('#checkbox_httpx').is(":checked"),
+                    'exclude': exclude_ip,
                 }, function (data, e) {
                     if (e === "success" && data['status'] == 'success') {
                         swal({
@@ -122,19 +126,21 @@ $(function () {
             $("#select_tech").prop("disabled", false);
             $("#select_bin").prop("disabled", false);
             $("#input_rate").prop("disabled", false);
-            $("#checkbox_webtitle").prop("disabled", false);
             $("#checkbox_whatweb").prop("disabled", false);
             $("#checkbox_httpx").prop("disabled", false);
             $("#checkbox_ping").prop("disabled", false);
+            $("#checkbox_exclude").prop("disabled", false);
+            $("#input_exclude").prop("disabled", false);
         } else {
             $("#input_port").prop("disabled", true);
             $("#select_tech").prop("disabled", true);
             $("#select_bin").prop("disabled", true);
             $("#input_rate").prop("disabled", true);
-            $("#checkbox_webtitle").prop("disabled", true);
             $("#checkbox_whatweb").prop("disabled", true);
             $("#checkbox_httpx").prop("disabled", true);
             $("#checkbox_ping").prop("disabled", true);
+            $("#checkbox_exclude").prop("disabled", true);
+            $("#input_exclude").prop("disabled", true);
         }
     })
 
